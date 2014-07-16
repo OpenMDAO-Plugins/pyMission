@@ -1,0 +1,3 @@
+graft src/pyMission/sphinx_build/html
+recursive-include src/pyMission/test *.py
+
