@@ -8,6 +8,7 @@ from openmdao.main.api import Assembly, set_as_top
 from openmdao.util.testutil import assert_rel_error
 
 from pyMission.aerodynamics import SysAeroSurrogate, SysCM
+from pyMission.coupled_analysis import SysCLTar, SysCTTar
 
 
 # Ignore the numerical warnings from performing the rel error calc.
@@ -113,6 +114,23 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         self.model.comp.eval_only = True
         self.run_model()
         self.compare_derivatives()
+
+    def test_SysCLTar(self):
+
+        compname = 'SysCLTar'
+        self.setup(compname)
+        self.model.comp.eval_only = True
+        self.run_model()
+        self.compare_derivatives(rel_error=True)
+
+    def test_SysCTTar(self):
+
+        compname = 'SysCTTar'
+        self.setup(compname)
+        self.model.comp.eval_only = True
+        self.run_model()
+        self.compare_derivatives(rel_error=True)
+
 
 if __name__ == "__main__":
 
