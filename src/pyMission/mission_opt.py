@@ -5,6 +5,7 @@ Trajectory optimization.
 # pylint: disable=E1101
 import numpy as np
 
+from openmdao.lib.drivers.api import NewtonSolver
 from openmdao.main.api import Assembly, set_as_top
 
 from pyMission.aerodynamics import SysAeroSurrogate, SysCM
@@ -107,6 +108,14 @@ class OptTrajectory(Assembly):
 
         self.connect('SysRho.rho', 'SysFuelWeight.rho')
         # Need v, gamma, CT_tar, x, SFC
+
+
+        # Functionals (i.e., components downstream of the coupled system.)
+        self.add('SysTau', SysTau(num_elem=self.num_elem))
+
+        self.connect('SysRho.rho', 'SysTau.rho')
+        self.connect('SysCTTar.CT_tar', 'SysTau.CT_tar')
+        # Need v, h
 
 
         # Coupled Analysis
