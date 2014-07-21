@@ -169,7 +169,6 @@ class SysCTTar(Component):
         super(SysCTTar, self).__init__()
 
         # Inputs
-
         self.add('fuel_w', Array(np.zeros((num_elem, )), iotype='in',
                                  desc = 'Fuel Weight'))
         self.add('Gamma', Array(np.zeros((num_elem, )), iotype='in',
@@ -325,56 +324,57 @@ class SysCTTar(Component):
                                  * dthrust_c) * 1e-1/1e-1
 
 
-class SysFuelWeight(ExplicitSystem):
-    """ computes the fuel consumption for each element, and compute
-        the fuel weight carried at each element control point
+class SysFuelWeight(Component):
+    """ Computes the fuel consumption for each element, and compute the fuel
+    weight carried at each element control point
     """
 
-    def _declare(self):
-        """ the owned variable is fuel weight: fuel_w
-            the dependencies are: speed (v)
-                                  pitch angle (gamma)
-                                  thrust coefficient (CT)
-                                  x distance (x)
-                                  SFC (SFC)
-                                  density (rho)
-                                  wing area (S)
+    def __init__(self, num_elem):
+        super(SysFuelWeight, self).__init__()
+
+        # Inputs
+        self.add('v', Array(np.zeros((num_elem, )), iotype='in',
+                            desc = 'Speed'))
+        self.add('Gamma', Array(np.zeros((num_elem, )), iotype='in',
+                                 desc = 'Pitch angle'))
+        self.add('CT_tar', Array(np.zeros((num_elem, )), iotype='in',
+                                 desc = 'Thrust Coefficient'))
+        self.add('x', Array(np.zeros((num_elem, )), iotype='in',
+                              desc = 'Distance'))
+        self.add('SFC', Array(np.zeros((num_elem, )), iotype='in',
+                              desc = 'Specific Fuel Consumption'))
+        self.add('rho', Array(np.zeros((num_elem, )), iotype='in',
+                              desc = 'Density'))
+        self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
+
+        # Note, this isn't used in the calculation, but it may have been used
+        # to help convergence due to lack of graph.
+        #self.add('fuel_w_0', Float(0.0, iotype='in',
+        #                           desc = 'Initial Fuel Weight'))
+
+        # Outputs
+        self.add('fuel_w', Array(np.zeros((num_elem, )), iotype='out',
+                                 desc = 'Fuel Weight'))
+
+    def execute(self):
+        """ The fuel burnt over each section is computed using trapezoidal
+        rule and the neighboring control points.
         """
 
-        self.num_elem = self.kwargs['num_elem']
-        fuel_w_0 = self.kwargs['fuel_w_0']
-        num_pts = self.num_elem+1
-        ind_pts = range(num_pts)
+        x_dist = self.x * 1e6
+        speed = self.v * 1e2
+        gamma = self.Gamma * 1e-1
+        thrust_c = self.CT_tar * 1e-1
+        SFC = self.SFC * 1e-6
+        rho = self.rho
 
-        self._declare_variable('fuel_w', size=num_pts, val=fuel_w_0)
-        self._declare_argument('v', indices=ind_pts)
-        self._declare_argument('gamma', indices=ind_pts)
-        self._declare_argument('CT_tar', indices=ind_pts)
-        self._declare_argument('x', indices=ind_pts)
-        self._declare_argument('SFC', indices=ind_pts)
-        self._declare_argument('rho', indices=ind_pts)
-        self._declare_argument(['S', 0], indices=[0])
-
-    def apply_G(self):
-        """ the fuel burnt over each section is computed using trapezoidal
-            rule and the neighboring control points
-        """
-
-        pvec = self.vec['p']
-        uvec = self.vec['u']
-
-        x_dist = pvec('x') * 1e6
-        speed = pvec('v') * 1e2
-        gamma = pvec('gamma') * 1e-1
-        thrust_c = pvec('CT_tar') * 1e-1
-        SFC = pvec('SFC') * 1e-6
-        rho = pvec('rho')
         fuel_w_end = 0.0
-        wing_area = pvec(['S', 0]) * 1e2
-        fuel_w = uvec('fuel_w')
+        wing_area = self.S * 1e2
 
-        fuel_delta = np.zeros(self.num_elem)
-        x_int = np.zeros(self.num_elem)
+        num_elem = len(x_dist)
+
+        fuel_delta = np.zeros(num_elem)
+        x_int = np.zeros(num_elem)
         x_int = x_dist[1:] - x_dist[0:-1]
         q_int = 0.5*rho*speed**2*wing_area
         cos_gamma = np.cos(gamma)
@@ -385,24 +385,29 @@ class SysFuelWeight(ExplicitSystem):
                       * x_int/2)
 
         fuel_cumul = np.cumsum(fuel_delta[::-1])[::-1]
-        fuel_w[0:-1] = (fuel_cumul + fuel_w_end) / 1e6
-        fuel_w[-1] = fuel_w_end / 1e6
+        self.fuel_w[0:-1] = (fuel_cumul + fuel_w_end) / 1e6
+        self.fuel_w[-1] = fuel_w_end / 1e6
 
-    def linearize(self):
-        """ pre-compute the derivatives of fuel weight wrt speed (v),
-            flight path angle (gamma), thrust_c (thrust coefficient),
-            specific fuel consumption (SFC), and density (rho)
+    def list_deriv_vars(self):
+        """ Return lists of inputs and outputs where we defined derivatives.
+        """
+        input_keys = ['v', 'Gamma', 'CT_tar', 'x', 'SFC', 'rho', 'S']
+        output_keys = ['fuel_w']
+        return input_keys, output_keys
+
+    def provideJ(self):
+        """ Pre-compute the derivatives of fuel weight wrt speed (v), flight
+        path angle (gamma), thrust_c (thrust coefficient), specific fuel
+        consumption (SFC), and density (rho).
         """
 
-        pvec = self.vec['p']
-
-        x_dist = pvec('x') * 1e6
-        speed = pvec('v') * 1e2
-        gamma = pvec('gamma') * 1e-1
-        thrust_c = pvec('CT_tar') * 1e-1
-        SFC = pvec('SFC') * 1e-6
-        rho = pvec('rho')
-        wing_area = pvec(['S', 0]) * 1e2
+        x_dist = self.x * 1e6
+        speed = self.v * 1e2
+        gamma = self.Gamma * 1e-1
+        thrust_c = self.CT_tar * 1e-1
+        SFC = self.SFC * 1e-6
+        rho = self.rho
+        wing_area = self.S * 1e2
 
         x_int = x_dist[1:] - x_dist[0:-1]
         q_int = 0.5*rho*speed**2*wing_area
@@ -449,22 +454,11 @@ class SysFuelWeight(ExplicitSystem):
                               (speed[1:] * cos_gamma[1:]**2) *
                               (sin_gamma[1:]) * x_int/2)
 
-    def apply_dGdp(self, args):
-        """ apply the pre-computed derivatives to the directional
-            derivatives required
+    def apply_deriv(self, arg, result):
+        """ Apply the pre-computed derivatives to the directional derivatives
+        required.
+        Forward mode.
         """
-
-        dpvec = self.vec['dp']
-        dgvec = self.vec['dg']
-
-        dwing_area = dpvec('S')
-        dx_dist = dpvec('x')
-        dspeed = dpvec('v')
-        dgamma = dpvec('gamma')
-        dthrust_c = dpvec('CT_tar')
-        dSFC = dpvec('SFC')
-        drho = dpvec('rho')
-        dfuel_w = dgvec('fuel_w')
 
         dfuel_dS = self.dfuel_dS
 
@@ -482,166 +476,183 @@ class SysFuelWeight(ExplicitSystem):
         dfuel_dv2 = self.dfuel_dv2
         dfuel_dgamma2 = self.dfuel_dgamma2
 
-        dfuel_temp = np.zeros(self.num_elem+1)
+        dfuel_temp = np.zeros(len(self.x))
 
-        if self.mode == 'fwd':
-            dfuel_w[:] = 0.0
-            if 'S') in args:
-                dfuel_temp[:] = 0.0
-                dfuel_temp[0:-1] = dfuel_dS * dwing_area
-                dfuel_temp = np.cumsum(dfuel_temp[::-1])
-                dfuel_temp = dfuel_temp[::-1]
-                dfuel_w[:] += dfuel_temp * 1e2 / 1e6
-            if 'x') in args:
-                dfuel_temp[:] = 0.0
-                dfuel_temp[0:-1] += dfuel_dx1 * dx_dist[0:-1]
-                dfuel_temp[0:-1] += dfuel_dx2 * dx_dist[1:]
-                dfuel_temp = np.cumsum(dfuel_temp[::-1])
-                dfuel_temp = dfuel_temp[::-1]
-                dfuel_w[:] += dfuel_temp
-            if 'v') in args:
-                dfuel_temp[:] = 0.0
-                dfuel_temp[0:-1] += dfuel_dv1 * dspeed[0:-1]
-                dfuel_temp[0:-1] += dfuel_dv2 * dspeed[1:]
-                dfuel_temp = np.cumsum(dfuel_temp[::-1])
-                dfuel_temp = dfuel_temp[::-1]
-                dfuel_w[:] += dfuel_temp * 1e2/1e6
-            if 'gamma') in args:
-                dfuel_temp[:] = 0.0
-                dfuel_temp[0:-1] += dfuel_dgamma1 * dgamma[0:-1]
-                dfuel_temp[0:-1] += dfuel_dgamma2 * dgamma[1:]
-                dfuel_temp = np.cumsum(dfuel_temp[::-1])
-                dfuel_temp = dfuel_temp[::-1]
-                dfuel_w[:] += dfuel_temp * 1e-1/1e6
-            if 'CT_tar') in args:
-                dfuel_temp[:] = 0.0
-                dfuel_temp[0:-1] += dfuel_dthrust1 * dthrust_c[0:-1]
-                dfuel_temp[0:-1] += dfuel_dthrust2 * dthrust_c[1:]
-                dfuel_temp = np.cumsum(dfuel_temp[::-1])
-                dfuel_temp = dfuel_temp[::-1]
-                dfuel_w[:] += dfuel_temp * 1e-1/1e6
-            if 'SFC') in args:
-                dfuel_temp[:] = 0.0
-                dfuel_temp[0:-1] += dfuel_dSFC1 * dSFC[0:-1]
-                dfuel_temp[0:-1] += dfuel_dSFC2 * dSFC[1:]
-                dfuel_temp = np.cumsum(dfuel_temp[::-1])
-                dfuel_temp = dfuel_temp[::-1]
-                dfuel_w[:] += dfuel_temp * 1e-6/1e6
-            if 'rho') in args:
-                dfuel_temp[:] = 0.0
-                dfuel_temp[0:-1] += dfuel_drho1 * drho[0:-1]
-                dfuel_temp[0:-1] += dfuel_drho2 * drho[1:]
-                dfuel_temp = np.cumsum(dfuel_temp[::-1])
-                dfuel_temp = dfuel_temp[::-1]
-                dfuel_w[:] += dfuel_temp / 1e6
+        if 'S' in arg:
+            dfuel_temp[:] = 0.0
+            dfuel_temp[0:-1] = dfuel_dS * arg['S']
+            dfuel_temp = np.cumsum(dfuel_temp[::-1])
+            dfuel_temp = dfuel_temp[::-1]
+            result['fuel_w'] += dfuel_temp * 1e2 / 1e6
+        if 'x' in arg:
+            dfuel_temp[:] = 0.0
+            dfuel_temp[0:-1] += dfuel_dx1 * arg['x'][0:-1]
+            dfuel_temp[0:-1] += dfuel_dx2 * arg['x'][1:]
+            dfuel_temp = np.cumsum(dfuel_temp[::-1])
+            dfuel_temp = dfuel_temp[::-1]
+            result['fuel_w'] += dfuel_temp
+        if 'v' in arg:
+            dfuel_temp[:] = 0.0
+            dfuel_temp[0:-1] += dfuel_dv1 * arg['v'][0:-1]
+            dfuel_temp[0:-1] += dfuel_dv2 * arg['v'][1:]
+            dfuel_temp = np.cumsum(dfuel_temp[::-1])
+            dfuel_temp = dfuel_temp[::-1]
+            result['fuel_w'] += dfuel_temp * 1e2/1e6
+        if 'gamma' in arg:
+            dfuel_temp[:] = 0.0
+            dfuel_temp[0:-1] += dfuel_dgamma1 * arg['gamma'][0:-1]
+            dfuel_temp[0:-1] += dfuel_dgamma2 * arg['gamma'][1:]
+            dfuel_temp = np.cumsum(dfuel_temp[::-1])
+            dfuel_temp = dfuel_temp[::-1]
+            result['fuel_w'] += dfuel_temp * 1e-1/1e6
+        if 'CT_tar' in arg:
+            dfuel_temp[:] = 0.0
+            dfuel_temp[0:-1] += dfuel_dthrust1 * arg['CT_tar'][0:-1]
+            dfuel_temp[0:-1] += dfuel_dthrust2 * arg['CT_tar'][1:]
+            dfuel_temp = np.cumsum(dfuel_temp[::-1])
+            dfuel_temp = dfuel_temp[::-1]
+            result['fuel_w'] += dfuel_temp * 1e-1/1e6
+        if 'SFC' in arg:
+            dfuel_temp[:] = 0.0
+            dfuel_temp[0:-1] += dfuel_dSFC1 * arg['SFC'][0:-1]
+            dfuel_temp[0:-1] += dfuel_dSFC2 * arg['SFC'][1:]
+            dfuel_temp = np.cumsum(dfuel_temp[::-1])
+            dfuel_temp = dfuel_temp[::-1]
+            result['fuel_w'] += dfuel_temp * 1e-6/1e6
+        if 'rho' in arg:
+            dfuel_temp[:] = 0.0
+            dfuel_temp[0:-1] += dfuel_drho1 * arg['rho'][0:-1]
+            dfuel_temp[0:-1] += dfuel_drho2 * arg['rho'][1:]
+            dfuel_temp = np.cumsum(dfuel_temp[::-1])
+            dfuel_temp = dfuel_temp[::-1]
+            result['fuel_w'] += dfuel_temp / 1e6
 
-        elif self.mode == 'rev':
-            dwing_area[:] = 0.0
-            dx_dist[:] = 0.0
-            dspeed[:] = 0.0
-            dgamma[:] = 0.0
-            dthrust_c[:] = 0.0
-            dSFC[:] = 0.0
-            drho[:] = 0.0
-            if 'S') in args:
-                dfuel_temp[:] = 0.0
-                fuel_cumul = np.cumsum(dfuel_w[0:-1])
-                dfuel_temp[0:-1] += dfuel_dS * fuel_cumul
-                dwing_area[:] += np.sum(dfuel_temp) * 1e2/1e6
-            if 'x') in args:
-                dfuel_temp[:] = 0.0
-                fuel_cumul = np.cumsum(dfuel_w[0:-1])
-                dfuel_temp[0:-1] += dfuel_dx1 * fuel_cumul
-                dfuel_temp[1:] += dfuel_dx2 * fuel_cumul
-                dx_dist[:] += dfuel_temp
-            if 'v') in args:
-                dfuel_temp[:] = 0.0
-                fuel_cumul = np.cumsum(dfuel_w[0:-1])
-                dfuel_temp[0:-1] += dfuel_dv1 * fuel_cumul
-                dfuel_temp[1:] += dfuel_dv2 * fuel_cumul
-                dspeed[:] += dfuel_temp * 1e2/1e6
-            if 'gamma') in args:
-                dfuel_temp[:] = 0.0
-                fuel_cumul = np.cumsum(dfuel_w[0:-1])
-                dfuel_temp[0:-1] += dfuel_dgamma1 * fuel_cumul
-                dfuel_temp[1:] += dfuel_dgamma2 * fuel_cumul
-                dgamma[:] += dfuel_temp * 1e-1/1e6
-            if 'CT_tar') in args:
-                dfuel_temp[:] = 0.0
-                fuel_cumul = np.cumsum(dfuel_w[0:-1])
-                dfuel_temp[0:-1] += dfuel_dthrust1 * fuel_cumul
-                dfuel_temp[1:] += dfuel_dthrust2 * fuel_cumul
-                dthrust_c[:] += dfuel_temp * 1e-1/1e6
-            if 'SFC') in args:
-                dfuel_temp[:] = 0.0
-                fuel_cumul = np.cumsum(dfuel_w[0:-1])
-                dfuel_temp[0:-1] += dfuel_dSFC1 * fuel_cumul
-                dfuel_temp[1:] += dfuel_dSFC2 * fuel_cumul
-                dSFC[:] += dfuel_temp * 1e-6/1e6
-            if 'rho') in args:
-                dfuel_temp[:] = 0.0
-                fuel_cumul = np.cumsum(dfuel_w[0:-1])
-                dfuel_temp[0:-1] += dfuel_drho1 * fuel_cumul
-                dfuel_temp[1:] += dfuel_drho2 * fuel_cumul
-                drho[:] += dfuel_temp / 1e6
-
-class SysAlpha(ImplicitSystem):
-    """ system used to make user provided CL match with CL target """
-
-    def _declare(self):
-        """ owned variable: alpha (angle of attack)
-            dependencies: CL (user provided coefficient of lift)
-                          CL_tar (target coefficient of lift)
+    def apply_derivT(self, arg, result):
+        """ Apply the pre-computed derivatives to the directional derivatives
+        required.
+        Adjoint mode.
         """
 
-        self.num_elem = self.kwargs['num_elem']
-        num_pts = self.num_elem+1
-        ind_pts = range(num_pts)
+        dfuel_dS = self.dfuel_dS
 
-        self._declare_variable('alpha', size=num_pts)
-        self._declare_argument('CL', indices=ind_pts)
-        self._declare_argument('CL_tar', indices=ind_pts)
+        dfuel_dx1 = self.dfuel_dx1
+        dfuel_dSFC1 = self.dfuel_dSFC1
+        dfuel_dthrust1 = self.dfuel_dthrust1
+        dfuel_drho1 = self.dfuel_drho1
+        dfuel_dv1 = self.dfuel_dv1
+        dfuel_dgamma1 = self.dfuel_dgamma1
 
-    def apply_F(self):
-        """ the residual of the system is simply the difference between
-            the two CL values
-        """
+        dfuel_dx2 = self.dfuel_dx2
+        dfuel_dSFC2 = self.dfuel_dSFC2
+        dfuel_dthrust2 = self.dfuel_dthrust2
+        dfuel_drho2 = self.dfuel_drho2
+        dfuel_dv2 = self.dfuel_dv2
+        dfuel_dgamma2 = self.dfuel_dgamma2
 
-        pvec = self.vec['p']
-        fvec = self.vec['f']
+        dfuel_temp = np.zeros(len(self.x))
 
-        lift_c = pvec('CL')
-        lift_c_tar = pvec('CL_tar')
-        alpha_res = fvec('alpha')
+        if 'S' in result:
+            dfuel_temp[:] = 0.0
+            fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
+            dfuel_temp[0:-1] += dfuel_dS * fuel_cumul
+            result['S'] += np.sum(dfuel_temp) * 1e2/1e6
+        if 'x' in result:
+            dfuel_temp[:] = 0.0
+            fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
+            dfuel_temp[0:-1] += dfuel_dx1 * fuel_cumul
+            dfuel_temp[1:] += dfuel_dx2 * fuel_cumul
+            result['x'] += dfuel_temp
+        if 'v' in result:
+            dfuel_temp[:] = 0.0
+            fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
+            dfuel_temp[0:-1] += dfuel_dv1 * fuel_cumul
+            dfuel_temp[1:] += dfuel_dv2 * fuel_cumul
+            result['v'] += dfuel_temp * 1e2/1e6
+        if 'gamma' in result:
+            dfuel_temp[:] = 0.0
+            fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
+            dfuel_temp[0:-1] += dfuel_dgamma1 * fuel_cumul
+            dfuel_temp[1:] += dfuel_dgamma2 * fuel_cumul
+            result['gamma'] += dfuel_temp * 1e-1/1e6
+        if 'CT_tar' in result:
+            dfuel_temp[:] = 0.0
+            fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
+            dfuel_temp[0:-1] += dfuel_dthrust1 * fuel_cumul
+            dfuel_temp[1:] += dfuel_dthrust2 * fuel_cumul
+            result['CT_tar'] += dfuel_temp * 1e-1/1e6
+        if 'SFC' in result:
+            dfuel_temp[:] = 0.0
+            fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
+            dfuel_temp[0:-1] += dfuel_dSFC1 * fuel_cumul
+            dfuel_temp[1:] += dfuel_dSFC2 * fuel_cumul
+            result['SFC'] += dfuel_temp * 1e-6/1e6
+        if 'rho' in result:
+            dfuel_temp[:] = 0.0
+            fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
+            dfuel_temp[0:-1] += dfuel_drho1 * fuel_cumul
+            dfuel_temp[1:] += dfuel_drho2 * fuel_cumul
+            result['rho'] += dfuel_temp / 1e6
 
-        alpha_res[:] = lift_c - lift_c_tar
 
-    def apply_dFdpu(self, args):
-        """ compute the trivial derivatives of the system """
+# This system can be replaced by a solver's Pseudocomp.
 
-        dpvec = self.vec['dp']
-        duvec = self.vec['du']
-        dfvec = self.vec['df']
+#class SysAlpha(ImplicitComponent):
+    #""" System used to make user provided CL match with CL target """
 
-        dlift_c = dpvec('CL')
-        dlift_c_tar = dpvec('CL_tar')
-        dalpha_res = dfvec('alpha')
-        dalpha = duvec('alpha')
+    #def __init__(self, num_elem):
+        #super(SysAlpha, self).__init__()
 
-        if self.mode == 'fwd':
-            dalpha_res[:] = 0.0
-            if 'CL') in args:
-                dalpha_res[:] += dlift_c
-            if 'CL_tar') in args:
-                dalpha_res[:] -= dlift_c_tar
+        ## Inputs
+        #self.add('CL', Array(np.zeros((num_elem, )), iotype='out',
+                             #desc = 'User provided coefficient of lift'))
+        #self.add('CL_tar', Array(np.zeros((num_elem, )), iotype='in',
+                                 #desc = 'Target coefficient of lift'))
 
-        elif self.mode == 'rev':
-            dlift_c[:] = 0.0
-            dlift_c_tar[:] = 0.0
-            dalpha[:] = 0.0
-            if 'CL') in args:
-                dlift_c[:] += dalpha_res
-            if 'CL_tar') in args:
-                dlift_c_tar[:] -= dalpha_res
+        ## States
+        #self.add('alpha', Array(np.zeros((num_elem, )), iotype='state',
+                                #desc = 'Angle of attack'))
+
+        ## Residuals
+        #self.add('alpha_res', Array(np.zeros((num_elem, )), iotype='residual',
+                                #desc = 'Residual for Angle of attack equation'))
+
+    #def evaluate(self):
+        #""" The residual of the system is simply the difference between the
+        #two CL values.
+        #"""
+
+        #lift_c = self.CL
+        #lift_c_tar = self.CL_tar
+        #alpha_res = fvec('alpha')
+
+        #alpha_res[:] = lift_c - lift_c_tar
+
+    #def apply_dFdpu(self, args):
+        #""" compute the trivial derivatives of the system """
+
+        #dpvec = self.vec['dp']
+        #duvec = self.vec['du']
+        #dfvec = self.vec['df']
+
+        #dlift_c = dpvec('CL')
+        #dlift_c_tar = dpvec('CL_tar')
+        #dalpha_res = dfvec('alpha')
+        #dalpha = duvec('alpha')
+
+        #if self.mode == 'fwd':
+            #dalpha_res[:] = 0.0
+            #if 'CL' in args:
+                #dalpha_res[:] += dlift_c
+            #if 'CL_tar' in args:
+                #dalpha_res[:] -= dlift_c_tar
+
+        #elif self.mode == 'rev':
+            #dlift_c[:] = 0.0
+            #dlift_c_tar[:] = 0.0
+            #dalpha[:] = 0.0
+            #if 'CL' in args:
+                #dlift_c[:] += dalpha_res
+            #if 'CL_tar' in args:
+                #dlift_c_tar[:] -= dalpha_res
 
 

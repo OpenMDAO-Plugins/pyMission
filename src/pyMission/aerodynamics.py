@@ -164,12 +164,12 @@ class SysCM(ImplicitComponent):
 
         # Residuals
         self.add('eta_res', Array(np.zeros((num_elem, )), iotype='residual',
-                              desc = 'Tail rotation angle'))
+                  desc = 'Residual for Tail rotation angle equation'))
 
 
     def evaluate(self):
-        """ compute CM value using alpha and eta, and use the CM value as
-            residual for eta
+        """ Compute CM value using alpha and eta, and use the CM value as
+        residual for eta.
         """
 
         alpha = self.alpha * 1e-1

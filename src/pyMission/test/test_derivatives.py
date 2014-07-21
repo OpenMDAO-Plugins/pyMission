@@ -8,7 +8,8 @@ from openmdao.main.api import Assembly, set_as_top
 from openmdao.util.testutil import assert_rel_error
 
 from pyMission.aerodynamics import SysAeroSurrogate, SysCM
-from pyMission.coupled_analysis import SysCLTar, SysCTTar
+from pyMission.atmospherics import SysSFC, SysTemp, SysRho, SysSpeed
+from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 
 
 # Ignore the numerical warnings from performing the rel error calc.
@@ -60,8 +61,8 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         outputs = ['comp.%s' % v for v in self.outputs]
 
         # Uncomment for testing.
-        #wflow.check_gradient(inputs=inputs, outputs=outputs)
-        #wflow.check_gradient(inputs=inputs, outputs=outputs, mode='adjoint')
+        wflow.check_gradient(inputs=inputs, outputs=outputs)
+        wflow.check_gradient(inputs=inputs, outputs=outputs, mode='adjoint')
 
         # Numeric
         wflow.config_changed()
@@ -100,36 +101,73 @@ class Testcase_pyMission_derivs(unittest.TestCase):
 
         assert_rel_error(self, diff.max(), 0.0, 1e-3)
 
-    def test_SysAeroSurrogate(self):
+    #def test_SysAeroSurrogate(self):
 
-        compname = 'SysAeroSurrogate'
+        #compname = 'SysAeroSurrogate'
+        #self.setup(compname)
+        #self.run_model()
+        #self.compare_derivatives()
+
+    #def test_SysCM(self):
+
+        #compname = 'SysCM'
+        #self.setup(compname)
+        #self.model.comp.eval_only = True
+        #self.run_model()
+        #self.compare_derivatives()
+
+    #def test_SysCLTar(self):
+
+        #compname = 'SysCLTar'
+        #self.setup(compname)
+        #self.run_model()
+        #self.compare_derivatives(rel_error=True)
+
+    #def test_SysCTTar(self):
+
+        #compname = 'SysCTTar'
+        #self.setup(compname)
+        #self.run_model()
+        #self.compare_derivatives(rel_error=True)
+
+    #def test_SysFuelWeight(self):
+
+        #compname = 'SysFuelWeight'
+        #self.setup(compname)
+        #self.run_model()
+        #self.compare_derivatives()
+
+    #def test_SysSFC(self):
+
+        #compname = 'SysSFC'
+        #self.setup(compname)
+        #self.run_model()
+        #self.compare_derivatives()
+
+    #def test_SysTemp(self):
+
+        #compname = 'SysTemp'
+        #self.setup(compname)
+        #self.run_model()
+        #self.compare_derivatives()
+
+    #def test_SysRho(self):
+
+        #compname = 'SysRho'
+        #self.setup(compname)
+        #self.run_model()
+        #self.compare_derivatives()
+
+    def test_SysSpeed(self):
+
+        compname = 'SysSpeed'
         self.setup(compname)
         self.run_model()
         self.compare_derivatives()
 
-    def test_SysCM(self):
-
-        compname = 'SysCM'
-        self.setup(compname)
-        self.model.comp.eval_only = True
+        self.model.comp.v_specified = True
         self.run_model()
         self.compare_derivatives()
-
-    def test_SysCLTar(self):
-
-        compname = 'SysCLTar'
-        self.setup(compname)
-        self.model.comp.eval_only = True
-        self.run_model()
-        self.compare_derivatives(rel_error=True)
-
-    def test_SysCTTar(self):
-
-        compname = 'SysCTTar'
-        self.setup(compname)
-        self.model.comp.eval_only = True
-        self.run_model()
-        self.compare_derivatives(rel_error=True)
 
 
 if __name__ == "__main__":
