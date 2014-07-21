@@ -1,4 +1,5 @@
 from mission import *
+from history import *
 import time
 
 params = {
@@ -10,9 +11,9 @@ params = {
     'e': 0.8,
     }
 
-num_elem = 1000
-num_cp = 50
-x_range = 1000.0e3
+num_elem = 500
+num_cp = 100
+x_range = 5000.0e3
 
 #h_init = numpy.ones(num_cp)*0.000005
 #h_init[0] = 0.0
@@ -35,7 +36,6 @@ traj.set_params(params)
 main = traj.initialize()
 
 main.compute(True)
-exit()
 
 if 0:
     v = main.vec['u']
@@ -72,53 +72,22 @@ opt.add_constraint('gamma_max', upper=0.0)
 start = time.time()
 opt('SNOPT')
 print 'OPTIMIZATION TIME', time.time() - start
+main.history.print_max_min(main.vec['u'])
+run_case, last_itr = main.history.get_index()
 
-# PRINT FIGURE #
-if 0:
-    total_x = main.vec['u']('x')
-    total_h = main.vec['u']('h')
-    total_v = main.vec['u']('v')
-    total_a = main.vec['u']('alpha')
-    total_t = main.vec['u']('tau')
-    total_e = main.vec['u']('eta')
-    total_w = main.vec['u']('fuel_w')
-    dist = len(main.vec['u']('x'))
-    temp_arr = numpy.zeros((dist,2))
-    for i in xrange(dist):
-        temp_arr[i] = [total_x[i]/1e3, total_h[i]]
-    numpy.savetxt('figure_1_h.dat', temp_arr)
-    for i in xrange(dist):
-        temp_arr[i] = [total_x[i]/1e3, total_v[i]*1e2]
-    numpy.savetxt('figure_2_v.dat', temp_arr)
-    for i in xrange(dist):
-        temp_arr[i] = [total_x[i]/1e3, total_a[i]*1e-1*180.0/numpy.pi]
-    numpy.savetxt('figure_3_a.dat', temp_arr)
-    for i in xrange(dist):
-        temp_arr[i] = [total_x[i]/1e3, total_t[i]]
-    numpy.savetxt('figure_4_t.dat', temp_arr)
-    for i in xrange(dist):
-        temp_arr[i] = [total_x[i]/1e3, total_e[i]*1e-1*180.0/numpy.pi]
-    numpy.savetxt('figure_5_e.dat', temp_arr)
-    for i in xrange(dist):
-        temp_arr[i] = [total_x[i]/1e3, total_w[i]*1e6/(9.81*0.804)]
-    numpy.savetxt('figure_6_f.dat', temp_arr)
 
-fig = matplotlib.pylab.figure(figsize=(12.0,7.0))
 v = main.vec['u']
-nr, nc = 3, 2
-fig.add_subplot(nr,nc,1).plot(v('x')*1000.0, v('h'))
-fig.add_subplot(nr,nc,1).set_ylabel('Altitude (km)')
-fig.add_subplot(nr,nc,2).plot(v('x')*1000.0, v('v')*1e2)
-fig.add_subplot(nr,nc,2).set_ylabel('Velocity (m/s)')
-fig.add_subplot(nr,nc,3).plot(v('x')*1000.0, v('alpha')*1e-1*180.0/numpy.pi)
-fig.add_subplot(nr,nc,3).set_ylabel('AoA (deg)')
-fig.add_subplot(nr,nc,4).plot(v('x')*1000.0, v('tau'))
-fig.add_subplot(nr,nc,4).set_ylabel('Throttle')
-fig.add_subplot(nr,nc,5).plot(v('x')*1000.0, v('eta')*1e-1*180.0/numpy.pi)
-fig.add_subplot(nr,nc,5).set_ylabel('Trim Angle (deg)')
-fig.add_subplot(nr,nc,6).plot(v('x')*1000.0, v('fuel_w')*1e6/(9.81*0.804))
-fig.add_subplot(nr,nc,6).set_ylabel('Fuel (L)')
-fig.add_subplot(nr,nc,5).set_xlabel('Distance (km)')
-fig.add_subplot(nr,nc,6).set_xlabel('Distance (km)')
-fig.savefig("./OptFig.pdf")
-fig.savefig("./OptFig.png")
+fig = matplotlib.pylab.figure()
+fig.add_subplot(1,1,1).plot(v('x')*1e3, v('h'), 'ob')
+fig.add_subplot(1,1,1).plot(v('x_pt')*1e3, v('h_pt'), '+r')
+fig.savefig('cp_test.png')
+
+
+exit()
+print 'PLOTTING---------'
+
+output_plt = Plotting(num_elem, num_cp, x_range, run_case)
+output_plt.plot_history([last_itr])
+exit()
+
+

@@ -14,6 +14,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab
 import MBI, scipy.sparse
+from history import *
 
 class GlobalizedSystem(SerialSystem):
     ''' doc string '''
@@ -36,7 +37,7 @@ class Top(SerialSystem):
         self.counter = 0
 
     def initialize_history(self, num_elem, num_cp, x_range):
-        self.history = history(num_elem, num_cp, x_range)
+        self.history = History(num_elem, num_cp, x_range)
         self.hist_counter = 0
 
     def compute0(self, output=False):
@@ -82,53 +83,6 @@ class Top(SerialSystem):
         self.history.save_history(self.vec['u'])
 
         return temp, success
-
-class history(object):
-
-    def __init__(self, num_elem, num_cp, x_range):
-
-        self.num_elem = num_elem
-        self.num_cp = num_cp
-        self.x_range = x_range
-        self.folder_name = './dist'+str(int(self.x_range*1e3))+'km-'\
-            +str(self.num_cp)+'-'+str(self.num_elem)
-        index = 0
-        while os.path.exists(self.folder_name+'-'+str(index)):
-            index += 1
-        self.folder_name = self.folder_name+'-'+str(index)+'/'
-        os.makedirs(self.folder_name)
-
-        self.hist_counter = 0
-
-    def save_history(self, vecu):
-
-        dist = vecu('x') * 1e6
-        altitude = vecu('h') * 1e3
-        speed = vecu('v') * 1e2
-        alpha = vecu('alpha') * 1e-1 * 180/numpy.pi
-        throttle = vecu('tau')
-        eta = vecu('eta') * 1e-1 * 180/numpy.pi
-        fuel = vecu('fuel_w') * 1e6
-        rho = vecu('rho')
-        thrust_c = vecu('CT_tar') * 1e-1
-        drag_c = vecu('CD') * 1e-1
-        lift_c = vecu('CL')
-        gamma = vecu('gamma') * 1e-1 * 180/numpy.pi
-        weight = (vecu('ac_w') + vecu('fuel_w')) * 1e6
-        temp = vecu('Temp') * 1e2
-        SFC = vecu('SFC') * 1e-6
-
-        file_name = str(int(self.x_range*1e3))+'km-'+str(self.num_cp)+'-'\
-            +str(self.num_elem)+'-'+str(self.hist_counter)
-
-        output_file = open(self.folder_name+file_name, 'w')
-
-        file_array = [dist, altitude, speed, alpha, throttle, eta, fuel,
-                      rho, lift_c, drag_c, thrust_c, gamma, weight,
-                      temp, SFC]
-        numpy.savetxt(output_file, file_array)
-
-        self.hist_counter += 1
 
 class OptTrajectory(object):
     """ class used to define and setup trajectory optimization problem """
