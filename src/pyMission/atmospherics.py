@@ -20,7 +20,7 @@ from openmdao.main.datatypes.api import Array, Float, Bool
 class SysSFC(Component):
     """ Linear SFC model wrt altitude """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysSFC, self).__init__()
 
         # Inputs
@@ -84,7 +84,7 @@ class SysSFC(Component):
 class SysTemp(Component):
     """ Linear temperature model using the standard atmosphere """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysTemp, self).__init__()
 
         # Inputs
@@ -137,7 +137,7 @@ class SysTemp(Component):
 class SysRho(Component):
     """ Density model using the linear temperature std atm model """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysRho, self).__init__()
 
         # Inputs
@@ -196,7 +196,7 @@ class SysRho(Component):
 class SysSpeed(Component):
     """ Compute airspeed using specified Mach number. """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysSpeed, self).__init__()
 
         # Inputs

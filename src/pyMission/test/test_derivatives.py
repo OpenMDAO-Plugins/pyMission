@@ -9,6 +9,8 @@ from openmdao.util.testutil import assert_rel_error
 
 from pyMission.aerodynamics import SysAeroSurrogate, SysCM
 from pyMission.atmospherics import SysSFC, SysTemp, SysRho, SysSpeed
+from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
+                               SysGammaBspline
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 
 
@@ -16,6 +18,9 @@ from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 warnings.simplefilter("ignore")
 
 NUM_ELEM = 3
+NUM_PT = 4
+
+arg_dict = {'num_elem': NUM_ELEM}
 
 class Testcase_pyMission_derivs(unittest.TestCase):
 
@@ -24,6 +29,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
     def setUp(self):
         """ Called before each test. """
         self.model = set_as_top(Assembly())
+        arg_dict = {'num_elem': NUM_ELEM}
 
     def tearDown(self):
         """ Called after each test. """
@@ -31,13 +37,9 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         self.inputs = None
         self.outputs = None
 
-    def setup(self, compname):
+    def setup(self, compname, kwargs):
 
-        try:
-            self.model.add('comp', eval('%s(NUM_ELEM)' % compname))
-        except TypeError:
-            # At least one comp has no args.
-            self.model.add('comp', eval('%s()' % compname))
+        self.model.add('comp', eval('%s(**kwargs)' % compname))
 
         self.model.driver.workflow.add('comp')
         self.inputs, self.outputs = self.model.comp.list_deriv_vars()
@@ -60,7 +62,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         inputs = ['comp.%s' % v for v in self.inputs]
         outputs = ['comp.%s' % v for v in self.outputs]
 
-        # Uncomment for testing.
+        # Uncomment for manual testing.
         wflow.check_gradient(inputs=inputs, outputs=outputs)
         wflow.check_gradient(inputs=inputs, outputs=outputs, mode='adjoint')
 
@@ -104,14 +106,14 @@ class Testcase_pyMission_derivs(unittest.TestCase):
     #def test_SysAeroSurrogate(self):
 
         #compname = 'SysAeroSurrogate'
-        #self.setup(compname)
+        #self.setup(compname, arg_dict)
         #self.run_model()
         #self.compare_derivatives()
 
     #def test_SysCM(self):
 
         #compname = 'SysCM'
-        #self.setup(compname)
+        #self.setup(compname, arg_dict)
         #self.model.comp.eval_only = True
         #self.run_model()
         #self.compare_derivatives()
@@ -119,56 +121,95 @@ class Testcase_pyMission_derivs(unittest.TestCase):
     #def test_SysCLTar(self):
 
         #compname = 'SysCLTar'
-        #self.setup(compname)
+        #self.setup(compname, arg_dict)
         #self.run_model()
         #self.compare_derivatives(rel_error=True)
 
     #def test_SysCTTar(self):
 
         #compname = 'SysCTTar'
-        #self.setup(compname)
+        #self.setup(compname, arg_dict)
         #self.run_model()
         #self.compare_derivatives(rel_error=True)
 
     #def test_SysFuelWeight(self):
 
         #compname = 'SysFuelWeight'
-        #self.setup(compname)
+        #self.setup(compname, arg_dict)
         #self.run_model()
         #self.compare_derivatives()
 
     #def test_SysSFC(self):
 
         #compname = 'SysSFC'
-        #self.setup(compname)
+        #self.setup(compname, arg_dict)
         #self.run_model()
         #self.compare_derivatives()
 
     #def test_SysTemp(self):
 
         #compname = 'SysTemp'
-        #self.setup(compname)
+        #self.setup(compname, arg_dict)
         #self.run_model()
         #self.compare_derivatives()
 
     #def test_SysRho(self):
 
         #compname = 'SysRho'
-        #self.setup(compname)
+        #self.setup(compname, arg_dict)
         #self.run_model()
         #self.compare_derivatives()
 
-    def test_SysSpeed(self):
+    #def test_SysSpeed(self):
 
-        compname = 'SysSpeed'
-        self.setup(compname)
+        #compname = 'SysSpeed'
+        #self.setup(compname, arg_dict)
+        #self.run_model()
+        #self.compare_derivatives()
+
+        #self.model.comp.v_specified = True
+        #self.run_model()
+        #self.compare_derivatives()
+
+    #def test_SysXBspline(self):
+
+        #compname = 'SysXBspline'
+        #arg_dict['num_pt'] = NUM_PT
+        #arg_dict['num_elem'] = 12
+        #self.setup(compname, arg_dict)
+        #self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
+        #self.run_model()
+        #self.compare_derivatives()
+
+    #def test_SysHBspline(self):
+
+        #compname = 'SysHBspline'
+        #arg_dict['num_pt'] = NUM_PT
+        #arg_dict['num_elem'] = 12
+        #self.setup(compname, arg_dict)
+        #self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
+        #self.run_model()
+        #self.compare_derivatives()
+
+    #def test_SysMVBspline(self):
+
+        #compname = 'SysMVBspline'
+        #arg_dict['num_pt'] = NUM_PT
+        #arg_dict['num_elem'] = 12
+        #self.setup(compname, arg_dict)
+        #self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
+        #self.run_model()
+        #self.compare_derivatives()
+
+    def test_SysGammaBspline(self):
+
+        compname = 'SysGammaBspline'
+        arg_dict['num_pt'] = NUM_PT
+        arg_dict['num_elem'] = 12
+        self.setup(compname, arg_dict)
+        self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
         self.run_model()
         self.compare_derivatives()
-
-        self.model.comp.v_specified = True
-        self.run_model()
-        self.compare_derivatives()
-
 
 if __name__ == "__main__":
 

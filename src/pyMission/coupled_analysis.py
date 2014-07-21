@@ -22,7 +22,7 @@ class SysCLTar(Component):
     vertical flight equilibrium equation is enforced.
     """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysCLTar, self).__init__()
 
         # Inputs
@@ -165,7 +165,7 @@ class SysCTTar(Component):
     horizontal flight equilibrium equation is enforced.
     """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysCTTar, self).__init__()
 
         # Inputs
@@ -329,7 +329,7 @@ class SysFuelWeight(Component):
     weight carried at each element control point
     """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysFuelWeight, self).__init__()
 
         # Inputs
@@ -599,7 +599,7 @@ class SysFuelWeight(Component):
 #class SysAlpha(ImplicitComponent):
     #""" System used to make user provided CL match with CL target """
 
-    #def __init__(self, num_elem):
+    #def __init__(self, num_elem=10):
         #super(SysAlpha, self).__init__()
 
         ## Inputs

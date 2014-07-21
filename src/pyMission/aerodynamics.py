@@ -21,7 +21,7 @@ class SysAeroSurrogate(Component):
     aerodynamic model
     """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysAeroSurrogate, self).__init__()
 
         # Inputs
@@ -151,7 +151,7 @@ class SysCM(ImplicitComponent):
     equilibrium.
     """
 
-    def __init__(self, num_elem):
+    def __init__(self, num_elem=10):
         super(SysCM, self).__init__()
 
         # Inputs
