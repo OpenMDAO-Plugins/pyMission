@@ -124,9 +124,9 @@ class OptTrajectory(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 1000
-    num_cp = 50
-    x_range = 1000.0e3
+    num_elem = 500
+    num_cp = 100
+    x_range = 5000.0e3
 
     x_init = x_range * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
 
