@@ -32,7 +32,7 @@ class BSplineSystem(Component):
 
         self.num_elem = num_elem
         self.num_pt = num_pt
-        self.MBI_setup()
+        #self.MBI_setup()
 
     def _x_init_changed(self, old, new):
         """Called whenever initial control point positions are set.
