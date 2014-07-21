@@ -12,6 +12,7 @@ from pyMission.atmospherics import SysSFC, SysTemp, SysRho, SysSpeed
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
+from pyMission.propulsion import SysTau
 
 
 # Ignore the numerical warnings from performing the rel error calc.
@@ -201,13 +202,20 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         #self.run_model()
         #self.compare_derivatives()
 
-    def test_SysGammaBspline(self):
+    #def test_SysGammaBspline(self):
 
-        compname = 'SysGammaBspline'
-        arg_dict['num_pt'] = NUM_PT
-        arg_dict['num_elem'] = 12
+        #compname = 'SysGammaBspline'
+        #arg_dict['num_pt'] = NUM_PT
+        #arg_dict['num_elem'] = 12
+        #self.setup(compname, arg_dict)
+        #self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
+        #self.run_model()
+        #self.compare_derivatives()
+
+    def test_SysTau(self):
+
+        compname = 'SysTau'
         self.setup(compname, arg_dict)
-        self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
         self.run_model()
         self.compare_derivatives()
 
