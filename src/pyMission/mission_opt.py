@@ -102,6 +102,13 @@ class OptTrajectory(Assembly):
         # need alpha (state=eta)
 
 
+        # Weight
+        self.add('SysFuelWeight', SysFuelWeight(num_elem=self.num_elem))
+
+        self.connect('SysRho.rho', 'SysFuelWeight.rho')
+        # Need v, gamma, CT_tar, x, SFC
+
+
         # Coupled Analysis
 
         # Optimization
