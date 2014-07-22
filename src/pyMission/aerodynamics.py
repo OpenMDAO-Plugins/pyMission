@@ -179,6 +179,8 @@ class SysCM(ImplicitComponent):
         mmt_ce = 1.06
 
         self.eta_res = (mmt_ca*alpha + mmt_ce*eta) / 1e-1
+        print 'impli state:', self.eta
+        print 'impli resid:', self.eta_res
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.

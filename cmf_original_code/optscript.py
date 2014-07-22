@@ -1,6 +1,7 @@
 from mission import *
 from history import *
 import time
+from subprocess import call
 
 params = {
     'S': 427.8/1e2,
@@ -11,8 +12,8 @@ params = {
     'e': 0.8,
     }
 
-num_elem = 500
-num_cp = 100
+num_elem = 100
+num_cp = 30
 x_range = 5000.0e3
 
 #h_init = numpy.ones(num_cp)*0.000005
@@ -82,7 +83,10 @@ fig.add_subplot(1,1,1).plot(v('x')*1e3, v('h'), 'ob')
 fig.add_subplot(1,1,1).plot(v('x_pt')*1e3, v('h_pt'), '+r')
 fig.savefig('cp_test.png')
 
-
+folder_name = '/home/jason/Documents/Results/dist'+str(int(x_range/1e3))\
+    +'km-'+str(num_cp)+'-'+str(num_elem)+'-'+str(run_case)+'/.'
+call (["mv", "./SNOPT_print.out", folder_name])
+call (["mv", "./cp_test.png", folder_name])
 exit()
 print 'PLOTTING---------'
 

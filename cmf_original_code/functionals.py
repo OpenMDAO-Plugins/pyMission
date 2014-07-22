@@ -216,7 +216,7 @@ class SysSlopeMin(ExplicitSystem):
         fmax = numpy.max(self.min - gamma)
         gmin[0] = (fmax + 1/self.rho *\
                        numpy.log(numpy.sum(numpy.exp(self.rho*(self.min-gamma-fmax)))))\
-                       *1e-3
+                       *1e-6
 
     def apply_dGdp(self, args):
         """ compute min slope KS function derivatives wrt flight
@@ -243,11 +243,11 @@ class SysSlopeMin(ExplicitSystem):
         if self.mode == 'fwd':
             dgmin[0] = 0.0
             if self.get_id('gamma') in args:
-                dgmin[0] += numpy.sum(deriv * dgamma[:]) * 1e-3 * 1e-1
+                dgmin[0] += numpy.sum(deriv * dgamma[:]) * 1e-6 * 1e-1
         if self.mode == 'rev':
             dgamma[:] = 0.0
             if self.get_id('gamma') in args:
-                dgamma[:] += deriv * dgmin[0] * 1e-3 * 1e-1
+                dgamma[:] += deriv * dgmin[0] * 1e-6 * 1e-1
 
 class SysSlopeMax(ExplicitSystem):
     """ KS-constraint used to limit max slope to prevent
@@ -275,7 +275,7 @@ class SysSlopeMax(ExplicitSystem):
         fmax = numpy.max(gamma - self.max)
         gmax[0] = (fmax + 1/self.rho * \
                        numpy.log(numpy.sum(numpy.exp(self.rho*(gamma-self.max-fmax)))))\
-                       * 1e-3
+                       * 1e-6
 
     def apply_dGdp(self, args):
         """ compute max slope KS function derivatives wrt flight
@@ -302,11 +302,11 @@ class SysSlopeMax(ExplicitSystem):
         if self.mode == 'fwd':
             dgmax[0] = 0.0
             if self.get_id('gamma') in args:
-                dgmax[0] += numpy.sum(deriv * dgamma[:]) * 1e-3 * 1e-1
+                dgmax[0] += numpy.sum(deriv * dgamma[:]) * 1e-6 * 1e-1
         if self.mode == 'rev':
             dgamma[:] = 0.0
             if self.get_id('gamma') in args:
-                dgamma[:] += deriv * dgmax[0] * 1e-3 * 1e-1
+                dgamma[:] += deriv * dgmax[0] * 1e-6 * 1e-1
 
 class SysFuelObj(ExplicitSystem):
     """ objective function used for the optimization problem """

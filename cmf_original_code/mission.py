@@ -78,9 +78,11 @@ class Top(SerialSystem):
 
         return temp, success
 
-    def compute(self, output=False):
-        temp, success = super(Top, self).compute(output)
-        self.history.save_history(self.vec['u'])
+    def compute_derivatives(self, mode, var, ind=0, output=False):
+        temp, success = super(Top, self).compute_derivatives(mode, var, ind,
+                                                             output)
+        if var == ('wf_obj', 0):
+            self.history.save_history(self.vec['u'])
 
         return temp, success
 
