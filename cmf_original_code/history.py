@@ -16,7 +16,7 @@ class History(object):
     """ class used to write optimization history onto disk """
 
     def __init__(self, num_elem, num_cp, x_range):
-        """ initialize variables, set folder name to 
+        """ initialize variables, set folder name to
             distxxxxkm-yyyy-zzzz-nnn/
             where xxxx is the distance of the mission
                   yyyy is the number of control points
@@ -28,7 +28,7 @@ class History(object):
         self.num_elem = num_elem
         self.num_cp = num_cp
         self.x_range = x_range
-        self.folder_name = '/home/jason/Documents/Results/dist'+\
+        self.folder_name = '/Users/ktmoore1/Work/pyMission/cmf_original_code'+\
             str(int(self.x_range*1e3))+'km-'\
             +str(self.num_cp)+'-'+str(self.num_elem)
         index = 0
@@ -141,7 +141,7 @@ class Plotting(object):
         self.num_cp = num_cp
         self.x_range = x_range/1e3
 
-        self.folder_name = '/home/jason/Documents/Results/dist'+\
+        self.folder_name = '/Users/ktmoore1/Work/pyMission/cmf_original_code'+\
             str(int(self.x_range))+'km-'\
             +str(self.num_cp)+'-'+str(self.num_elem)+'-'+str(index)+'/'
 

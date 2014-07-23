@@ -3,7 +3,7 @@ import numpy
 import copy
 import os
 from framework import *
-from optimization import *
+#from optimization import *
 from bsplines import *
 from atmospherics import *
 from coupled_analysis import *
@@ -18,7 +18,7 @@ from history import *
 
 class GlobalizedSystem(SerialSystem):
     ''' doc string '''
-    
+
     def solve_F(self):
         """ Solve f for u, p |-> u """
 
