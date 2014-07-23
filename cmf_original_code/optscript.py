@@ -3,22 +3,23 @@ from history import *
 import time
 from subprocess import call
 
+# USER SPECIFIED DATA
+
 params = {
     'S': 427.8/1e2,
     'ac_w': 210000*9.81/1e6,
     'thrust_sl': 1020000.0/1e6/3,
-    'SFCSL': 8.951,
+    'SFCSL': 40,#8.951,
     'AR': 8.68,
     'e': 0.8,
     }
 
-num_elem = 100
-num_cp = 30
-x_range = 5000.0e3
+num_elem = 75
+num_cp = 15
+x_range = 1000.0e3
+folder_name = '/home/jason/Documents/Results/'
 
-#h_init = numpy.ones(num_cp)*0.000005
-#h_init[0] = 0.0
-#h_init[-1] = 0.0
+# END USER SPECIFIED DATA
 
 v_init = numpy.ones(num_cp)*2.3
 #x_init = numpy.linspace(0.0, x_range, num_cp)/1e6
@@ -34,6 +35,7 @@ traj.set_init_h(h_init)
 traj.set_init_v(v_init)
 traj.set_init_x(x_init)
 traj.set_params(params)
+traj.set_folder_name(folder_name)
 main = traj.initialize()
 
 main.compute(True)
@@ -67,9 +69,9 @@ opt.add_constraint('h_i', lower=0.0, upper=0.0)
 opt.add_constraint('h_f', lower=0.0, upper=0.0)
 opt.add_constraint('Tmin', upper=0.0)
 opt.add_constraint('Tmax', upper=0.0)
-opt.add_constraint('gamma_min', upper=0.0)
-opt.add_constraint('gamma_max', upper=0.0)
-#opt.add_constraint('gamma', lower=gamma_lb, upper=gamma_ub)
+#opt.add_constraint('gamma_min', upper=0.0)
+#opt.add_constraint('gamma_max', upper=0.0)
+opt.add_constraint('gamma', lower=gamma_lb, upper=gamma_ub)
 start = time.time()
 opt('SNOPT')
 print 'OPTIMIZATION TIME', time.time() - start

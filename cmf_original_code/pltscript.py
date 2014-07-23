@@ -9,19 +9,20 @@ import matplotlib.pylab
 
 # USER SPECIFIED INPUTS:
 
-num_elem = 100
-num_cp = 30
-x_range = 5000.0
+num_elem = 75
+num_cp = 15
+x_range = 1000.0
 step = 1
 initial_ind = 0
 file_index = 0
 video = True
+folder_name = '/home/jason/Documents/Results/'
 
 # END USER SPECIFIED INPUTS
 
 fig = matplotlib.pylab.figure(figsize=(18.0,8.0))
 index = initial_ind
-folder_name = '/home/jason/Documents/Results/dist'+str(int(x_range))+'km-'\
+folder_name = folder_name + 'dist'+str(int(x_range))+'km-'\
     +str(num_cp)+'-'+str(num_elem)+'-'+str(file_index)+'/'
 if not os.path.exists(folder_name):
     raise('ERROR: SPECIFIED CASE DOES NOT EXIST')
@@ -88,7 +89,7 @@ while ((not os.path.isfile(folder_name+max_name))
             fplot(nr, nc, 10).plot(dist, fuel)
             fplot(nr, nc, 10).set_ylabel('Fuel Weight (lb)')
             fplot(nr, nc, 10).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 10).set_ylim([-100.0, 800000.0])
+            fplot(nr, nc, 10).set_ylim([-100.0, 80000.0])
             fplot(nr, nc, 7).plot(dist, rho)
             fplot(nr, nc, 7).set_ylabel('Density (kg/m^3)')
             fplot(nr, nc, 7).set_xlim([-100.0, rnd(x_range, -3)+100.0])
@@ -128,7 +129,7 @@ if video == True:
                                      num_cp,
                                      num_elem)
     call(["mencoder", "mf://"+folder_name+'fig-*.png', "-mf", 
-          "fps=5:type=png", "-ovc", "x264", "-x264encopts", 
+          "fps=10:type=png", "-ovc", "x264", "-x264encopts", 
           "bitrate=15000", "-o", folder_name+file_name+".avi"])
 
 

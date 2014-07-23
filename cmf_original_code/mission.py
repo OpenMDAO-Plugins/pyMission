@@ -3,7 +3,7 @@ import numpy
 import copy
 import os
 from framework import *
-#from optimization import *
+from optimization import *
 from bsplines import *
 from atmospherics import *
 from coupled_analysis import *
@@ -18,7 +18,7 @@ from history import *
 
 class GlobalizedSystem(SerialSystem):
     ''' doc string '''
-
+    
     def solve_F(self):
         """ Solve f for u, p |-> u """
 
@@ -36,8 +36,8 @@ class Top(SerialSystem):
         #self.fig = matplotlib.pylab.figure(figsize=(12.0,12.0))
         self.counter = 0
 
-    def initialize_history(self, num_elem, num_cp, x_range):
-        self.history = History(num_elem, num_cp, x_range)
+    def initialize_history(self, num_elem, num_cp, x_range, folder_name):
+        self.history = History(num_elem, num_cp, x_range, folder_name)
         self.hist_counter = 0
 
     def compute0(self, output=False):
@@ -103,6 +103,7 @@ class OptTrajectory(object):
         self.aspect_ratio = 0.0
         self.oswald = 0.0
         self.v_specified = 0
+        self.folder_name = None
 
     def set_init_h(self, h_init):
         self.h_pts = h_init
@@ -124,6 +125,9 @@ class OptTrajectory(object):
         self.sfc_sl = kw['SFCSL']
         self.aspect_ratio = kw['AR']
         self.oswald = kw['e']
+
+    def set_folder_name(self, folder_name):
+        self.folder_name = folder_name
 
     def initialize(self):
 
@@ -309,6 +313,6 @@ class OptTrajectory(object):
                  ]).setup()
         #self.main.initialize_plotting()
         self.main.initialize_history(self.num_elem, self.num_pt,
-                                     self.x_pts[-1])
+                                     self.x_pts[-1], self.folder_name)
 
         return self.main
