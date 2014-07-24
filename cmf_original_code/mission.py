@@ -18,7 +18,7 @@ from history import *
 
 class GlobalizedSystem(SerialSystem):
     ''' doc string '''
-    
+
     def solve_F(self):
         """ Solve f for u, p |-> u """
 

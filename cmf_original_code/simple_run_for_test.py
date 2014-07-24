@@ -34,11 +34,17 @@ traj.set_init_h(h_init)
 traj.set_init_v(v_init)
 traj.set_init_x(x_init)
 traj.set_params(params)
+traj.folder_name = '/home/kenmoore/Work/pyMission'
 main = traj.initialize()
 
+from time import time
+t1 = time()
 main.compute(True)
+print "Elapsed time:", time()-t1
 
 print 'done'
+
+exit()
 
 keys = main.vec['u'].keys()
 data = {}

@@ -202,4 +202,7 @@ if __name__ == "__main__":
     model.AR = 8.68
     model.oswald = 0.8
 
+    from time import time
+    t1 = time()
     model.run()
+    print "Elapsed time:", time()-t1
