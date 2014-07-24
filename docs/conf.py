@@ -17,7 +17,7 @@ def _sys_path_add(toadd=None):
         distdir = os.path.dirname(os.path.dirname(__file__))
         sys.path = [distdir] + [os.path.join(distdir, p) for p in toadd] + sys.path
 
-_sys_path_add([])
+_sys_path_add(['src', 'cmf_original_code', 'src/pyMission', 'src/pyMission/test'])
 
 # General configuration
 # ---------------------
