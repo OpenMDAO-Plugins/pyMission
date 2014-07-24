@@ -26,24 +26,24 @@ class SysCLTar(Component):
         super(SysCLTar, self).__init__()
 
         # Inputs
-        self.add('fuel_w', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('fuel_w', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Fuel Weight'))
-        self.add('Gamma', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('Gamma', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Flight path angle'))
-        self.add('CT_tar', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('CT_tar', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Thrust Coefficient'))
-        self.add('rho', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('rho', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Density'))
-        self.add('v', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Speed'))
-        self.add('alpha', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
         self.add('ac_w', Float(0.0, iotype='in',
                                desc = 'Weight of aircraft + payload'))
 
         # Outputs
-        self.add('CL', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('CL', Array(np.zeros((num_elem+1, )), iotype='out',
                              desc = 'Lift Coefficient'))
 
     def execute(self):
@@ -169,24 +169,24 @@ class SysCTTar(Component):
         super(SysCTTar, self).__init__()
 
         # Inputs
-        self.add('fuel_w', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('fuel_w', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Fuel Weight'))
-        self.add('Gamma', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('Gamma', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Flight path angle'))
-        self.add('CD', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('CD', Array(np.zeros((num_elem+1, )), iotype='in',
                              desc = 'Drag Coefficient'))
-        self.add('alpha', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
-        self.add('rho', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('rho', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Density'))
-        self.add('v', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Speed'))
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
         self.add('ac_w', Float(0.0, iotype='in',
                                desc = 'Weight of aircraft + payload'))
 
         # Outputs
-        self.add('CT_tar', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('CT_tar', Array(np.zeros((num_elem+1, )), iotype='out',
                                  desc = 'Thrust Coefficient'))
 
     def execute(self):
@@ -333,17 +333,17 @@ class SysFuelWeight(Component):
         super(SysFuelWeight, self).__init__()
 
         # Inputs
-        self.add('v', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Speed'))
-        self.add('Gamma', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('Gamma', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Pitch angle'))
-        self.add('CT_tar', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('CT_tar', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Thrust Coefficient'))
-        self.add('x', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('x', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Distance'))
-        self.add('SFC', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('SFC', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Specific Fuel Consumption'))
-        self.add('rho', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('rho', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Density'))
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
 
@@ -353,7 +353,7 @@ class SysFuelWeight(Component):
         #                           desc = 'Initial Fuel Weight'))
 
         # Outputs
-        self.add('fuel_w', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('fuel_w', Array(np.zeros((num_elem+1, )), iotype='out',
                                  desc = 'Fuel Weight'))
 
     def execute(self):
@@ -603,17 +603,17 @@ class SysFuelWeight(Component):
         #super(SysAlpha, self).__init__()
 
         ## Inputs
-        #self.add('CL', Array(np.zeros((num_elem, )), iotype='out',
+        #self.add('CL', Array(np.zeros((num_elem+1, )), iotype='out',
                              #desc = 'User provided coefficient of lift'))
-        #self.add('CL_tar', Array(np.zeros((num_elem, )), iotype='in',
+        #self.add('CL_tar', Array(np.zeros((num_elem+1, )), iotype='in',
                                  #desc = 'Target coefficient of lift'))
 
         ## States
-        #self.add('alpha', Array(np.zeros((num_elem, )), iotype='state',
+        #self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='state',
                                 #desc = 'Angle of attack'))
 
         ## Residuals
-        #self.add('alpha_res', Array(np.zeros((num_elem, )), iotype='residual',
+        #self.add('alpha_res', Array(np.zeros((num_elem+1, )), iotype='residual',
                                 #desc = 'Residual for Angle of attack equation'))
 
     #def evaluate(self):

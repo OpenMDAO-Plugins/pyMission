@@ -30,7 +30,7 @@ class BSplineSystem(Component):
                                  desc = 'Initial control point positions.',
                                  deriv_ignore=True))
 
-        self.num_elem = num_elem
+        self.num_elem = num_elem+1
         self.num_pt = num_pt
         #self.MBI_setup()
 
@@ -76,7 +76,7 @@ class SysXBspline(BSplineSystem):
                             desc = 'Control points for distance'))
 
         # Outputs
-        self.add('x', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('x', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'b-spline parameterization for distance'))
 
     def execute(self):
@@ -125,7 +125,7 @@ class SysHBspline(BSplineSystem):
                             desc = 'Control points for altitude'))
 
         # Outputs
-        self.add('h', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('h', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'b-spline parameterization for altitude'))
 
     def execute(self):
@@ -176,9 +176,9 @@ class SysMVBspline(BSplineSystem):
                             desc = 'Control points for velocity'))
 
         # Outputs
-        self.add('M', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('M', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'b-spline parameterization for Mach number'))
-        self.add('v_spline', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('v_spline', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'b-spline parameterization for velocity'))
 
     def execute(self):
@@ -234,7 +234,7 @@ class SysGammaBspline(BSplineSystem):
                             desc = 'Control points for altitude'))
 
         # Outputs
-        self.add('Gamma', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('Gamma', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'Flight path angle w/ b-spline '
                             'parameterization'))
 

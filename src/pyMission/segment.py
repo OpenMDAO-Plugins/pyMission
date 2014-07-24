@@ -1,12 +1,12 @@
 """
-Trajectory optimization.
+INTENDED FOR MISSION ANALYSIS USE
+This file contains the segment assembly.
 """
 
 # pylint: disable=E1101
 import numpy as np
 
-from openmdao.lib.casehandlers.api import BSONCaseRecorder
-from openmdao.lib.drivers.api import NewtonSolver, BroydenSolver
+from openmdao.lib.drivers.api import NewtonSolver
 from openmdao.main.api import Assembly, set_as_top
 from openmdao.main.datatypes.api import Array, Float
 
@@ -18,30 +18,33 @@ from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.propulsion import SysTau
 
 
-class OptTrajectory(Assembly):
-    """ class used to define and setup trajectory optimization problem """
+class MissionSegment(Assembly):
+    """ Defines a single segment for the Mission Analysis. """
 
 
     def __init__(self, num_elem=10, num_cp=5, x_pts=None):
-        """Initialize the trajectory optimization problem.
+        """Initialize this segment trajectory problem.
 
         num_elem: int
             number of computations points in the mission profile
 
         num_cp: int
             number of control points for the splines
+
+        x_pts: 1d array
+            array containing the x locations of the spline control points.
         """
 
         self.num_elem = num_elem
         self.num_pt = num_cp
         self.x_pts = x_pts
 
-        super(OptTrajectory, self).__init__()
+        super(MissionSegment, self).__init__()
 
     def configure(self):
         """ set it all up. """
 
-        # Make some boundary variables for ease of use.
+        # Place all design variables on the boundary.
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
         self.add('ac_w', Float(0.0, iotype='in',
                                desc = 'Weight of aircraft + payload'))
@@ -59,7 +62,7 @@ class OptTrajectory(Assembly):
         self.add('SysXBspline', SysXBspline(num_elem=self.num_elem,
                                             num_pt=self.num_pt))
         self.SysXBspline.x_init = self.x_pts
-        #self.SysXBspline.x_pt = np.linspace(0.0, self.x_pts[-1], self.num_elem)
+        self.SysXBspline.x_pt = self.x_pts
 
         self.add('SysHBspline', SysHBspline(num_elem=self.num_elem,
                                             num_pt=self.num_pt))
@@ -96,7 +99,7 @@ class OptTrajectory(Assembly):
 
         # Weight
         self.add('SysFuelWeight', SysFuelWeight(num_elem=self.num_elem))
-        self.SysFuelWeight.fuel_w = np.linspace(1.0, 0.0, self.num_elem)
+        self.SysFuelWeight.fuel_w = np.linspace(1.0, 0.0, self.num_elem+1)
 
         self.connect('S', 'SysFuelWeight.S')
         self.connect('SysRho.rho', 'SysFuelWeight.rho')
@@ -168,7 +171,10 @@ class OptTrajectory(Assembly):
         self.driver.workflow.add(['SysTau'])
 
 
-        # Optimization
+        # Promote useful variables to the boundary.
+        self.create_passthrough('SysHBspline.h_pt')
+        self.connect('h_pt', 'SysGammaBspline.h_pt')
+        self.create_passthrough('SysMVBspline.v_pt')
 
 if __name__ == "__main__":
 
@@ -180,11 +186,10 @@ if __name__ == "__main__":
     v_init = np.ones(num_cp)*2.3
     h_init = 1 * np.sin(np.pi * x_init / (x_range/1e6))
 
-    model = OptTrajectory(num_elem, num_cp, x_init)
-    model.recorders = [BSONCaseRecorder('mission.bson')]
+    model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
 
-    model.SysHBspline.h_pt = h_init
-    model.SysMVBspline.v_pt = v_init
+    model.h_pt = h_init
+    model.v_pt = v_init
 
     # Pull velocity from BSpline instead of calculating it.
     model.SysSpeed.v_specified = True

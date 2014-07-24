@@ -25,9 +25,9 @@ class SysAeroSurrogate(Component):
         super(SysAeroSurrogate, self).__init__()
 
         # Inputs
-        self.add('alpha', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
-        self.add('eta', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('eta', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Tail rotation angle'))
         self.add('AR', Float(0.0, iotype='in',
                              desc = 'Aspect Ratio'))
@@ -35,9 +35,9 @@ class SysAeroSurrogate(Component):
                                  desc = "Oswald's efficiency"))
 
         # Outputs
-        self.add('CL', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('CL', Array(np.zeros((num_elem+1, )), iotype='out',
                              desc = 'Lift Coefficient'))
-        self.add('CD', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('CD', Array(np.zeros((num_elem+1, )), iotype='out',
                              desc = 'Drag Coefficient'))
 
     def execute(self):
@@ -155,15 +155,15 @@ class SysCM(ImplicitComponent):
         super(SysCM, self).__init__()
 
         # Inputs
-        self.add('alpha', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
 
         # States
-        self.add('eta', Array(np.zeros((num_elem, )), iotype='state',
+        self.add('eta', Array(np.zeros((num_elem+1, )), iotype='state',
                               desc = 'Tail rotation angle'))
 
         # Residuals
-        self.add('eta_res', Array(np.zeros((num_elem, )), iotype='residual',
+        self.add('eta_res', Array(np.zeros((num_elem+1, )), iotype='residual',
                   desc = 'Residual for Tail rotation angle equation'))
 
 

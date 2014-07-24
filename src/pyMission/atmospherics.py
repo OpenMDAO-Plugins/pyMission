@@ -24,13 +24,13 @@ class SysSFC(Component):
         super(SysSFC, self).__init__()
 
         # Inputs
-        self.add('h', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude'))
         self.add('SFCSL', Float(0.0, iotype='in',
                                 desc = 'sea-level SFC value'))
 
         # Outputs
-        self.add('SFC', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('SFC', Array(np.zeros((num_elem+1, )), iotype='out',
                               desc = 'Specific Fuel Consumption'))
 
     def execute(self):
@@ -88,11 +88,11 @@ class SysTemp(Component):
         super(SysTemp, self).__init__()
 
         # Inputs
-        self.add('h', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude'))
 
         # Outputs
-        self.add('temp', Array(np.zeros((num_elem, )), iotype='out', low=0.001,
+        self.add('temp', Array(np.zeros((num_elem+1, )), iotype='out', low=0.001,
                             desc = 'Temperature'))
 
     def execute(self):
@@ -141,11 +141,11 @@ class SysRho(Component):
         super(SysRho, self).__init__()
 
         # Inputs
-        self.add('temp', Array(np.zeros((num_elem, )), iotype='in', low=0.001,
+        self.add('temp', Array(np.zeros((num_elem+1, )), iotype='in', low=0.001,
                             desc = 'Temperature'))
 
         # Outputs
-        self.add('rho', Array(np.zeros((num_elem, )), iotype='out', low=0.001,
+        self.add('rho', Array(np.zeros((num_elem+1, )), iotype='out', low=0.001,
                             desc = 'Density'))
 
     def execute(self):
@@ -200,18 +200,18 @@ class SysSpeed(Component):
         super(SysSpeed, self).__init__()
 
         # Inputs
-        self.add('temp', Array(np.zeros((num_elem, )), iotype='in', low=0.001,
+        self.add('temp', Array(np.zeros((num_elem+1, )), iotype='in', low=0.001,
                             desc = 'Temperature'))
-        self.add('M', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('M', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Mach Number'))
-        self.add('v_spline', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('v_spline', Array(np.zeros((num_elem+1, )), iotype='in',
                                    desc = 'Speed'))
         self.add('v_specified', Bool(False, iotype='in',
                  desc='Set to True to disable calculation and use v_spline '
                  'instead.'))
 
         # Outputs
-        self.add('v', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('v', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'Speed'))
 
     def execute(self):

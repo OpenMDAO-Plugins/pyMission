@@ -25,20 +25,20 @@ class SysTau(Component):
         super(SysTau, self).__init__()
 
         # Inputs
-        self.add('CT_tar', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('CT_tar', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Thrust Coefficient'))
-        self.add('rho', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('rho', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Density'))
-        self.add('v', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Speed'))
-        self.add('h', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude'))
         self.add('thrust_sl', Float(0.0, iotype='in',
                                     desc = 'Maximum sea-level thrust'))
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
 
         # Outputs
-        self.add('tau', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('tau', Array(np.zeros((num_elem+1, )), iotype='out',
                                  desc = 'Throttle setting'))
 
     def execute(self):
@@ -149,20 +149,20 @@ class SysTauSurrogate(Component):
         super(SysTauSurrogate, self).__init__()
 
         # Inputs
-        self.add('h', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude'))
-        self.add('temp', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('temp', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Temperature'))
-        self.add('v', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Speed'))
-        self.add('CT_tar', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('CT_tar', Array(np.zeros((num_elem+1, )), iotype='in',
                                  desc = 'Thrust Coefficient'))
-        self.add('rho', Array(np.zeros((num_elem, )), iotype='in',
+        self.add('rho', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Density'))
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
 
         # Outputs
-        self.add('tau', Array(np.zeros((num_elem, )), iotype='out',
+        self.add('tau', Array(np.zeros((num_elem+1, )), iotype='out',
                                  desc = 'Throttle setting'))
 
         self.build_surrogate('UHB.outputFLOPS')
