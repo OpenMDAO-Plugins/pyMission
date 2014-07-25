@@ -3,7 +3,7 @@ import numpy
 import copy
 import os
 from framework import *
-from optimization import *
+#from optimization import *
 from bsplines import *
 from atmospherics import *
 from coupled_analysis import *
@@ -103,6 +103,8 @@ class OptTrajectory(object):
         self.aspect_ratio = 0.0
         self.oswald = 0.0
         self.v_specified = 0
+        self.gamma_lb = numpy.tan(-30.0 * (numpy.pi/180.0))/1e-1
+        self.gamma_ub = numpy.tan(30.0 * (numpy.pi/180.0))/1e-1
         self.folder_name = None
 
     def set_init_h(self, h_init):
@@ -129,7 +131,7 @@ class OptTrajectory(object):
     def set_folder_name(self, folder_name):
         self.folder_name = folder_name
 
-    def initialize(self):
+    def initialize_framework(self):
 
         self.main = Top('mission',
                         NL='NLN_GS',
@@ -316,3 +318,22 @@ class OptTrajectory(object):
                                      self.x_pts[-1], self.folder_name)
 
         return self.main
+
+    def set_gamma_bound(self, gamma_lb, gamma_ub):
+        self.gamma_lb = gamma_lb
+        self.gamma_ub = gamma_ub
+
+    def initialize_opt(self, main, h_init):
+        gamma_lb = self.gamma_lb
+        gamma_ub = self.gamma_ub
+
+        opt = Optimization(main)
+        opt.add_design_variable('h_pt', value=h_init, lower=0.0, upper=20.0)
+        opt.add_objective('wf_obj')
+        opt.add_constraint('h_i', lower=0.0, upper=0.0)
+        opt.add_constraint('h_f', lower=0.0, upper=0.0)
+        opt.add_constraint('Tmin', upper=0.0)
+        opt.add_constraint('Tmax', upper=0.0)
+        opt.add_constraint('gamma', lower=gamma_lb, upper=gamma_ub,
+                           get_jacs=main('gamma').get_jacs, linear=True)
+

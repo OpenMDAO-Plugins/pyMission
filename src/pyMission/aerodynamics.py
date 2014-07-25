@@ -2,6 +2,16 @@
 INTENDED FOR MISSION ANALYSIS USE
 This file contains the aerodynamic models used by the mission analysis
 code. The present implementation uses linear aerodynamics.
+
+The mission analysis and trajectory optimization tool was developed by:
+    Jason Kao*
+    John Hwang*
+
+* University of Michigan Department of Aerospace Engineering,
+  Multidisciplinary Design Optimization lab
+  mdolab.engin.umich.edu
+
+copyright July 2014
 """
 
 # pylint: disable=E1101
@@ -57,7 +67,7 @@ class SysAeroSurrogate(Component):
 
         self.CL = lift_c0 + lift_ca*alpha + lift_ce*eta
         self.CD = (drag_c0 + self.CL**2 /
-                   (np.pi * aspect_ratio * oswald))/1e-1
+                   (np.pi * aspect_ratio * oswald))/1e-1 * 3
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
@@ -89,24 +99,24 @@ class SysAeroSurrogate(Component):
                 result['CL'] += lift_ca * dalpha * 1e-1
             if 'CD' in result:
                 result['CD'] += 2 * lift_c * lift_ca / (np.pi * oswald *
-                                                        aspect_ratio) * dalpha
+                                                        aspect_ratio) * dalpha * 3
         if 'eta' in arg:
             deta = arg['eta']
             if 'CL' in result:
                 result['CL'] += lift_ce * deta * 1e-1
             if 'CD' in result:
                 result['CD'] += 2 * lift_c * lift_ce / (np.pi * oswald *
-                                                        aspect_ratio) * deta
+                                                        aspect_ratio) * deta * 3
         if 'AR' in arg:
             daspect_ratio = arg['AR']
             if 'CD' in result:
                 result['CD'] -= lift_c**2 / (np.pi * aspect_ratio**2 *
-                                             oswald) * daspect_ratio / 1e-1
+                                             oswald) * daspect_ratio / 1e-1 * 3
         if 'oswald' in arg:
             doswald = arg['oswald']
             if 'CD' in result:
                 result['CD'] -= lift_c**2 / (np.pi * aspect_ratio *
-                                             oswald**2) * doswald / 1e-1
+                                             oswald**2) * doswald / 1e-1 * 3
 
     def apply_derivT(self, arg, result):
         """ Compute the derivatives of lift and drag coefficient wrt alpha,
@@ -126,25 +136,25 @@ class SysAeroSurrogate(Component):
                 result['alpha'] += lift_ca * arg['CL'] * 1e-1
             if 'CD' in arg:
                 result['alpha'] += 2 * lift_c * lift_ca / (np.pi * oswald *
-                                                           aspect_ratio) * arg['CD']
+                                                           aspect_ratio) * arg['CD'] * 3
         if 'eta' in result:
             if 'CL' in arg:
                 result['eta'] += lift_ce * arg['CL'] * 1e-1
             if 'CD' in arg:
                 result['eta'] += 2 * lift_c * lift_ce / (np.pi * oswald *
-                                                         aspect_ratio) * arg['CD']
+                                                         aspect_ratio) * arg['CD'] * 3
         if 'AR' in result:
             if 'CD' in arg:
                 result['AR'] -= np.sum((lift_c**2 /
                                         (np.pi * oswald *
                                          aspect_ratio**2) *
-                                        arg['CD'])) / 1e-1
+                                        arg['CD'])) / 1e-1 * 3
         if 'oswald' in result:
             if 'CD' in arg:
                 result['oswald'] -= np.sum((lift_c**2 /
                                             (np.pi * oswald**2 *
                                              aspect_ratio) *
-                                            arg['CD'])) / 1e-1
+                                            arg['CD'])) / 1e-1 * 3
 
 class SysCM(ImplicitComponent):
     """ Compute the tail rotation angle necessary to maintain pitch moment

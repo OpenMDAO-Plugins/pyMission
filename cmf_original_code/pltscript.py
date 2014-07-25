@@ -1,3 +1,20 @@
+"""
+MISSION ANALYSIS/TRAJECTORY OPTIMIZATION
+This is the runscript used for plotting the history of the trajectory 
+optimization problem. The history plotting can be done simultaneously as
+the trajectory optimization runscript is being ran. At the end of the
+figure generation, a video of the history is also produced.
+The mission analysis and trajectory optimization tool was developed by:
+    Jason Kao*
+    John Hwang*
+
+* University of Michigan Department of Aerospace Engineering,
+  Multidisciplinary Design Optimization lab
+  mdolab.engin.umich.edu
+
+copyright July 2014
+"""
+
 import numpy
 import os
 import time
@@ -7,25 +24,29 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab
 
+###########################
 # USER SPECIFIED INPUTS:
 
-num_elem = 75
-num_cp = 15
-x_range = 1000.0
+num_elem = 2000
+num_cp = 200
+x_range = 150.0
 step = 1
 initial_ind = 0
 file_index = 0
 video = True
-folder_name = '/home/jason/Documents/Results/'
+folder_name = '/home/jason/Documents/Results/test-'
+fuel_guess = 10000.0
 
 # END USER SPECIFIED INPUTS
+###########################
 
+# initialize figure, set up folder-paths
 fig = matplotlib.pylab.figure(figsize=(18.0,8.0))
 index = initial_ind
 folder_name = folder_name + 'dist'+str(int(x_range))+'km-'\
     +str(num_cp)+'-'+str(num_elem)+'-'+str(file_index)+'/'
 if not os.path.exists(folder_name):
-    raise('ERROR: SPECIFIED CASE DOES NOT EXIST')
+    raise Exception('ERROR: SPECIFIED CASE DOES NOT EXIST')
 
 max_name = str(int(x_range))+'km-'+str(num_cp)+\
     '-'+str(num_elem)+'-maxmin.dat'
@@ -35,17 +56,30 @@ file_name = '%ikm-%i-%i-%04i' % (int(x_range),
                                  num_cp,
                                  num_elem,
                                  index)
+sleep = False
 
+# continues loop for figure generation until BOTH end file (*-maxmin.dat)
+# has been found AND the next .dat file doesn't exist
 while ((not os.path.isfile(folder_name+max_name))
        or (os.path.isfile(folder_name+file_name+'.dat'))):
+
+    # skip figure generation if a corresponding figure exists already
     if os.path.isfile(folder_name+'fig-'+file_name+'.png'):
         index += step
         file_name = '%ikm-%i-%i-%04i' % (int(x_range),
                                          num_cp,
                                          num_elem,
                                          index)
+
+    # reads data file and save figure if the next file is found
     else:
         if os.path.isfile(folder_name+file_name+'.dat'):
+
+            # this delay is necesesary to prevent the script from reading
+            # the data file before history.py is done writing it
+            if sleep == True:
+                time.sleep(0.1)
+                sleep = False
 
             [dist, altitude, speed, alpha, throttle, eta, fuel,
              rho, lift_c, drag_c, thrust, gamma, weight, temp,
@@ -61,57 +95,29 @@ while ((not os.path.isfile(folder_name+max_name))
             print 'Printing fig: ', folder_name+file_name+'...'
             fig.clf()
             nr, nc = 4, 3
+
+            values = [altitude/1e3, speed, eta, 
+                      gamma, mach, alpha,
+                      rho, throttle, lift_c,
+                      fuel/1e3, thrust/1e3, drag_c]
+            labels = ['Altitude (*10^3 ft)', 'TAS (knots)', 'Trim (deg)',
+                      'Path Angle (deg)', 'Mach Number', 'AoA (deg)',
+                      'Density (kg/m^3)', 'Throttle', 'C_L',
+                      'Fuel wt. (10^3 lb)', 'Thrust (10^3 lb)', 'C_D']
+            limits = [[-1, 51], [100, 600], [-10, 10],
+                      [-32.0, 32.0], [0.05, 1.2], [-5, 10],
+                      [0.0, 1.3], [-0.1, 1.1], [0.0, 0.8],
+                      [-100.0/1e3, fuel_guess/1e3], [0.0, 250.0], [0.01*3, 0.05*3]]
+
             fplot = fig.add_subplot
-            fplot(nr, nc, 1).plot(dist, altitude/1e3)
-            fplot(nr, nc, 1).set_ylabel('Altitude (*10^3 ft)')
-            fplot(nr, nc, 1).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 1).set_ylim([-1, 51])
-            fplot(nr, nc, 2).plot(dist, speed)
-            fplot(nr, nc, 2).set_ylabel('Airspeed (knots)')
-            fplot(nr, nc, 2).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 2).set_ylim([100, 600])
-            fplot(nr, nc, 6).plot(dist, alpha)
-            fplot(nr, nc, 6).set_ylabel('AoA (deg)')
-            fplot(nr, nc, 6).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 6).set_ylim([-5, 10])
-            fplot(nr, nc, 5).plot(dist, mach)
-            fplot(nr, nc, 5).set_ylabel('Mach Number')
-            fplot(nr, nc, 5).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 5).set_ylim([0.05, 1.2])
-            fplot(nr, nc, 8).plot(dist, throttle)
-            fplot(nr, nc, 8).set_ylabel('Throttle')
-            fplot(nr, nc, 8).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 8).set_ylim([-0.1, 1.1])
-            fplot(nr, nc, 3).plot(dist, eta)
-            fplot(nr, nc, 3).set_ylabel('Trim Angle (deg)')
-            fplot(nr, nc, 3).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 3).set_ylim([-10, 10])
-            fplot(nr, nc, 10).plot(dist, fuel)
-            fplot(nr, nc, 10).set_ylabel('Fuel Weight (lb)')
-            fplot(nr, nc, 10).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 10).set_ylim([-100.0, 80000.0])
-            fplot(nr, nc, 7).plot(dist, rho)
-            fplot(nr, nc, 7).set_ylabel('Density (kg/m^3)')
-            fplot(nr, nc, 7).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 7).set_ylim([0.0, 1.3])
-            fplot(nr, nc, 9).plot(dist, lift_c)
-            fplot(nr, nc, 9).set_ylabel('Lift Coef')
-            fplot(nr, nc, 9).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 9).set_ylim([0.0, 0.8])
-            fplot(nr, nc, 12).plot(dist, drag_c)
-            fplot(nr, nc, 12).set_ylabel('Drag Coef')
-            fplot(nr, nc, 12).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 12).set_ylim([0.01, 0.05])
+            for i in xrange(12):
+                fplot(nr, nc, i+1).plot(dist, values[i])
+                fplot(nr, nc, i+1).set_ylabel(labels[i])
+                fplot(nr, nc, i+1).set_xlim([-100.0, rnd(x_range, -2)+100.0])
+                fplot(nr, nc, i+1).set_ylim(limits[i])
+
             fplot(nr, nc, 10).set_xlabel('Distance (km)')
-            fplot(nr, nc, 11).plot(dist, thrust/1e3)
-            fplot(nr, nc, 11).set_ylabel('Thrust (10^3 lb)')
-            fplot(nr, nc, 11).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 11).set_ylim([0.0, 100.0])
             fplot(nr, nc, 11).set_xlabel('Distance (km)')
-            fplot(nr, nc, 4).plot(dist, gamma)
-            fplot(nr, nc, 4).set_ylabel('Path Angle (deg)')
-            fplot(nr, nc, 4).set_xlim([-100.0, rnd(x_range, -3)+100.0])
-            fplot(nr, nc, 4).set_ylim([-10.0, 10.0])
             fplot(nr, nc, 12).set_xlabel('Distance (km)')
             fig.savefig(folder_name+'fig-'+file_name+'.png')
 
@@ -121,9 +127,13 @@ while ((not os.path.isfile(folder_name+max_name))
                                              num_elem,
                                              index)
 
+        # The next data file hasn't been written yet, so wait until it
+        # exists
         else:
+            sleep = True
             time.sleep(0.1)
 
+# generate video of history from the figures
 if video == True:
     file_name = '%ikm-%i-%i' % (int(x_range),
                                      num_cp,

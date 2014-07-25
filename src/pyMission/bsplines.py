@@ -4,6 +4,16 @@ b-splines parameterization of altitude, x-distance, and Mach number.
 These provide altitude and Mach number profile wrt x-distance.
 Gamma (flight path angle) is also computed using the altitude
 parameterization
+
+The mission analysis and trajectory optimization tool was developed by:
+    Jason Kao*
+    John Hwang*
+
+* University of Michigan Department of Aerospace Engineering,
+  Multidisciplinary Design Optimization lab
+  mdolab.engin.umich.edu
+
+copyright July 2014
 """
 
 # pylint: disable=E1101

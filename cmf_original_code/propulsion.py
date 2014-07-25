@@ -1,6 +1,15 @@
 """
 INTENDED FOR MISSION ANALYSIS USE
 provides propulsion models for the use of mission analysis.
+The mission analysis and trajectory optimization tool was developed by:
+    Jason Kao*
+    John Hwang*
+
+* University of Michigan Department of Aerospace Engineering,
+  Multidisciplinary Design Optimization lab
+  mdolab.engin.umich.edu
+
+copyright July 2014
 """
 
 # pylint: disable=E1101

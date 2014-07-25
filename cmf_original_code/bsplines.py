@@ -4,6 +4,15 @@ b-splines parameterization of altitude, x-distance, and Mach number.
 These provide altitude and Mach number profile wrt x-distance.
 Gamma (flight path angle) is also computed using the altitude
 parameterization
+The mission analysis and trajectory optimization tool was developed by:
+    Jason Kao*
+    John Hwang*
+
+* University of Michigan Department of Aerospace Engineering,
+  Multidisciplinary Design Optimization lab
+  mdolab.engin.umich.edu
+
+copyright July 2014
 """
 
 # pylint: disable=E1101
@@ -221,3 +230,6 @@ class SysGammaBspline(BSplineSystem):
             dh_pt[:] = 0.0
             if self.get_id('h_pt') in args:
                 dh_pt[:] += self.jac_gamma.T.dot(dgamma[:]) * 1e3/1e-1
+
+    def get_jacs(self):
+        return {'h_pt': self.jac_gamma * 1e3/1e-1}

@@ -1,3 +1,7 @@
+""" This is used to generate the pickle for testing the OpenMDAO version vs
+the CMF version.
+"""
+
 from mission import *
 from history import *
 import time
@@ -14,17 +18,15 @@ params = {
 
 num_elem = 100
 num_cp = 30
-x_range = 5000.0e3
+x_range = 150.0
 
 #h_init = numpy.ones(num_cp)*0.000005
 #h_init[0] = 0.0
 #h_init[-1] = 0.0
 
 v_init = numpy.ones(num_cp)*2.3
-#x_init = numpy.linspace(0.0, x_range, num_cp)/1e6
-x_init = x_range * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
-
-h_init = 1 * numpy.sin(numpy.pi * x_init / (x_range/1e6))
+x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
+h_init = 1 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
 
 gamma_lb = numpy.tan(-20.0 * (numpy.pi/180.0))/1e-1
 gamma_ub = numpy.tan(20.0 * (numpy.pi/180.0))/1e-1
@@ -34,8 +36,8 @@ traj.set_init_h(h_init)
 traj.set_init_v(v_init)
 traj.set_init_x(x_init)
 traj.set_params(params)
-traj.folder_name = '/home/kenmoore/Work/pyMission'
-main = traj.initialize()
+traj.set_folder_name('.')
+main = traj.initialize_framework()
 
 from time import time
 t1 = time()
@@ -44,7 +46,7 @@ print "Elapsed time:", time()-t1
 
 print 'done'
 
-exit()
+#exit()
 
 keys = main.vec['u'].keys()
 data = {}

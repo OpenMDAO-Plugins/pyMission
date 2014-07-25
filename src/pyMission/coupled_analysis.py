@@ -3,6 +3,16 @@ INTENDED FOR MISSION ANALYSIS USE
 The horizontal and vertical flight equilibrium equations are presented
 and enforced. The fuel weight is also computed. The user-defined relation
 between alpha, CL, and CD are not here!
+
+The mission analysis and trajectory optimization tool was developed by:
+    Jason Kao*
+    John Hwang*
+
+* University of Michigan Department of Aerospace Engineering,
+  Multidisciplinary Design Optimization lab
+  mdolab.engin.umich.edu
+
+copyright July 2014
 """
 
 # pylint: disable=E1101

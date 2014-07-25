@@ -2,7 +2,16 @@
 INTENDED FOR MISSION ANALYSIS USE
 Atmospheric models for specific fuel consumption (SFC), temperature, and
 density. All models extracted from the linear portion of the standard
-atmosphere
+atmosphere.
+The mission analysis and trajectory optimization tool was developed by:
+    Jason Kao*
+    John Hwang*
+
+* University of Michigan Department of Aerospace Engineering,
+  Multidisciplinary Design Optimization lab
+  mdolab.engin.umich.edu
+
+copyright July 2014
 """
 
 # pylint: disable=E1101

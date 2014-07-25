@@ -1,7 +1,16 @@
 """
 INTENDED FOR MISSION ANALYSIS USE
 This module provides functions and classes used to write optimization
-history into files, and plot the information from these files
+history into files, and plot the information from these files.
+The mission analysis and trajectory optimization tool was developed by:
+    Jason Kao*
+    John Hwang*
+
+* University of Michigan Department of Aerospace Engineering,
+  Multidisciplinary Design Optimization lab
+  mdolab.engin.umich.edu
+
+copyright July 2014
 """
 
 # pylint: disable=E1101
