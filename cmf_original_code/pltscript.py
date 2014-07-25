@@ -27,14 +27,14 @@ import matplotlib.pylab
 ###########################
 # USER SPECIFIED INPUTS:
 
-num_elem = 2000
-num_cp = 200
-x_range = 150.0
+num_elem = 100
+num_cp = 10
+x_range = 1000.0
 step = 1
 initial_ind = 0
 file_index = 0
 video = True
-folder_name = '/home/jason/Documents/Results/test-'
+folder_name = '/home/jason/Documents/Results/MGtest-'
 fuel_guess = 10000.0
 
 # END USER SPECIFIED INPUTS
@@ -78,7 +78,7 @@ while ((not os.path.isfile(folder_name+max_name))
             # this delay is necesesary to prevent the script from reading
             # the data file before history.py is done writing it
             if sleep == True:
-                time.sleep(0.1)
+                time.sleep(0.2)
                 sleep = False
 
             [dist, altitude, speed, alpha, throttle, eta, fuel,

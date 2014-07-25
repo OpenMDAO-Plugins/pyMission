@@ -3,7 +3,7 @@ import numpy
 import copy
 import os
 from framework import *
-#from optimization import *
+from optimization import *
 from bsplines import *
 from atmospherics import *
 from coupled_analysis import *
@@ -14,11 +14,12 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab
 import MBI, scipy.sparse
+import scipy.sparse.linalg
 from history import *
 
 class GlobalizedSystem(SerialSystem):
     ''' doc string '''
-
+    
     def solve_F(self):
         """ Solve f for u, p |-> u """
 
@@ -92,10 +93,10 @@ class OptTrajectory(object):
     def __init__(self, num_elem, num_cp):
         self.num_elem = num_elem
         self.num_pt = num_cp
-        self.h_pts = numpy.zeros(num_elem+1)
-        self.M_pts = numpy.zeros(num_elem+1)
-        self.v_pts = numpy.zeros(num_elem+1)
-        self.x_pts = numpy.zeros(num_elem+1)
+        self.h_pts = numpy.zeros(num_cp)
+        self.M_pts = numpy.zeros(num_cp)
+        self.v_pts = numpy.zeros(num_cp)
+        self.x_pts = numpy.zeros(num_cp)
         self.wing_area = 0.0
         self.ac_w = 0.0
         self.thrust_sl = 0.0
@@ -110,6 +111,13 @@ class OptTrajectory(object):
     def set_init_h(self, h_init):
         self.h_pts = h_init
 
+    def set_init_h_pt(self, h_init_pt):
+        A = self.jac_h
+        b = h_init_pt
+        ATA = A.T.dot(A)
+        ATb = A.T.dot(b)
+        self.h_pts = scipy.sparse.linalg.gmres(ATA, ATb)[0]
+
     def set_init_M(self, M_init):
         self.M_pts = M_init
 
@@ -119,6 +127,31 @@ class OptTrajectory(object):
     def set_init_v(self, v_init):
         self.v_pts = v_init
         self.v_specified = 1
+
+    def setup_MBI(self):
+        """ generate jacobians for b-splines using MBI package """
+
+        num_pts = self.num_elem + 1
+        num_cp = self.num_pt
+
+        alt = numpy.linspace(0, 16, num_pts)
+        x_dist = numpy.linspace(0, self.x_pts[-1], num_pts)/1e6
+        
+        arr = MBI.MBI(alt, [x_dist], [num_cp], [4])
+        jac = arr.getJacobian(0, 0)
+        jacd = arr.getJacobian(1, 0)
+
+        c_arryx = self.x_pts
+        d_arryx = jacd.dot(c_arryx)*1e6
+
+        lins = numpy.linspace(0, num_pts-1, num_pts).astype(int)
+        diag = scipy.sparse.csc_matrix((1.0/d_arryx,
+                                        (lins,lins)))
+        jace = diag.dot(jacd)
+
+        self.jac_h = jac
+        self.jac_gamma = jace
+
 
     def set_params(self, kw):
         self.wing_area = kw['S']
@@ -179,17 +212,21 @@ class OptTrajectory(object):
                                 SysXBspline('x', num_elem=self.num_elem,
                                             num_pt=self.num_pt,
                                             x_init=self.x_pts,
-                                            x_0=numpy.linspace(0.0, self.x_pts[-1], self.num_elem+1)),
+                                            x_0=numpy.linspace(0.0, self.x_pts[-1], self.num_elem+1),
+                                            jac_h=self.jac_h),
                                 SysHBspline('h', num_elem=self.num_elem,
                                             num_pt=self.num_pt,
-                                            x_init=self.x_pts),
+                                            x_init=self.x_pts,
+                                            jac_h=self.jac_h),
                                 SysMVBspline('M', num_elem=self.num_elem,
                                              num_pt=self.num_pt,
-                                             x_init=self.x_pts),
+                                             x_init=self.x_pts,
+                                             jac_h=self.jac_h),
                                 SysGammaBspline('gamma',
                                                 num_elem=self.num_elem,
                                                 num_pt=self.num_pt,
-                                                x_init=self.x_pts),
+                                                x_init=self.x_pts,
+                                                jac_gamma=self.jac_gamma),
                                 ]),
                         SerialSystem('atmospherics',
                                      NL='NLN_GS',
@@ -323,12 +360,12 @@ class OptTrajectory(object):
         self.gamma_lb = gamma_lb
         self.gamma_ub = gamma_ub
 
-    def initialize_opt(self, main, h_init):
+    def initialize_opt(self, main):
         gamma_lb = self.gamma_lb
         gamma_ub = self.gamma_ub
 
         opt = Optimization(main)
-        opt.add_design_variable('h_pt', value=h_init, lower=0.0, upper=20.0)
+        opt.add_design_variable('h_pt', value=self.h_pts, lower=0.0, upper=20.0)
         opt.add_objective('wf_obj')
         opt.add_constraint('h_i', lower=0.0, upper=0.0)
         opt.add_constraint('h_f', lower=0.0, upper=0.0)
@@ -336,4 +373,5 @@ class OptTrajectory(object):
         opt.add_constraint('Tmax', upper=0.0)
         opt.add_constraint('gamma', lower=gamma_lb, upper=gamma_ub,
                            get_jacs=main('gamma').get_jacs, linear=True)
-
+        return opt
+        
