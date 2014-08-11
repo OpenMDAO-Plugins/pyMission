@@ -286,7 +286,7 @@ class System(object):
         for subsystem in self.subsystems['local']:
             end += numpy.sum(subsystem.var_sizes[subsystem.comm.rank, :])
             subsystem.setup_4of7_vecs({vec: arrays[vec][start:end] for vec in
-                                       ['u', 'f', 'du', 'df', 
+                                       ['u', 'f', 'du', 'df',
                                         'lb', 'ub', 'u0', 'f0']})
             start += numpy.sum(subsystem.var_sizes[subsystem.comm.rank, :])
 
@@ -329,7 +329,7 @@ class System(object):
         self.solvers['NL'] = {'NEWTON': Newton(self),
                               'NLN_JC': NonlinearJacobi(self),
                               'NLN_GS': NonlinearGS(self),
-                              }  
+                              }
         self.solvers['LN'] = {'None': Identity(self),
                               'KSP_PC': KSP(self),
                               'LIN_JC': LinearJacobi(self),
@@ -355,7 +355,7 @@ class System(object):
 
         if not scatter == None:
             self.vec[var].array[:] *= self.vec['u0'].array[:]
-            
+
             if self.mode == 'fwd':
                 scatter.scatter(var_petsc, arg_petsc, addv=False, mode=False)
             elif self.mode == 'rev':
@@ -479,7 +479,7 @@ class System(object):
         jac = numpy.zeros((n,n+2))
         jac[:,-1] = self.rhs_buf.array[:]
         jac[:,-2] = self.sol_vec.array[:]
-        
+
         for i in xrange(n):
             self.sol_vec.array[:] = 0.0
             self.sol_vec.array[i] = 1.0
@@ -496,7 +496,7 @@ class System(object):
                 else:
                     l = j + 36
                 print '%6.2f'%(jac[k,l]),
-            print ' | ', 
+            print ' | ',
             print '%6.2f'%(jac[k,l+1]),
             print ' | ',
             print ' = ',
@@ -529,7 +529,7 @@ class System(object):
             sys = elemsystem.name, elemsystem.copy
             for arg in self.vec['dp'][sys]:
                 if self.variables[arg] is not None:
-                    self.vec['dp'][sys][arg][:] = 0.0  
+                    self.vec['dp'][sys][arg][:] = 0.0
 
         self.rhs_vec.array[:] = 0.0
 
@@ -544,7 +544,7 @@ class System(object):
         success = self.solve_dFdu()
         if not success:
             self.sol_vec.array[:] = 0.0
-        
+
         return self.sol_vec, success
 
     def check_derivatives_all2(self):
@@ -566,7 +566,7 @@ class System(object):
             f = numpy.array(self.vec['f'].array)
             Jac_FDD[:,col] = (f-f0)/h
             self.vec['u'].array[col] -= h
-            
+
         self.compute(output=False)
         self.vec['du'].array[:] = 0.0
         self.vec['df'].array[:] = 0.0
@@ -574,7 +574,7 @@ class System(object):
             sys = elemsystem.name, elemsystem.copy
             for arg in self.vec['dp'][sys]:
                 if self.variables[arg] is not None:
-                    self.vec['dp'][sys][arg][:] = 0.0  
+                    self.vec['dp'][sys][arg][:] = 0.0
 
         self.set_mode('fwd', False)
         for col in xrange(nvar):
@@ -585,7 +585,7 @@ class System(object):
 
         self.vec['du'].array[:] = 0.0
         self.vec['df'].array[:] = 0.0
-        
+
         self.set_mode('rev', False)
         for col in xrange(nvar):
             self.vec['df'].array[col] = 1.0
@@ -620,25 +620,25 @@ class System(object):
             ie1, ie2 = ielem1[elem_name], ielem2[elem_name]
             for arg in elemsystem.arguments:
                 iv1, iv2 = ivar1[arg], ivar2[arg]
-                fwd = numpy.linalg.norm((Jac_FDD[ie1:ie2,iv1:iv2] - 
+                fwd = numpy.linalg.norm((Jac_FDD[ie1:ie2,iv1:iv2] -
                                          Jac_fwd[ie1:ie2,iv1:iv2]), numpy.inf)
-                rev = numpy.linalg.norm((Jac_FDD[ie1:ie2,iv1:iv2] - 
+                rev = numpy.linalg.norm((Jac_FDD[ie1:ie2,iv1:iv2] -
                                          Jac_rev[ie1:ie2,iv1:iv2]), numpy.inf)
-                anl = numpy.linalg.norm((Jac_fwd[ie1:ie2,iv1:iv2] - 
+                anl = numpy.linalg.norm((Jac_fwd[ie1:ie2,iv1:iv2] -
                                          Jac_rev[ie1:ie2,iv1:iv2]), numpy.inf)
 
                 print ('%' + str(14) + 's %3i %13s %17.10e %17.10e %17.10e') % \
-                    (name, copy, arg[0], fwd, rev, anl)      
+                    (name, copy, arg[0], fwd, rev, anl)
             iv1, iv2 = ivar1[(elem_name,0)], ivar2[(elem_name,0)]
-            fwd = numpy.linalg.norm(Jac_FDD[ie1:ie2,iv1:iv2] - 
+            fwd = numpy.linalg.norm(Jac_FDD[ie1:ie2,iv1:iv2] -
                                     Jac_fwd[ie1:ie2,iv1:iv2], numpy.inf)
-            rev = numpy.linalg.norm(Jac_FDD[ie1:ie2,iv1:iv2] - 
+            rev = numpy.linalg.norm(Jac_FDD[ie1:ie2,iv1:iv2] -
                                     Jac_rev[ie1:ie2,iv1:iv2], numpy.inf)
-            anl = numpy.linalg.norm(Jac_fwd[ie1:ie2,iv1:iv2] - 
+            anl = numpy.linalg.norm(Jac_fwd[ie1:ie2,iv1:iv2] -
                                     Jac_rev[ie1:ie2,iv1:iv2], numpy.inf)
 
             print ('%' + str(14) + 's %3i %13s %17.10e %17.10e %17.10e') % \
-                (name, copy, elem_name, fwd, rev, anl)  
+                (name, copy, elem_name, fwd, rev, anl)
 
     def check_derivatives(self, mode, elemsys, arguments=None):
         self.vec['df'].array[:] = 0.0
@@ -646,7 +646,7 @@ class System(object):
             sys = elemsystem.name, elemsystem.copy
             for arg in self.vec['dp'][sys]:
                 if self.variables[arg] is not None:
-                    self.vec['dp'][sys][arg][:] = 0.0    
+                    self.vec['dp'][sys][arg][:] = 0.0
 
         elemsystem = self(elemsys)
         if elemsystem is None:
@@ -882,7 +882,7 @@ class ExplicitSystem(ElementarySystem):
                 vec['du'][var][:] = vec['df'][var][:]
         elif self.mode == 'rev':
             for var in self.variables:
-                vec['df'][var][:] = vec['du'][var][:]        
+                vec['df'][var][:] = vec['du'][var][:]
 
     def apply_G(self):
         """ Must be implemented by user """
@@ -907,7 +907,7 @@ class IndVar(ExplicitSystem):
             self.size = size
 
         super(IndVar, self).__init__(name, copy, **kwargs)
-        
+
         if 'u_scal' in self.kwargs:
             self.u_scal = self.kwargs['u_scal']
         else:
@@ -919,7 +919,7 @@ class IndVar(ExplicitSystem):
 
     def _declare(self):
         """ Declares the variable """
-        self._declare_variable([self.name, self.copy], 
+        self._declare_variable([self.name, self.copy],
                                size=self.size, val=self.value,
                                u_scal=self.u_scal, f_scal=self.f_scal)
     def apply_G(self):
@@ -968,7 +968,7 @@ class CompoundSystem(System):
 
         app_ind_set = PETSc.IS().createGeneral(app_indices, comm=self.comm)
         petsc_ind_set = PETSc.IS().createGeneral(petsc_indices, comm=self.comm)
-        self.app_ordering = PETSc.AO().createBasic(app_ind_set, petsc_ind_set, 
+        self.app_ordering = PETSc.AO().createBasic(app_ind_set, petsc_ind_set,
                                                    comm=self.comm)
 
         var_full = []
@@ -1102,10 +1102,12 @@ class Solver(object):
         norm0, norm = self._initialize()
         counter = 0
         self.print_info(counter, norm/norm0, norm0=norm0)
+        print counter, norm, self._system.vec['df']
         while counter < ilimit and norm > atol and norm/norm0 > rtol:
             self._operation()
             norm = self._norm()
             counter += 1
+            print counter, norm, self._system.vec['df']
             self.print_info(counter, norm/norm0, norm0=norm)
             #self.print_info(counter, norm, norm0=norm0)
         success = not (norm > atol and norm/norm0 > rtol)
@@ -1294,7 +1296,7 @@ class KSP(LinearSolver):
 
         lsize = numpy.sum(system.var_sizes[system.comm.rank, :])
         size = numpy.sum(system.var_sizes)
-        jac_mat = PETSc.Mat().createPython([(lsize, size), (lsize, size)], 
+        jac_mat = PETSc.Mat().createPython([(lsize, size), (lsize, size)],
                                            comm=system.comm)
         jac_mat.setPythonContext(self)
         jac_mat.setUp()
@@ -1305,7 +1307,7 @@ class KSP(LinearSolver):
         self.ksp.setGMRESRestart(1000)
         self.ksp.setPCSide(PETSc.PC.Side.RIGHT)
         self.ksp.setMonitor(self.Monitor(self))
-            
+
         pc_mat = self.ksp.getPC()
         pc_mat.setType('python')
         pc_mat.setPythonContext(self)
@@ -1328,6 +1330,7 @@ class KSP(LinearSolver):
             rhs_buf.array[:] = system.rhs_vec.array[:]
             self.ksp.solve(rhs_buf, sol_buf)
             system.sol_vec.array[:] = sol_buf.array[:]
+            print "Newton solution", system.sol_vec.array
 
         #system.rhs_vec.array[:] = system.sol_vec.array[:]
         #system.solve_precon()
@@ -1367,7 +1370,7 @@ class LinearJacobi(LinearSolver):
         if system.mode == 'fwd':
             system.scatter('lin')
         for subsystem in system.subsystems['local']:
-            args = [v for v in system.variables 
+            args = [v for v in system.variables
                     if v not in subsystem.variables]
             subsystem.rhs_vec.array[:] = 0.0
             subsystem.apply_dFdpu(args)
@@ -1386,7 +1389,7 @@ class LinearJacobi(LinearSolver):
         if system.mode == 'fwd':
             system.scatter('lin')
             for subsystem in system.subsystems['local']:
-                args = [v for v in system.variables 
+                args = [v for v in system.variables
                         if v not in subsystem.variables]
                 subsystem.apply_dFdpu(args)
 
@@ -1397,7 +1400,7 @@ class LinearJacobi(LinearSolver):
         elif system.mode == 'rev':
             system.sol_buf.array[:] = system.rhs_buf.array[:]
             for subsystem in system.subsystems['local']:
-                args = [v for v in system.variables 
+                args = [v for v in system.variables
                         if v not in subsystem.variables]
                 system.rhs_vec.array[:] = 0.0
                 subsystem.apply_dFdpu(args)
@@ -1421,7 +1424,7 @@ class LinearGS(LinearSolver):
         if system.mode == 'fwd':
             for subsystem in system.subsystems['local']:
                 system.scatter('lin', subsystem)
-                args = [v for v in system.variables 
+                args = [v for v in system.variables
                         if v not in subsystem.variables]
                 system.rhs_vec.array[:] = 0.0
 
@@ -1437,7 +1440,7 @@ class LinearGS(LinearSolver):
                 system.sol_buf.array[:] = system.rhs_buf.array[:]
                 for subsystem2 in system.subsystems['local']:
                     if subsystem is not subsystem2:
-                        args = [v for v in system.variables 
+                        args = [v for v in system.variables
                                 if v not in subsystem2.variables]
                         system.rhs_vec.array[:] = 0.0
                         subsystem2.apply_dFdpu(args)
@@ -1445,6 +1448,6 @@ class LinearGS(LinearSolver):
                         system.sol_buf.array[:] -= system.rhs_vec.array[:]
                 system.rhs_vec.array[:] = system.sol_buf.array[:]
                 subsystem.solve_dFdu()
-                
+
             system.subsystems['local'].reverse()
-            
+
