@@ -103,12 +103,6 @@ class Discipline2(ExplicitSystem):
 main = SerialSystem('main',
                     NL='NEWTON',
                     LN='LIN_GS',
-                    LN_ilimit=100,
-                    NL_ilimit=100,
-                    NL_rtol=1e-6,
-                    NL_atol=1e-10,
-                    LN_rtol=1e-6,
-                    LN_atol=1e-10,
                     output=True,
                     subsystems=[
     IndVar('z1', val=5.0),
