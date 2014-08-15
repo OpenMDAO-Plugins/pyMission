@@ -141,7 +141,7 @@ class SysTemp(Component):
 
         dtemp_dalt = -6.5e-3
 
-        result['h'] = dtemp_dalt * arg['temp'] * 1e3/1e2
+        result['h'] += dtemp_dalt * arg['temp'] * 1e3/1e2
 
 
 class SysRho(Component):

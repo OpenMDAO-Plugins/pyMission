@@ -67,14 +67,12 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         #wflow.check_gradient(inputs=inputs, outputs=outputs, mode='adjoint')
 
         # Numeric
-        wflow.config_changed()
         Jn = wflow.calc_gradient(inputs=inputs,
                                  outputs=outputs,
                                  mode="fd")
         #print Jn
 
         # Analytic forward
-        wflow.config_changed()
         Jf = wflow.calc_gradient(inputs=inputs,
                                  outputs=outputs,
                                  mode='forward')
@@ -89,7 +87,6 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         assert_rel_error(self, diff.max(), 0.0, 1e-3)
 
         # Analytic adjoint
-        wflow.config_changed()
         Ja = wflow.calc_gradient(inputs=inputs,
                                  outputs=outputs,
                                  mode='adjoint')
@@ -108,7 +105,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         compname = 'SysAeroSurrogate'
         self.setup(compname, self.arg_dict)
         self.run_model()
-        self.compare_derivatives()
+        self.compare_derivatives(rel_error=True)
 
     def test_SysCM(self):
 
