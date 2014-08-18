@@ -107,20 +107,18 @@ class MissionSegment(Assembly):
         self.driver.workflow.add(['SysSFC', 'SysTemp', 'SysRho', 'SysSpeed'])
 
 
-        # Weight
-        self.add('SysFuelWeight', SysFuelWeight(num_elem=self.num_elem))
-        self.SysFuelWeight.fuel_w = np.linspace(1.0, 0.0, self.num_elem+1)
+        # --------------------------
+        # Coupled System begins here
+        # --------------------------
 
-        self.connect('S', 'SysFuelWeight.S')
-        self.connect('SysRho.rho', 'SysFuelWeight.rho')
-        self.connect('SysXBspline.x', 'SysFuelWeight.x')
-        self.connect('SysGammaBspline.Gamma', 'SysFuelWeight.Gamma')
-        self.connect('SysSpeed.v', 'SysFuelWeight.v')
-        self.connect('SysSFC.SFC', 'SysFuelWeight.SFC')
+        # Vertical Equilibrium
+        self.add('SysCLTar', SysCLTar(num_elem=self.num_elem))
 
-
-        # Moment Equilibrium
-        self.add('SysCM', SysCM(num_elem=self.num_elem))
+        self.connect('S', 'SysCLTar.S')
+        self.connect('ac_w', 'SysCLTar.ac_w')
+        self.connect('SysRho.rho', 'SysCLTar.rho')
+        self.connect('SysGammaBspline.Gamma', 'SysCLTar.Gamma')
+        self.connect('SysSpeed.v', 'SysCLTar.v')
 
 
         # Drag
@@ -128,7 +126,6 @@ class MissionSegment(Assembly):
 
         self.connect('AR', 'SysAeroSurrogate.AR')
         self.connect('oswald', 'SysAeroSurrogate.oswald')
-        self.connect('SysCM.eta', 'SysAeroSurrogate.eta')
 
 
         # Horizontal Equilibrium
@@ -140,49 +137,56 @@ class MissionSegment(Assembly):
         self.connect('SysGammaBspline.Gamma', 'SysCTTar.Gamma')
         self.connect('SysSpeed.v', 'SysCTTar.v')
         self.connect('SysAeroSurrogate.CD', 'SysCTTar.CD')
-        self.connect('SysFuelWeight.fuel_w', 'SysCTTar.fuel_w')
+        self.connect('SysAeroSurrogate.alpha', 'SysCTTar.alpha')
 
 
-        # Vertical Equilibrium
-        self.add('SysCLTar', SysCLTar(num_elem=self.num_elem))
-
-        self.connect('S', 'SysCLTar.S')
-        self.connect('ac_w', 'SysCLTar.ac_w')
-        self.connect('SysRho.rho', 'SysCLTar.rho')
-        self.connect('SysGammaBspline.Gamma', 'SysCLTar.Gamma')
-        self.connect('SysSpeed.v', 'SysCLTar.v')
-        self.connect('SysCTTar.CT_tar', 'SysCLTar.CT_tar')
-        self.connect('SysFuelWeight.fuel_w', 'SysCLTar.fuel_w')
+        # Moment Equilibrium
+        self.add('SysCM', SysCM(num_elem=self.num_elem))
+        self.connect('SysAeroSurrogate.alpha', 'SysCM.alpha')
+        #self.SysCM.eval_only = False
 
 
-          # Coupled Analysis - Gauss Siedel for outer loop
-        self.add('coupled_solver', FixedPointIterator())
+        # Weight
+        self.add('SysFuelWeight', SysFuelWeight(num_elem=self.num_elem))
+        self.SysFuelWeight.fuel_w = np.linspace(1.0, 0.0, self.num_elem+1)
 
-        #self.coupled_solver.add_parameter(('SysCLTar.alpha', 'SysCM.alpha',
-        #                                   'SysAeroSurrogate.alpha', 'SysCTTar.alpha'))
-
-        #self.coupled_solver.add_parameter('SysFuelWeight.CT_tar')
-
-        #self.coupled_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
-        #self.coupled_solver.add_constraint('SysFuelWeight.CT_tar = SysCTTar.CT_tar')
-
-        self.coupled_solver.iprint = 1
-        self.driver.workflow.add(['coupled_solver'])
+        self.connect('S', 'SysFuelWeight.S')
+        self.connect('SysRho.rho', 'SysFuelWeight.rho')
+        self.connect('SysXBspline.x', 'SysFuelWeight.x')
+        self.connect('SysGammaBspline.Gamma', 'SysFuelWeight.Gamma')
+        self.connect('SysSpeed.v', 'SysFuelWeight.v')
+        self.connect('SysSFC.SFC', 'SysFuelWeight.SFC')
+        self.connect('SysCTTar.CT_tar', 'SysFuelWeight.CT_tar')
 
 
         # Drag subsystem - Newton for inner loop
         self.add('drag_solver', NewtonSolver())
-        self.coupled_solver.add_parameter(('SysAeroSurrogate.alpha'))
+        self.drag_solver.add_parameter(('SysAeroSurrogate.alpha'))
+        self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
         self.drag_solver.workflow.add(['SysAeroSurrogate'])
 
         self.drag_solver.iprint = 1
-        self.coupled_solver.workflow.add(['coupled_solver'])
 
 
-        # Connections
-        self.connect('SysAeroSurrogate.alpha', 'SysCLTar.alpha')
-        self.connect('SysAeroSurrogate.alpha', 'SysCM.alpha')
-        self.connect('SysAeroSurrogate.alpha', 'SysCTTar.alpha')
+        # Coupled Analysis - Gauss Siedel for outer loop
+        #self.add('coupled_solver', FixedPointIterator())
+        self.add('coupled_solver', NewtonSolver())
+        #self.coupled_solver.tolerance = 1e-10
+
+        self.coupled_solver.add_parameter('SysCLTar.CT_tar')
+        self.coupled_solver.add_parameter('SysCLTar.fuel_w')
+        self.coupled_solver.add_parameter('SysCLTar.alpha')
+        self.coupled_solver.add_parameter('SysAeroSurrogate.eta')
+        self.coupled_solver.add_parameter('SysCTTar.fuel_w')
+        self.coupled_solver.add_constraint('SysCLTar.CT_tar = SysCTTar.CT_tar')
+        self.coupled_solver.add_constraint('SysCLTar.fuel_w = SysFuelWeight.fuel_w')
+        self.coupled_solver.add_constraint('SysCLTar.alpha = SysAeroSurrogate.alpha')
+        self.coupled_solver.add_constraint('SysAeroSurrogate.eta = SysCM.eta')
+        self.coupled_solver.add_constraint('SysCTTar.fuel_w = SysFuelWeight.fuel_w')
+
+        self.coupled_solver.iprint = 1
+        self.driver.workflow.add(['coupled_solver'])
+        self.coupled_solver.workflow.add(['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
 
 
         # Functionals (i.e., components downstream of the coupled system.)
