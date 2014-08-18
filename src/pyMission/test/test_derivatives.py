@@ -112,6 +112,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         compname = 'SysCM'
         self.setup(compname, self.arg_dict)
         self.model.comp.eval_only = True
+        self.model.comp._run_explicit = True
         self.run_model()
         self.compare_derivatives()
 
