@@ -16,7 +16,7 @@ copyright July 2014
 # pylint: disable=E1101
 import numpy as np
 
-from openmdao.lib.drivers.api import NewtonSolver
+from openmdao.lib.drivers.api import NewtonSolver, FixedPointIterator
 from openmdao.main.api import Assembly, set_as_top
 from openmdao.main.datatypes.api import Array, Float
 
@@ -155,18 +155,34 @@ class MissionSegment(Assembly):
         self.connect('SysFuelWeight.fuel_w', 'SysCLTar.fuel_w')
 
 
-          # Coupled Analysis
-        self.add('coupled_solver', NewtonSolver())
+          # Coupled Analysis - Gauss Siedel for outer loop
+        self.add('coupled_solver', FixedPointIterator())
 
-        self.coupled_solver.add_parameter(('SysCLTar.alpha', 'SysCM.alpha',
-                                           'SysAeroSurrogate.alpha', 'SysCTTar.alpha'))
-        self.coupled_solver.add_parameter('SysFuelWeight.CT_tar')
+        #self.coupled_solver.add_parameter(('SysCLTar.alpha', 'SysCM.alpha',
+        #                                   'SysAeroSurrogate.alpha', 'SysCTTar.alpha'))
 
-        self.coupled_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
-        self.coupled_solver.add_constraint('SysFuelWeight.CT_tar = SysCTTar.CT_tar')
+        #self.coupled_solver.add_parameter('SysFuelWeight.CT_tar')
+
+        #self.coupled_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
+        #self.coupled_solver.add_constraint('SysFuelWeight.CT_tar = SysCTTar.CT_tar')
 
         self.coupled_solver.iprint = 1
         self.driver.workflow.add(['coupled_solver'])
+
+
+        # Drag subsystem - Newton for inner loop
+        self.add('drag_solver', NewtonSolver())
+        self.coupled_solver.add_parameter(('SysAeroSurrogate.alpha'))
+        self.drag_solver.workflow.add(['SysAeroSurrogate'])
+
+        self.drag_solver.iprint = 1
+        self.coupled_solver.workflow.add(['coupled_solver'])
+
+
+        # Connections
+        self.connect('SysAeroSurrogate.alpha', 'SysCLTar.alpha')
+        self.connect('SysAeroSurrogate.alpha', 'SysCM.alpha')
+        self.connect('SysAeroSurrogate.alpha', 'SysCTTar.alpha')
 
 
         # Functionals (i.e., components downstream of the coupled system.)
