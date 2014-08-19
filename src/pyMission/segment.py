@@ -16,7 +16,7 @@ copyright July 2014
 # pylint: disable=E1101
 import numpy as np
 
-from openmdao.lib.drivers.api import NewtonSolver, FixedPointIterator
+from openmdao.lib.drivers.api import NewtonSolver, FixedPointIterator, BroydenSolver
 from openmdao.main.api import Assembly, set_as_top
 from openmdao.main.datatypes.api import Array, Float
 
@@ -143,7 +143,7 @@ class MissionSegment(Assembly):
         # Moment Equilibrium
         self.add('SysCM', SysCM(num_elem=self.num_elem))
         self.connect('SysAeroSurrogate.alpha', 'SysCM.alpha')
-        #self.SysCM.eval_only = False
+        self.SysCM.eval_only = True
 
 
         # Weight
@@ -170,7 +170,7 @@ class MissionSegment(Assembly):
 
         # Coupled Analysis - Gauss Siedel for outer loop
         #self.add('coupled_solver', FixedPointIterator())
-        self.add('coupled_solver', NewtonSolver())
+        self.add('coupled_solver', BroydenSolver())
         #self.coupled_solver.tolerance = 1e-10
 
         self.coupled_solver.add_parameter('SysCLTar.CT_tar')
@@ -183,6 +183,10 @@ class MissionSegment(Assembly):
         self.coupled_solver.add_constraint('SysCLTar.alpha = SysAeroSurrogate.alpha')
         self.coupled_solver.add_constraint('SysAeroSurrogate.eta = SysCM.eta')
         self.coupled_solver.add_constraint('SysCTTar.fuel_w = SysFuelWeight.fuel_w')
+
+        # (Only non-GS pair)
+        self.coupled_solver.add_parameter('SysCM.eta')
+        self.coupled_solver.add_constraint('SysCM.eta_res = 0')
 
         self.coupled_solver.iprint = 1
         self.driver.workflow.add(['coupled_solver'])
