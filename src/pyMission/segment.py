@@ -52,7 +52,7 @@ class MissionSegment(Assembly):
         super(MissionSegment, self).__init__()
 
     def configure(self):
-        """ set it all up. """
+        """ Set it all up. """
 
         # Place all design variables on the boundary.
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
