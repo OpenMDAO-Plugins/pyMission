@@ -228,7 +228,7 @@ class MissionSegment(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 100
+    num_elem = 10000
     num_cp = 30
     x_range = 150.0
 
@@ -252,10 +252,20 @@ if __name__ == "__main__":
     model.AR = 8.68
     model.oswald = 0.8
 
-    model.run()
-
-    from time import time
-    t1 = time()
-    model.run()
-    print "Elapsed time:", time()-t1
-
+    #from time import time
+    #t1 = time()
+    #model.run()
+    #print "Elapsed time:", time()-t1
+    #exit()
+    import cProfile
+    import pstats
+    import sys
+    cProfile.run('model.run()', 'profout')
+    p = pstats.Stats('profout')
+    p.strip_dirs()
+    p.sort_stats('time')
+    p.print_stats()
+    print '\n\n---------------------\n\n'
+    p.print_callers()
+    print '\n\n---------------------\n\n'
+    p.print_callees()
