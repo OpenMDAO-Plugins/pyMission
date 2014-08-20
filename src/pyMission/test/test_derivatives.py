@@ -107,13 +107,13 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         self.run_model()
         self.compare_derivatives(rel_error=True)
 
-    def test_SysCM(self):
+    def test_AAASysCM(self):
 
         compname = 'SysCM'
         self.setup(compname, self.arg_dict)
         self.model.comp.eval_only = True
-        self.model.comp._run_explicit = True
         self.run_model()
+        self.model.comp._run_explicit = True
         self.compare_derivatives()
 
     def test_SysCLTar(self):

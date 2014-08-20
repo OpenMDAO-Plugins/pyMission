@@ -161,16 +161,22 @@ class MissionSegment(Assembly):
 
         # Drag subsystem - Newton for inner loop
         self.add('drag_solver', NewtonSolver())
+        #self.add('drag_solver', BroydenSolver())
         self.drag_solver.add_parameter(('SysAeroSurrogate.alpha'))
-        self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
+        #self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
+        self.drag_solver.add_constraint('SysCLTar.CL = SysAeroSurrogate.CL')
         self.drag_solver.workflow.add(['SysAeroSurrogate'])
 
         self.drag_solver.iprint = 1
+        self.drag_solver.atol = 1e-10
+        self.drag_solver.rtol = 1e-10
+        self.drag_solver.max_iteration = 15
 
 
         # Coupled Analysis - Gauss Siedel for outer loop
         #self.add('coupled_solver', FixedPointIterator())
         self.add('coupled_solver', BroydenSolver())
+        #self.add('coupled_solver', NewtonSolver())
         #self.coupled_solver.tolerance = 1e-10
 
         self.coupled_solver.add_parameter('SysCLTar.CT_tar')
@@ -214,6 +220,8 @@ if __name__ == "__main__":
 
     num_elem = 100
     num_cp = 30
+    num_elem = 2
+    num_cp = 2
     x_range = 150.0
 
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
@@ -236,7 +244,10 @@ if __name__ == "__main__":
     model.AR = 8.68
     model.oswald = 0.8
 
-    from time import time
-    t1 = time()
     model.run()
-    print "Elapsed time:", time()-t1
+
+    #from time import time
+    #t1 = time()
+    #model.run()
+    #print "Elapsed time:", time()-t1
+
