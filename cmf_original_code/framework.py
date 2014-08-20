@@ -1107,7 +1107,7 @@ class Solver(object):
             self._operation()
             norm = self._norm()
             counter += 1
-            print 'norm', counter, norm, self._system.vec['df']
+            print self.__class__, 'norm', counter, norm, self._system.vec['df']
             self.print_info(counter, norm/norm0, norm0=norm)
             #self.print_info(counter, norm, norm0=norm0)
         success = not (norm > atol and norm/norm0 > rtol)
@@ -1351,6 +1351,8 @@ class KSP(LinearSolver):
 
         system.apply_dFdpu(system.variables.keys())
         rhs_vec.array[:] = system.rhs_vec.array[:]
+        print "sol_vec", sol_vec.array[:]
+        print "rhs_vec", rhs_vec.array[:]
 
     def apply(self, mat, sol_vec, rhs_vec):
         """ Applies preconditioner """

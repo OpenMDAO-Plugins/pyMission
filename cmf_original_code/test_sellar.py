@@ -102,7 +102,7 @@ class Discipline2(ExplicitSystem):
 
 main = SerialSystem('main',
                     NL='NEWTON',
-                    LN='LIN_GS',
+                    LN='KSP_PC',
                     output=True,
                     subsystems=[
     IndVar('z1', val=5.0),

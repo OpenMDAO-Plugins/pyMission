@@ -161,10 +161,8 @@ class MissionSegment(Assembly):
 
         # Drag subsystem - Newton for inner loop
         self.add('drag_solver', NewtonSolver())
-        #self.add('drag_solver', BroydenSolver())
         self.drag_solver.add_parameter(('SysAeroSurrogate.alpha'))
-        #self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
-        self.drag_solver.add_constraint('SysCLTar.CL = SysAeroSurrogate.CL')
+        self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
         self.drag_solver.workflow.add(['SysAeroSurrogate'])
 
         self.drag_solver.iprint = 1
@@ -175,8 +173,8 @@ class MissionSegment(Assembly):
 
         # Coupled Analysis - Gauss Siedel for outer loop
         #self.add('coupled_solver', FixedPointIterator())
-        self.add('coupled_solver', BroydenSolver())
-        #self.add('coupled_solver', NewtonSolver())
+        #self.add('coupled_solver', BroydenSolver())
+        self.add('coupled_solver', NewtonSolver())
         #self.coupled_solver.tolerance = 1e-10
 
         self.coupled_solver.add_parameter('SysCLTar.CT_tar')
