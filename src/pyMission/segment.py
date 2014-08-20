@@ -196,8 +196,8 @@ class MissionSegment(Assembly):
         self.coupled_solver.add_parameter('SysCM.eta')
         self.coupled_solver.add_constraint('SysCM.eta_res = 0')
 
-        self.coupled_solver.atol = 1e-10
-        self.coupled_solver.rtol = 1e-10
+        self.coupled_solver.atol = 1e-14
+        self.coupled_solver.rtol = 1e-14
         self.coupled_solver.gradient_options.gmres_tolerance = 1e-14
 
         self.coupled_solver.iprint = 1
@@ -230,8 +230,6 @@ if __name__ == "__main__":
 
     num_elem = 100
     num_cp = 30
-    num_elem = 2
-    num_cp = 2
     x_range = 150.0
 
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
