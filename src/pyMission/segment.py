@@ -169,6 +169,7 @@ class MissionSegment(Assembly):
         self.drag_solver.atol = 1e-10
         self.drag_solver.rtol = 1e-10
         self.drag_solver.max_iteration = 15
+        self.drag_solver.gradient_options.gmres_tolerance = 1e-10
 
 
         # Coupled Analysis - Gauss Siedel for outer loop
@@ -191,6 +192,8 @@ class MissionSegment(Assembly):
         # (Only non-GS pair)
         self.coupled_solver.add_parameter('SysCM.eta')
         self.coupled_solver.add_constraint('SysCM.eta_res = 0')
+
+        self.coupled_solver.gradient_options.gmres_tolerance = 1e-10
 
         self.coupled_solver.iprint = 1
         self.driver.workflow.add(['coupled_solver'])
@@ -244,8 +247,8 @@ if __name__ == "__main__":
 
     model.run()
 
-    #from time import time
-    #t1 = time()
-    #model.run()
-    #print "Elapsed time:", time()-t1
+    from time import time
+    t1 = time()
+    model.run()
+    print "Elapsed time:", time()-t1
 

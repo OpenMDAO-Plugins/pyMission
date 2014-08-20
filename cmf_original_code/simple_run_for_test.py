@@ -37,6 +37,7 @@ traj.set_init_v(v_init)
 traj.set_init_x(x_init)
 traj.set_params(params)
 traj.set_folder_name('.')
+traj.setup_MBI()
 main = traj.initialize_framework()
 
 from time import time
@@ -46,7 +47,7 @@ print "Elapsed time:", time()-t1
 
 print 'done'
 
-#exit()
+exit()
 
 keys = main.vec['u'].keys()
 data = {}

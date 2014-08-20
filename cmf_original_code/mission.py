@@ -3,7 +3,7 @@ import numpy
 import copy
 import os
 from framework import *
-from optimization import *
+#from optimization import *
 from bsplines import *
 from atmospherics import *
 from coupled_analysis import *
@@ -19,7 +19,7 @@ from history import *
 
 class GlobalizedSystem(SerialSystem):
     ''' doc string '''
-    
+
     def solve_F(self):
         """ Solve f for u, p |-> u """
 
@@ -136,7 +136,7 @@ class OptTrajectory(object):
 
         alt = numpy.linspace(0, 16, num_pts)
         x_dist = numpy.linspace(0, self.x_pts[-1], num_pts)/1e6
-        
+
         arr = MBI.MBI(alt, [x_dist], [num_cp], [4])
         jac = arr.getJacobian(0, 0)
         jacd = arr.getJacobian(1, 0)
@@ -374,4 +374,4 @@ class OptTrajectory(object):
         opt.add_constraint('gamma', lower=gamma_lb, upper=gamma_ub,
                            get_jacs=main('gamma').get_jacs, linear=True)
         return opt
-        
+

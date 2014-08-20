@@ -1107,7 +1107,7 @@ class Solver(object):
             self._operation()
             norm = self._norm()
             counter += 1
-            print self.__class__, 'norm', counter, norm, self._system.vec['df']
+            #print self.__class__, 'norm', counter, norm, self._system.vec['df']
             self.print_info(counter, norm/norm0, norm0=norm)
             #self.print_info(counter, norm, norm0=norm0)
         success = not (norm > atol and norm/norm0 > rtol)
@@ -1164,9 +1164,9 @@ class Newton(NonlinearSolver):
         system.vec['df'].array[:] = -system.vec['f'].array[:]
         system.linearize()
         system.solve_dFdu()
-        print "begin line search"
+        #print "begin line search"
         system.solve_line_search()
-        print "end line search"
+        #print "end line search"
 
 
 class Backtracking(NonlinearSolver):
@@ -1199,7 +1199,7 @@ class Backtracking(NonlinearSolver):
         if norm0 == 0.0:
             norm0 = 1.0
         system.vec['u'].array[:] += self.alpha * system.vec['du'].array[:]
-        print 'init', self.alpha
+        #print 'init', self.alpha
         norm = self._norm()
         return norm0, norm
 
@@ -1210,7 +1210,7 @@ class Backtracking(NonlinearSolver):
         self.alpha /= 2.0
         system.vec['u'].array[:] += self.alpha * system.vec['du'].array[:]
         self.info = self.alpha
-        print 'oper', self.alpha
+        #print 'oper', self.alpha
 
 
 class NonlinearJacobi(NonlinearSolver):
@@ -1334,7 +1334,7 @@ class KSP(LinearSolver):
             rhs_buf.array[:] = system.rhs_vec.array[:]
             self.ksp.solve(rhs_buf, sol_buf)
             system.sol_vec.array[:] = sol_buf.array[:]
-            print "Newton solution", system.sol_vec.array
+            #print "Newton solution", system.sol_vec.array
 
         #system.rhs_vec.array[:] = system.sol_vec.array[:]
         #system.solve_precon()
@@ -1351,8 +1351,8 @@ class KSP(LinearSolver):
 
         system.apply_dFdpu(system.variables.keys())
         rhs_vec.array[:] = system.rhs_vec.array[:]
-        print "sol_vec", sol_vec.array[:]
-        print "rhs_vec", rhs_vec.array[:]
+        #print "sol_vec", sol_vec.array[:]
+        #print "rhs_vec", rhs_vec.array[:]
 
     def apply(self, mat, sol_vec, rhs_vec):
         """ Applies preconditioner """
