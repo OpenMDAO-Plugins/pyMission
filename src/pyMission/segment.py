@@ -107,9 +107,9 @@ class MissionSegment(Assembly):
         self.driver.workflow.add(['SysSFC', 'SysTemp', 'SysRho', 'SysSpeed'])
 
 
-        # --------------------------
-        # Coupled System begins here
-        # --------------------------
+        # -----------------------------------
+        # Comps for Coupled System begin here
+        # -----------------------------------
 
         # Vertical Equilibrium
         self.add('SysCLTar', SysCLTar(num_elem=self.num_elem))
@@ -159,7 +159,10 @@ class MissionSegment(Assembly):
         self.connect('SysCTTar.CT_tar', 'SysFuelWeight.CT_tar')
 
 
+        # ----------------------------------------
         # Drag subsystem - Newton for inner loop
+        # ----------------------------------------
+
         self.add('drag_solver', NewtonSolver())
         self.drag_solver.add_parameter(('SysAeroSurrogate.alpha'))
         self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
@@ -172,11 +175,11 @@ class MissionSegment(Assembly):
         self.drag_solver.gradient_options.gmres_tolerance = 1e-10
 
 
+        # ------------------------------------------------
         # Coupled Analysis - Gauss Siedel for outer loop
-        #self.add('coupled_solver', FixedPointIterator())
-        #self.add('coupled_solver', BroydenSolver())
+        # -----------------------------------------------
+
         self.add('coupled_solver', NewtonSolver())
-        #self.coupled_solver.tolerance = 1e-10
 
         self.coupled_solver.add_parameter('SysCLTar.CT_tar')
         self.coupled_solver.add_parameter('SysCLTar.fuel_w')
@@ -193,12 +196,18 @@ class MissionSegment(Assembly):
         self.coupled_solver.add_parameter('SysCM.eta')
         self.coupled_solver.add_constraint('SysCM.eta_res = 0')
 
-        self.coupled_solver.gradient_options.gmres_tolerance = 1e-10
+        self.coupled_solver.atol = 1e-10
+        self.coupled_solver.rtol = 1e-10
+        self.coupled_solver.gradient_options.gmres_tolerance = 1e-14
 
         self.coupled_solver.iprint = 1
         self.driver.workflow.add(['coupled_solver'])
         self.coupled_solver.workflow.add(['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
 
+
+        # --------------------
+        # Downstream of solver
+        # --------------------
 
         # Functionals (i.e., components downstream of the coupled system.)
         self.add('SysTau', SysTau(num_elem=self.num_elem))
