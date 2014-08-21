@@ -5,6 +5,7 @@ import random
 import warnings
 
 from openmdao.main.api import Assembly, set_as_top
+from openmdao.main.test.test_derivatives import SimpleDriver
 from openmdao.util.testutil import assert_rel_error
 
 from pyMission.aerodynamics import SysAeroSurrogate, SysCM
@@ -112,9 +113,12 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         compname = 'SysCM'
         self.setup(compname, self.arg_dict)
         self.model.comp.eval_only = True
-        self.run_model()
         self.model.comp._run_explicit = True
-        self.compare_derivatives()
+        self.model.add('driver', SimpleDriver())
+        self.model.driver.add_parameter('comp.eta', low=-999, high=999)
+        self.model.driver.add_constraint('comp.eta_res = 0')
+        self.run_model()
+        self.compare_derivatives(rel_error=True)
 
     def test_SysCLTar(self):
 
