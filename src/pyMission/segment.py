@@ -54,7 +54,7 @@ class MissionSegment(Assembly):
     def configure(self):
         """ Set it all up. """
 
-        # Place all design variables on the boundary.
+        # Place all design variables on the Assembly boundary.
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
         self.add('ac_w', Float(0.0, iotype='in',
                                desc = 'Weight of aircraft + payload'))
@@ -176,7 +176,8 @@ class MissionSegment(Assembly):
 
 
         # ------------------------------------------------
-        # Coupled Analysis - Gauss Siedel for outer loop
+        # Coupled Analysis - Newton for outer loop
+        # TODO: replace with GS/Newton cascaded solvers when working
         # -----------------------------------------------
 
         self.add('coupled_solver', NewtonSolver())
@@ -228,7 +229,7 @@ class MissionSegment(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 40000
+    num_elem = 100
     num_cp = 30
     x_range = 150.0
 
@@ -252,20 +253,23 @@ if __name__ == "__main__":
     model.AR = 8.68
     model.oswald = 0.8
 
-    from time import time
-    t1 = time()
-    model.run()
-    print "Elapsed time:", time()-t1
-    exit()
-    import cProfile
-    import pstats
-    import sys
-    cProfile.run('model.run()', 'profout')
-    p = pstats.Stats('profout')
-    p.strip_dirs()
-    p.sort_stats('time')
-    p.print_stats()
-    print '\n\n---------------------\n\n'
-    p.print_callers()
-    print '\n\n---------------------\n\n'
-    p.print_callees()
+    profile = False
+
+    if profile is False:
+        from time import time
+        t1 = time()
+        model.run()
+        print "Elapsed time:", time()-t1
+    else:
+        import cProfile
+        import pstats
+        import sys
+        cProfile.run('model.run()', 'profout')
+        p = pstats.Stats('profout')
+        p.strip_dirs()
+        p.sort_stats('time')
+        p.print_stats()
+        print '\n\n---------------------\n\n'
+        p.print_callers()
+        print '\n\n---------------------\n\n'
+        p.print_callees()
