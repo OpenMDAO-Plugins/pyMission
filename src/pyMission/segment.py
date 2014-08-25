@@ -86,8 +86,6 @@ class MissionSegment(Assembly):
                                             num_pt=self.num_pt))
         self.SysGammaBspline.x_init = self.x_pts
 
-        self.driver.workflow.add(['SysXBspline', 'SysHBspline',
-                                  'SysMVBspline', 'SysGammaBspline'])
 
 
         # Atmospherics
@@ -103,8 +101,6 @@ class MissionSegment(Assembly):
         self.connect('SysTemp.temp', 'SysSpeed.temp')
         self.connect('SysMVBspline.M', 'SysSpeed.M')
         self.connect('SysMVBspline.v_spline', 'SysSpeed.v_spline')
-
-        self.driver.workflow.add(['SysSFC', 'SysTemp', 'SysRho', 'SysSpeed'])
 
 
         # -----------------------------------
@@ -166,7 +162,6 @@ class MissionSegment(Assembly):
         self.add('drag_solver', NewtonSolver())
         self.drag_solver.add_parameter(('SysAeroSurrogate.alpha'))
         self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
-        self.drag_solver.workflow.add(['SysAeroSurrogate'])
 
         self.drag_solver.iprint = 1
         self.drag_solver.atol = 1e-10
@@ -202,8 +197,6 @@ class MissionSegment(Assembly):
         self.coupled_solver.gradient_options.gmres_tolerance = 1e-14
 
         self.coupled_solver.iprint = 1
-        self.driver.workflow.add(['coupled_solver'])
-        self.coupled_solver.workflow.add(['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
 
 
         # --------------------
@@ -219,13 +212,25 @@ class MissionSegment(Assembly):
         self.connect('SysCTTar.CT_tar', 'SysTau.CT_tar')
         self.connect('SysHBspline.h', 'SysTau.h')
         self.connect('SysSpeed.v', 'SysTau.v')
-        self.driver.workflow.add(['SysTau'])
 
 
         # Promote useful variables to the boundary.
         self.create_passthrough('SysHBspline.h_pt')
         self.connect('h_pt', 'SysGammaBspline.h_pt')
         self.create_passthrough('SysMVBspline.v_pt')
+
+        #-------------------------
+        # Iteration Hieararchy
+        #-------------------------
+        self.driver.workflow.add(['SysXBspline', 'SysHBspline',
+                                  'SysMVBspline', 'SysGammaBspline',
+                                  'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
+                                  'coupled_solver'
+                                  'SysTau'])
+        self.coupled_solver.workflow.add(['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
+        self.drag_solver.workflow.add(['SysAeroSurrogate'])
+
+
 
 if __name__ == "__main__":
 
