@@ -225,7 +225,7 @@ class MissionSegment(Assembly):
         self.driver.workflow.add(['SysXBspline', 'SysHBspline',
                                   'SysMVBspline', 'SysGammaBspline',
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
-                                  'coupled_solver'
+                                  'coupled_solver',
                                   'SysTau'])
         self.coupled_solver.workflow.add(['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
         self.drag_solver.workflow.add(['SysAeroSurrogate'])
