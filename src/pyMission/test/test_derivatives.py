@@ -13,6 +13,8 @@ from pyMission.atmospherics import SysSFC, SysTemp, SysRho, SysSpeed
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
+from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
+                                  SysFuelObj, SysHi, SysHf
 from pyMission.propulsion import SysTau
 
 
@@ -108,7 +110,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         self.run_model()
         self.compare_derivatives(rel_error=True)
 
-    def test_AAASysCM(self):
+    def test_SysCM(self):
 
         compname = 'SysCM'
         self.setup(compname, self.arg_dict)
@@ -219,6 +221,58 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         self.setup(compname, self.arg_dict)
         self.run_model()
         self.compare_derivatives()
+
+    def test_SysTmin(self):
+
+        compname = 'SysTmin'
+        self.setup(compname, self.arg_dict)
+        self.model.comp.tau = self.model.comp.tau/1000
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysTmax(self):
+
+        compname = 'SysTmax'
+        self.setup(compname, self.arg_dict)
+        self.model.comp.tau = self.model.comp.tau/1000
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysSlopeMin(self):
+
+        compname = 'SysSlopeMin'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysSlopeMax(self):
+
+        compname = 'SysSlopeMax'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysFuelObj(self):
+
+        compname = 'SysFuelObj'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysHi(self):
+
+        compname = 'SysHi'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysHf(self):
+
+        compname = 'SysHf'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
 
 if __name__ == "__main__":
 

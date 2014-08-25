@@ -16,7 +16,7 @@ params = {
     'e': 0.8,
     }
 
-num_elem = 40000
+num_elem = 100
 num_cp = 30
 x_range = 150.0
 

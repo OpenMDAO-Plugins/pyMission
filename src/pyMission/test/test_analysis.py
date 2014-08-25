@@ -5,7 +5,7 @@ import warnings
 
 import numpy as np
 
-from openmdao.main.api import set_as_top
+from openmdao.main.api import set_as_top, Driver
 from openmdao.util.testutil import assert_rel_error
 
 from pyMission.segment import MissionSegment
@@ -71,11 +71,11 @@ class Testcase_pyMissionSegment(unittest.TestCase):
 
         # Find data in model
         new_data = {}
-        comps = model.list_components()
+        comps = [comp for comp in model.list_components() if comp not in ['coupled_solver', 'drag_solver']]
         for name in comps:
             comp = model.get(name)
             for key in old_keys:
-                if hasattr(comp, key):
+                if key in comp.list_vars():
                     new_data[key] = comp.get(key)
                     old_keys.remove(key)
 

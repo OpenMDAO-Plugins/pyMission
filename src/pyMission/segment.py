@@ -25,6 +25,8 @@ from pyMission.atmospherics import SysSFC, SysTemp, SysRho, SysSpeed
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
+from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
+                                  SysFuelObj, SysHi, SysHf
 from pyMission.propulsion import SysTau
 
 
@@ -205,6 +207,13 @@ class MissionSegment(Assembly):
 
         # Functionals (i.e., components downstream of the coupled system.)
         self.add('SysTau', SysTau(num_elem=self.num_elem))
+        self.add('SysTmin', SysTmin(num_elem=self.num_elem))
+        self.add('SysTmax', SysTmax(num_elem=self.num_elem))
+        self.add('SysSlopeMin', SysSlopeMin(num_elem=self.num_elem))
+        self.add('SysSlopeMax', SysSlopeMax(num_elem=self.num_elem))
+        self.add('SysFuelObj', SysFuelObj(num_elem=self.num_elem))
+        self.add('SysHi', SysHi(num_elem=self.num_elem))
+        self.add('SysHf', SysHf(num_elem=self.num_elem))
 
         self.connect('S', 'SysTau.S')
         self.connect('thrust_sl', 'SysTau.thrust_sl')
@@ -212,12 +221,25 @@ class MissionSegment(Assembly):
         self.connect('SysCTTar.CT_tar', 'SysTau.CT_tar')
         self.connect('SysHBspline.h', 'SysTau.h')
         self.connect('SysSpeed.v', 'SysTau.v')
+        self.connect('SysTau.tau', 'SysTmin.tau')
+        self.connect('SysTau.tau', 'SysTmax.tau')
+        self.connect('SysGammaBspline.Gamma', 'SysSlopeMin.Gamma')
+        self.connect('SysGammaBspline.Gamma', 'SysSlopeMax.Gamma')
+        self.connect('SysFuelWeight.fuel_w', 'SysFuelObj.fuel_w')
+        self.connect('SysHBspline.h', 'SysHi.h')
+        self.connect('SysHBspline.h', 'SysHf.h')
 
 
         # Promote useful variables to the boundary.
         self.create_passthrough('SysHBspline.h_pt')
         self.connect('h_pt', 'SysGammaBspline.h_pt')
         self.create_passthrough('SysMVBspline.v_pt')
+        self.create_passthrough('SysTmin.Tmin')
+        self.create_passthrough('SysTmax.Tmax')
+        self.create_passthrough('SysFuelObj.wf_obj')
+        self.create_passthrough('SysHi.h_i')
+        self.create_passthrough('SysHf.h_f')
+
 
         #-------------------------
         # Iteration Hieararchy
@@ -226,7 +248,8 @@ class MissionSegment(Assembly):
                                   'SysMVBspline', 'SysGammaBspline',
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
                                   'coupled_solver',
-                                  'SysTau'])
+                                  'SysTau', 'SysTmin', 'SysTmax', 'SysSlopeMin', 'SysSlopeMax',
+                                  'SysFuelObj'])
         self.coupled_solver.workflow.add(['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
         self.drag_solver.workflow.add(['SysAeroSurrogate'])
 
