@@ -18,6 +18,7 @@ import time
 import numpy as np
 
 from openmdao.main.api import set_as_top
+from openmdao.lib.casehandlers.api import BSONCaseRecorder
 
 from pyopt_driver.pyopt_driver import pyOptDriver
 from pyMission.segment import MissionSegment
@@ -43,21 +44,24 @@ while num_cp <= num_cp_max:
     h_init = 1 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
-    model.add('driver', pyOptDriver())
+    model.replace('driver', pyOptDriver())
     model.driver.optimizer = 'SNOPT'
     #from openmdao.main.test.test_derivatives import SimpleDriver
-    #model.add('driver', SimpleDriver())
+    #model.replace('driver', SimpleDriver())
 
     model.driver.add_parameter('h_pt', low=0.0, high=20.0)
-    model.driver.add_objective('wf_obj')
-    #model.driver.add_constraint('SysHi.h_i = 0.0')
-    #model.driver.add_constraint('SysHf.h_f = 0.0')
-    #model.driver.add_constraint('Tmin < 0.0')
-    #model.driver.add_constraint('Tmax < 0.0')
-    #model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb)
-    #model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub)
+    #model.driver.add_parameter(('SysHBspline.h_pt', 'SysGammaBspline.h_pt'), low=0.0, high=20.0)
+    model.driver.add_objective('SysFuelObj.wf_obj')
+    model.driver.add_constraint('SysHi.h_i = 0.0')
+    model.driver.add_constraint('SysHf.h_f = 0.0')
+    model.driver.add_constraint('SysTmin.Tmin < 0.0')
+    model.driver.add_constraint('SysTmax.Tmax < 0.0')
+    model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb)
+    model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub)
 
     model.h_pt = h_init
+    #model.SysHBspline.h_pt = h_init
+    #model.SysGammaBspline.h_pt = h_init
     model.v_pt = v_init
 
     # Pull velocity from BSpline instead of calculating it.
@@ -71,7 +75,18 @@ while num_cp <= num_cp_max:
     model.AR = 8.68
     model.oswald = 0.8
 
+    # Recording the results
+    filename = 'mission_cp_%d.bson' % num_cp
+    model.recorders = [BSONCaseRecorder(filename)]
+    model.includes = model.driver.list_param_targets()
+    model.includes.extend(model.driver.list_constraint_targets())
+    model.includes.append('SysFuelObj.wf_obj')
+
     # Optimize
     model.run()
+    model.check_gradient()
+
+    # Save case DB from this opt
+    # TODO
 
     num_cp += num_cp_step

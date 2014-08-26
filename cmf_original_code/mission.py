@@ -24,9 +24,9 @@ class GlobalizedSystem(SerialSystem):
         """ Solve f for u, p |-> u """
 
         kwargs = self.kwargs
-        #self.solvers['NL']['NLN_GS'](ilimit=kwargs['GL_GS_ilimit'],
-        #                             atol=kwargs['GL_GS_atol'],
-        #                             rtol=kwargs['GL_GS_rtol'])
+        self.solvers['NL']['NLN_GS'](ilimit=kwargs['GL_GS_ilimit'],
+                                     atol=kwargs['GL_GS_atol'],
+                                     rtol=kwargs['GL_GS_rtol'])
         return self.solvers['NL']['NEWTON'](ilimit=kwargs['GL_NT_ilimit'],
                                             atol=kwargs['GL_NT_atol'],
                                             rtol=kwargs['GL_NT_rtol'])

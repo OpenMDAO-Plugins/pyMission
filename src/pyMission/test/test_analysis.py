@@ -57,11 +57,11 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         old_keys.remove('gamma')
         old_keys.remove('gamma_max')
         old_keys.remove('gamma_min')
-        old_keys.remove('Tmin')
-        old_keys.remove('Tmax')
-        old_keys.remove('h_i')
-        old_keys.remove('h_f')
-        old_keys.remove('wf_obj')
+        #old_keys.remove('Tmin')
+        #old_keys.remove('Tmax')
+        #old_keys.remove('h_i')
+        #old_keys.remove('h_f')
+        #old_keys.remove('wf_obj')
         old_keys.remove('CL_tar')
         old_keys.remove('thrust_sl')
         old_keys.remove('e')
@@ -85,10 +85,11 @@ class Testcase_pyMissionSegment(unittest.TestCase):
             old = old_data[key]
             new = new_data[key]
 
-            diff = np.nan_to_num(abs(new - old) / old)
-            #print key
-            #print old
-            #print new
+            #diff = np.nan_to_num(abs(new - old) / old)
+            diff = new-old
+            print key
+            print old
+            print new
             assert_rel_error(self, diff.max(), 0.0, 1e-12)
 
 if __name__ == "__main__":
