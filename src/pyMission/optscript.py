@@ -24,7 +24,8 @@ from pyopt_driver.pyopt_driver import pyOptDriver
 from pyMission.segment import MissionSegment
 
 
-num_elem = 100
+#num_elem = 100
+num_elem = 3000
 num_cp_init = 10
 num_cp_max = 10#200
 num_cp_step = 10
@@ -46,8 +47,10 @@ while num_cp <= num_cp_max:
     model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
     model.replace('driver', pyOptDriver())
     model.driver.optimizer = 'SNOPT'
-    #from openmdao.main.test.test_derivatives import SimpleDriver
-    #model.replace('driver', SimpleDriver())
+    #opt_dict = {'Iterations limit': 1000000,
+    #            'Major iterations limit': 1000000,
+    #            'Minor iterations limit': 1000000 }
+    #model.driver.options = opt_dict
 
     model.driver.add_parameter('h_pt', low=0.0, high=20.0)
     #model.driver.add_parameter(('SysHBspline.h_pt', 'SysGammaBspline.h_pt'), low=0.0, high=20.0)
@@ -76,7 +79,7 @@ while num_cp <= num_cp_max:
     model.oswald = 0.8
 
     # Recording the results
-    filename = 'mission_cp_%d.bson' % num_cp
+    filename = 'mission_history_cp_%d.bson' % num_cp
     model.recorders = [BSONCaseRecorder(filename)]
     model.includes = model.driver.list_param_targets()
     model.includes.extend(model.driver.list_constraint_targets())
@@ -86,7 +89,13 @@ while num_cp <= num_cp_max:
     model.run()
     model.check_gradient()
 
-    # Save case DB from this opt
+    # Save final optimization results
+    from openmdao.main.test.test_derivatives import SimpleDriver
+    model.replace('driver', SimpleDriver())
+    filename = 'mission_final_cp_%d.bson' % num_cp
+    model.recorders = [BSONCaseRecorder(filename)]
+    model.includes = ['*']
+    model.run()
     # TODO
 
     num_cp += num_cp_step
