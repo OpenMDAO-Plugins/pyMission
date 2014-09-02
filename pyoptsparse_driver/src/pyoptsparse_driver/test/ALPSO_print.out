@@ -1,0 +1,4819 @@
+                                     ======================
+                                        ALPSO 1.1 (Serial)
+                                     ======================
+
+Parameters:
+-------------------------------------------------------------------------------------------------
+Swarmsize           :       40    MaxOuterIters     :      200    Seed:       1409685502.10622907
+Cognitive Parameter :    2.000    MaxInnerIters     :        6    Scaling            :          1
+Social Parameter    :    1.000    MinInnerIters     :        6    Stopping Criteria  :          1
+Initial Weight      :    0.990    DynInnerIters     :        0    Number of Failures :         15
+Final Weight        :    0.550    StoppingIters     :        5    Number of Successes:          5
+
+Absolute Tolerance  : 1.00e-02    Number Initial Pos:        0    Neighbourhood Model:      gbest
+Relative Tolerance  : 1.00e-02    Initial Velocity  :        1    Neighbourhood Size :         40
+Inequality Tolerance: 1.00e-03    Maximum Velocity  :        2    Selfless           :          1
+Equality Tolerance  : 1.00e-03    Craziness Velocity: 1.00e-04    Fileout            :          1
+Global Distance     : 1.00e-01    Initial Penalty   :     1.00    File Name          :  ALPSO.out
+-------------------------------------------------------------------------------------------------
+
+
+================================================================================
+
+NUMBER OF ITERATIONS: 1
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 280
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 0
+
+PENALTY FACTOR:
+	rp(0) = 1
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 2
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 520
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2
+
+PENALTY FACTOR:
+	rp(0) = 22.3606797749979
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 3
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 760
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 46.7213595499958
+
+PENALTY FACTOR:
+	rp(0) = 108.0756211525011
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 4
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 1000
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 262.872601854998
+
+PENALTY FACTOR:
+	rp(0) = 256.3555157661904
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 5
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 1240
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 775.5836333873789
+
+PENALTY FACTOR:
+	rp(0) = 440.336131094014
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 6
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 1480
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1656.255895575407
+
+PENALTY FACTOR:
+	rp(0) = 643.478029068477
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 7
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 1720
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2943.211953712361
+
+PENALTY FACTOR:
+	rp(0) = 857.7895944974445
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 8
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 1960
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4658.791142707249
+
+PENALTY FACTOR:
+	rp(0) = 1079.211650083899
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 9
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 2200
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6817.214442875047
+
+PENALTY FACTOR:
+	rp(0) = 1305.489797248053
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 10
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 2440
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 9428.194037371153
+
+PENALTY FACTOR:
+	rp(0) = 1535.268220651619
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 11
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 2680
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 12498.73047867439
+
+PENALTY FACTOR:
+	rp(0) = 1767.677181973167
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 12
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 2920
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 16034.08484262073
+
+PENALTY FACTOR:
+	rp(0) = 2002.129169323294
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 13
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 3160
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 20038.34318126732
+
+PENALTY FACTOR:
+	rp(0) = 2238.210400144908
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 14
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 3400
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 24514.76398155713
+
+PENALTY FACTOR:
+	rp(0) = 2475.619315522741
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 15
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 3640
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 29466.00261260261
+
+PENALTY FACTOR:
+	rp(0) = 2714.12981508819
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 16
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 3880
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 34894.26224277899
+
+PENALTY FACTOR:
+	rp(0) = 2953.568275949406
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 17
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 4120
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 40801.3987946778
+
+PENALTY FACTOR:
+	rp(0) = 3193.79863151537
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 18
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 4360
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 47188.99605770854
+
+PENALTY FACTOR:
+	rp(0) = 3434.71236269169
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 19
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 4600
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 54058.42078309192
+
+PENALTY FACTOR:
+	rp(0) = 3676.221592310912
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 20
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 4840
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 61410.86396771374
+
+PENALTY FACTOR:
+	rp(0) = 3918.254202055864
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 21
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 5080
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 69247.37237182546
+
+PENALTY FACTOR:
+	rp(0) = 4160.750304086556
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 22
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 5320
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 77568.87297999857
+
+PENALTY FACTOR:
+	rp(0) = 4403.65964227478
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 23
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 5560
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 86376.19226454814
+
+PENALTY FACTOR:
+	rp(0) = 4646.939645200595
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 24
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 5800
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 95670.07155494933
+
+PENALTY FACTOR:
+	rp(0) = 4890.55394497774
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 25
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 6040
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 105451.1794449048
+
+PENALTY FACTOR:
+	rp(0) = 5134.471234823134
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 26
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 6280
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 115720.1219145511
+
+PENALTY FACTOR:
+	rp(0) = 5378.664376835365
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 27
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 6520
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 126477.4506682218
+
+PENALTY FACTOR:
+	rp(0) = 5623.109697227634
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 28
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 6760
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 137723.6700626771
+
+PENALTY FACTOR:
+	rp(0) = 5867.786423828774
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 29
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 7000
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 149459.2429103346
+
+PENALTY FACTOR:
+	rp(0) = 6112.676232844634
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 30
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 7240
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 161684.5953760239
+
+PENALTY FACTOR:
+	rp(0) = 6357.762880448277
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 31
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 7480
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 174400.1211369205
+
+PENALTY FACTOR:
+	rp(0) = 6603.031900894475
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 32
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 7720
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 187606.1849387094
+
+PENALTY FACTOR:
+	rp(0) = 6848.47035728982
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 33
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 7960
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 201303.1256532891
+
+PENALTY FACTOR:
+	rp(0) = 7094.066634401051
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 34
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 8200
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 215491.2589220912
+
+PENALTY FACTOR:
+	rp(0) = 7339.810265294518
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 35
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 8440
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 230170.8794526802
+
+PENALTY FACTOR:
+	rp(0) = 7585.691785405604
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 36
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 8680
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 245342.2630234914
+
+PENALTY FACTOR:
+	rp(0) = 7831.70260900354
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 37
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 8920
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 261005.6682414985
+
+PENALTY FACTOR:
+	rp(0) = 8077.834924060693
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 38
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 9160
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 277161.3380896199
+
+PENALTY FACTOR:
+	rp(0) = 8324.081602339382
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 39
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 9400
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 293809.5012942986
+
+PENALTY FACTOR:
+	rp(0) = 8570.436122133729
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 40
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 9640
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 310950.3735385661
+
+PENALTY FACTOR:
+	rp(0) = 8816.892501592696
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 41
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 9880
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 328584.1585417514
+
+PENALTY FACTOR:
+	rp(0) = 9063.445240935582
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 42
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 10120
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 346711.0490236226
+
+PENALTY FACTOR:
+	rp(0) = 9310.08927217702
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 43
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 10360
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 365331.2275679766
+
+PENALTY FACTOR:
+	rp(0) = 9556.819915222541
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 44
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 10600
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 384444.8673984217
+
+PENALTY FACTOR:
+	rp(0) = 9803.632839392008
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 45
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 10840
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 404052.1330772057
+
+PENALTY FACTOR:
+	rp(0) = 10050.52402958679
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 46
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 11080
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 424153.1811363793
+
+PENALTY FACTOR:
+	rp(0) = 10297.48975644525
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 47
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 11320
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 444748.1606492698
+
+PENALTY FACTOR:
+	rp(0) = 10544.52654993658
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 48
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 11560
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 465837.2137491429
+
+PENALTY FACTOR:
+	rp(0) = 10791.63117592914
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 49
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 11800
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 487420.4761010012
+
+PENALTY FACTOR:
+	rp(0) = 11038.80061534088
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 50
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 12040
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 509498.077331683
+
+PENALTY FACTOR:
+	rp(0) = 11286.03204553845
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 51
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 12280
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 532070.1414227599
+
+PENALTY FACTOR:
+	rp(0) = 11533.32282370046
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 52
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 12520
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 555136.7870701607
+
+PENALTY FACTOR:
+	rp(0) = 11780.67047190185
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 53
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 12760
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 578698.1280139644
+
+PENALTY FACTOR:
+	rp(0) = 12028.07266371014
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 54
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 13000
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 602754.2733413847
+
+PENALTY FACTOR:
+	rp(0) = 12275.52721211379
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 55
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 13240
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 627305.3277656123
+
+PENALTY FACTOR:
+	rp(0) = 12523.03205862714
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 56
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 13480
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 652351.3918828665
+
+PENALTY FACTOR:
+	rp(0) = 12770.58526343709
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 57
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 13720
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 677892.5624097406
+
+PENALTY FACTOR:
+	rp(0) = 13018.18499647455
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 58
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 13960
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 703928.9324026897
+
+PENALTY FACTOR:
+	rp(0) = 13265.82952930846
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 59
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 14200
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 730460.5914613067
+
+PENALTY FACTOR:
+	rp(0) = 13513.51722777333
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 60
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 14440
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 757487.6259168533
+
+PENALTY FACTOR:
+	rp(0) = 13761.24654525212
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 61
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 14680
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 785010.1190073575
+
+PENALTY FACTOR:
+	rp(0) = 14009.01601654589
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 62
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 14920
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 813028.1510404493
+
+PENALTY FACTOR:
+	rp(0) = 14256.82425226994
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 63
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 15160
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 841541.7995449891
+
+PENALTY FACTOR:
+	rp(0) = 14504.66993372298
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 64
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 15400
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 870551.1394124351
+
+PENALTY FACTOR:
+	rp(0) = 14752.5518081825
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 65
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 15640
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 900056.2430288001
+
+PENALTY FACTOR:
+	rp(0) = 15000.46868458449
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 66
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 15880
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 930057.1803979691
+
+PENALTY FACTOR:
+	rp(0) = 15248.41942955047
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 67
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 16120
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 960554.01925707
+
+PENALTY FACTOR:
+	rp(0) = 15496.40296372896
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 68
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 16360
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 991546.8251845279
+
+PENALTY FACTOR:
+	rp(0) = 15744.418258422
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 69
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 16600
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1023035.661701372
+
+PENALTY FACTOR:
+	rp(0) = 15992.46433247056
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 70
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 16840
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1055020.590366313
+
+PENALTY FACTOR:
+	rp(0) = 16240.54024937527
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 71
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 17080
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1087501.670865064
+
+PENALTY FACTOR:
+	rp(0) = 16488.64511463164
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 72
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 17320
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1120478.961094327
+
+PENALTY FACTOR:
+	rp(0) = 16736.77807326075
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 73
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 17560
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1153952.517240848
+
+PENALTY FACTOR:
+	rp(0) = 16984.93830751858
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 74
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 17800
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1187922.393855886
+
+PENALTY FACTOR:
+	rp(0) = 17233.12503476869
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 75
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 18040
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1222388.643925423
+
+PENALTY FACTOR:
+	rp(0) = 17481.33750550443
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 76
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 18280
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1257351.318936432
+
+PENALTY FACTOR:
+	rp(0) = 17729.5750015083
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 77
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 18520
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1292810.468939448
+
+PENALTY FACTOR:
+	rp(0) = 17977.83683413725
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 78
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 18760
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1328766.142607723
+
+PENALTY FACTOR:
+	rp(0) = 18226.12234272366
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 79
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 19000
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1365218.38729317
+
+PENALTY FACTOR:
+	rp(0) = 18474.43089308281
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 80
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 19240
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1402167.249079336
+
+PENALTY FACTOR:
+	rp(0) = 18722.76187611844
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 81
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 19480
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1439612.772831573
+
+PENALTY FACTOR:
+	rp(0) = 18971.11470651878
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 82
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 19720
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1477555.002244611
+
+PENALTY FACTOR:
+	rp(0) = 19219.48882153614
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 83
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 19960
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1515993.979887683
+
+PENALTY FACTOR:
+	rp(0) = 19467.8836798436
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 84
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 20200
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1554929.74724737
+
+PENALTY FACTOR:
+	rp(0) = 19716.2987604632
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 85
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 20440
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1594362.344768297
+
+PENALTY FACTOR:
+	rp(0) = 19964.7335617602
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 86
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 20680
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1634291.811891817
+
+PENALTY FACTOR:
+	rp(0) = 20213.1876004987
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 87
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 20920
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1674718.187092814
+
+PENALTY FACTOR:
+	rp(0) = 20461.66041095403
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 88
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 21160
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1715641.507914722
+
+PENALTY FACTOR:
+	rp(0) = 20710.1515440781
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 89
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 21400
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1757061.811002879
+
+PENALTY FACTOR:
+	rp(0) = 20958.6605667137
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 90
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 21640
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1798979.132136306
+
+PENALTY FACTOR:
+	rp(0) = 21207.18706085455
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 91
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 21880
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1841393.506258015
+
+PENALTY FACTOR:
+	rp(0) = 21455.73062294789
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 92
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 22120
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1884304.967503911
+
+PENALTY FACTOR:
+	rp(0) = 21704.29086323665
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 93
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 22360
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1927713.549230384
+
+PENALTY FACTOR:
+	rp(0) = 21952.86740513858
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 94
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 22600
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 1971619.284040661
+
+PENALTY FACTOR:
+	rp(0) = 22201.45988465996
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 95
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 22840
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2016022.203809981
+
+PENALTY FACTOR:
+	rp(0) = 22450.06794984138
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 96
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 23080
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2060922.339709664
+
+PENALTY FACTOR:
+	rp(0) = 22698.69126023384
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 97
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 23320
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2106319.722230132
+
+PENALTY FACTOR:
+	rp(0) = 22947.32948640283
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 98
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 23560
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2152214.381202938
+
+PENALTY FACTOR:
+	rp(0) = 23195.98230945899
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 99
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 23800
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2198606.345821856
+
+PENALTY FACTOR:
+	rp(0) = 23444.64942061331
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 100
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 24040
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2245495.644663082
+
+PENALTY FACTOR:
+	rp(0) = 23693.33052075564
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 101
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 24280
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2292882.305704594
+
+PENALTY FACTOR:
+	rp(0) = 23942.02532005487
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 102
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 24520
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2340766.356344704
+
+PENALTY FACTOR:
+	rp(0) = 24190.73353757955
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 103
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 24760
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2389147.823419863
+
+PENALTY FACTOR:
+	rp(0) = 24439.45490093766
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 104
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 25000
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2438026.733221738
+
+PENALTY FACTOR:
+	rp(0) = 24688.18914593443
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 105
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 25240
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2487403.111513607
+
+PENALTY FACTOR:
+	rp(0) = 24936.9360162471
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 106
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 25480
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2537276.983546101
+
+PENALTY FACTOR:
+	rp(0) = 25185.69526311563
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 107
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 25720
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2587648.374072333
+
+PENALTY FACTOR:
+	rp(0) = 25434.46664504847
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 108
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 25960
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2638517.30736243
+
+PENALTY FACTOR:
+	rp(0) = 25683.24992754241
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 109
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 26200
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2689883.807217515
+
+PENALTY FACTOR:
+	rp(0) = 25932.04488281591
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 110
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 26440
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2741747.896983146
+
+PENALTY FACTOR:
+	rp(0) = 26180.85128955486
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 111
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 26680
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2794109.599562256
+
+PENALTY FACTOR:
+	rp(0) = 26429.66893267042
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 112
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 26920
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2846968.937427597
+
+PENALTY FACTOR:
+	rp(0) = 26678.49760306789
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 113
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 27160
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2900325.932633733
+
+PENALTY FACTOR:
+	rp(0) = 26927.33709742635
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 114
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 27400
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 2954180.606828586
+
+PENALTY FACTOR:
+	rp(0) = 27176.18721798822
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 115
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 27640
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3008532.981264562
+
+PENALTY FACTOR:
+	rp(0) = 27425.0477723584
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 116
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 27880
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3063383.076809279
+
+PENALTY FACTOR:
+	rp(0) = 27673.9185733123
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 117
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 28120
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3118730.913955904
+
+PENALTY FACTOR:
+	rp(0) = 27922.79943861245
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 118
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 28360
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3174576.512833129
+
+PENALTY FACTOR:
+	rp(0) = 28171.6901908331
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 119
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 28600
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3230919.893214795
+
+PENALTY FACTOR:
+	rp(0) = 28420.59065719252
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 120
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 28840
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3287761.07452918
+
+PENALTY FACTOR:
+	rp(0) = 28669.50066939246
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 121
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 29080
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3345100.075867965
+
+PENALTY FACTOR:
+	rp(0) = 28918.42006346459
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 122
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 29320
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3402936.915994894
+
+PENALTY FACTOR:
+	rp(0) = 29167.34867962331
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 123
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 29560
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3461271.613354141
+
+PENALTY FACTOR:
+	rp(0) = 29416.2863621249
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 124
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 29800
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3520104.186078391
+
+PENALTY FACTOR:
+	rp(0) = 29665.23295913244
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 125
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 30040
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3579434.651996655
+
+PENALTY FACTOR:
+	rp(0) = 29914.18832258639
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 126
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 30280
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3639263.028641828
+
+PENALTY FACTOR:
+	rp(0) = 30163.15230808042
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 127
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 30520
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3699589.333257989
+
+PENALTY FACTOR:
+	rp(0) = 30412.12477474235
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 128
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 30760
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3760413.582807474
+
+PENALTY FACTOR:
+	rp(0) = 30661.10558511986
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 129
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 31000
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3821735.793977714
+
+PENALTY FACTOR:
+	rp(0) = 30910.09460507082
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 130
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 31240
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3883555.983187855
+
+PENALTY FACTOR:
+	rp(0) = 31159.09170365792
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 131
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 31480
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 3945874.166595171
+
+PENALTY FACTOR:
+	rp(0) = 31408.0967530475
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 132
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 31720
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4008690.360101266
+
+PENALTY FACTOR:
+	rp(0) = 31657.10962841233
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 133
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 31960
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4072004.579358091
+
+PENALTY FACTOR:
+	rp(0) = 31906.13020783816
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 134
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 32200
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4135816.839773768
+
+PENALTY FACTOR:
+	rp(0) = 32155.15837223387
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 135
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 32440
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4200127.156518236
+
+PENALTY FACTOR:
+	rp(0) = 32404.19400524504
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 136
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 32680
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4264935.544528726
+
+PENALTY FACTOR:
+	rp(0) = 32653.23699317085
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 137
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 32920
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4330242.018515067
+
+PENALTY FACTOR:
+	rp(0) = 32902.28722488403
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 138
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 33160
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4396046.592964835
+
+PENALTY FACTOR:
+	rp(0) = 33151.34459175387
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 139
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 33400
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4462349.282148344
+
+PENALTY FACTOR:
+	rp(0) = 33400.40898757208
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 140
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 33640
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4529150.100123487
+
+PENALTY FACTOR:
+	rp(0) = 33649.48030848132
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 141
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 33880
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4596449.06074045
+
+PENALTY FACTOR:
+	rp(0) = 33898.55845290641
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 142
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 34120
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4664246.177646264
+
+PENALTY FACTOR:
+	rp(0) = 34147.64332148802
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 143
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 34360
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4732541.46428924
+
+PENALTY FACTOR:
+	rp(0) = 34396.73481701875
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 144
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 34600
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4801334.933923277
+
+PENALTY FACTOR:
+	rp(0) = 34645.83284438143
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 145
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 34840
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4870626.59961204
+
+PENALTY FACTOR:
+	rp(0) = 34894.93731048975
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 146
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 35080
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 4940416.474233019
+
+PENALTY FACTOR:
+	rp(0) = 35144.04812423086
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 147
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 35320
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5010704.570481481
+
+PENALTY FACTOR:
+	rp(0) = 35393.16519641003
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 148
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 35560
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5081490.900874301
+
+PENALTY FACTOR:
+	rp(0) = 35642.28843969724
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 149
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 35800
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5152775.477753695
+
+PENALTY FACTOR:
+	rp(0) = 35891.41776857559
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 150
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 36040
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5224558.313290847
+
+PENALTY FACTOR:
+	rp(0) = 36140.55309929154
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 151
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 36280
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5296839.419489429
+
+PENALTY FACTOR:
+	rp(0) = 36389.69434980675
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 152
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 36520
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5369618.808189043
+
+PENALTY FACTOR:
+	rp(0) = 36638.84143975162
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 153
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 36760
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5442896.491068546
+
+PENALTY FACTOR:
+	rp(0) = 36887.99429038039
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 154
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 37000
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5516672.479649306
+
+PENALTY FACTOR:
+	rp(0) = 37137.15282452771
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 155
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 37240
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5590946.785298361
+
+PENALTY FACTOR:
+	rp(0) = 37386.31696656666
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 156
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 37480
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5665719.419231495
+
+PENALTY FACTOR:
+	rp(0) = 37635.48664236818
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 157
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 37720
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5740990.392516231
+
+PENALTY FACTOR:
+	rp(0) = 37884.66177926177
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 158
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 37960
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5816759.716074754
+
+PENALTY FACTOR:
+	rp(0) = 38133.84230599755
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 159
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 38200
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5893027.400686749
+
+PENALTY FACTOR:
+	rp(0) = 38383.02815270946
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 160
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 38440
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 5969793.456992168
+
+PENALTY FACTOR:
+	rp(0) = 38632.21925087972
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 161
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 38680
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6047057.895493927
+
+PENALTY FACTOR:
+	rp(0) = 38881.41553330436
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 162
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 38920
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6124820.726560536
+
+PENALTY FACTOR:
+	rp(0) = 39130.61693405988
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 163
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 39160
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6203081.960428655
+
+PENALTY FACTOR:
+	rp(0) = 39379.82338847095
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 164
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 39400
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6281841.607205597
+
+PENALTY FACTOR:
+	rp(0) = 39629.03483307913
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 165
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 39640
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6361099.676871755
+
+PENALTY FACTOR:
+	rp(0) = 39878.25120561255
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 166
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 39880
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6440856.17928298
+
+PENALTY FACTOR:
+	rp(0) = 40127.47244495653
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 167
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 40120
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6521111.124172893
+
+PENALTY FACTOR:
+	rp(0) = 40376.69849112509
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 168
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 40360
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6601864.521155143
+
+PENALTY FACTOR:
+	rp(0) = 40625.92928523341
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 169
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 40600
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6683116.37972561
+
+PENALTY FACTOR:
+	rp(0) = 40875.16476947099
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 170
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 40840
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6764866.709264552
+
+PENALTY FACTOR:
+	rp(0) = 41124.40488707573
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 171
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 41080
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6847115.519038703
+
+PENALTY FACTOR:
+	rp(0) = 41373.64958230873
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 172
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 41320
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 6929862.818203321
+
+PENALTY FACTOR:
+	rp(0) = 41622.89880042992
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 173
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 41560
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7013108.615804181
+
+PENALTY FACTOR:
+	rp(0) = 41872.15248767426
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 174
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 41800
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7096852.920779529
+
+PENALTY FACTOR:
+	rp(0) = 42121.41059122881
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 175
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 42040
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7181095.741961987
+
+PENALTY FACTOR:
+	rp(0) = 42370.67305921038
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 176
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 42280
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7265837.088080407
+
+PENALTY FACTOR:
+	rp(0) = 42619.93984064386
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 177
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 42520
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7351076.967761694
+
+PENALTY FACTOR:
+	rp(0) = 42869.21088544112
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 178
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 42760
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7436815.389532576
+
+PENALTY FACTOR:
+	rp(0) = 43118.48614438063
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 179
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 43000
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7523052.361821338
+
+PENALTY FACTOR:
+	rp(0) = 43367.76556908754
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 180
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 43240
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7609787.892959513
+
+PENALTY FACTOR:
+	rp(0) = 43617.04911201442
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 181
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 43480
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7697021.991183542
+
+PENALTY FACTOR:
+	rp(0) = 43866.33672642252
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 182
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 43720
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7784754.664636387
+
+PENALTY FACTOR:
+	rp(0) = 44115.62836636351
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 183
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 43960
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7872985.921369114
+
+PENALTY FACTOR:
+	rp(0) = 44364.92398666179
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 184
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 44200
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 7961715.769342437
+
+PENALTY FACTOR:
+	rp(0) = 44614.22354289727
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 185
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 44440
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8050944.216428232
+
+PENALTY FACTOR:
+	rp(0) = 44863.52699138865
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 186
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 44680
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8140671.27041101
+
+PENALTY FACTOR:
+	rp(0) = 45112.8342891771
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 187
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 44920
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8230896.938989365
+
+PENALTY FACTOR:
+	rp(0) = 45362.14539401043
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 188
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 45160
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8321621.229777385
+
+PENALTY FACTOR:
+	rp(0) = 45611.46026432772
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 189
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 45400
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8412844.15030604
+
+PENALTY FACTOR:
+	rp(0) = 45860.77885924431
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 190
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 45640
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8504565.70802453
+
+PENALTY FACTOR:
+	rp(0) = 46110.10113853723
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 191
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 45880
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8596785.910301603
+
+PENALTY FACTOR:
+	rp(0) = 46359.42706263097
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 192
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 46120
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8689504.764426865
+
+PENALTY FACTOR:
+	rp(0) = 46608.75659258372
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 193
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 46360
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8782722.277612032
+
+PENALTY FACTOR:
+	rp(0) = 46858.08969007388
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 194
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 46600
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8876438.456992181
+
+PENALTY FACTOR:
+	rp(0) = 47107.426317387
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 195
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 46840
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 8970653.309626956
+
+PENALTY FACTOR:
+	rp(0) = 47356.76643740299
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 196
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 47080
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 9065366.842501761
+
+PENALTY FACTOR:
+	rp(0) = 47606.11001358376
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 197
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 47320
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 9160579.062528929
+
+PENALTY FACTOR:
+	rp(0) = 47855.45700996107
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 198
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 47560
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 9256289.976548851
+
+PENALTY FACTOR:
+	rp(0) = 48104.80739112478
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 199
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 47800
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 9352499.5913311
+
+PENALTY FACTOR:
+	rp(0) = 48354.16112221134
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================
+
+================================================================================
+
+NUMBER OF ITERATIONS: 200
+
+NUMBER OF OBJECTIVE FUNCTION EVALUATIONS: 48040
+
+OBJECTIVE FUNCTION VALUE:
+	F = 0
+
+EQUALITY CONSTRAINTS VALUES:
+
+INEQUALITY CONSTRAINTS VALUES:
+	G(0) = 1
+
+LAGRANGIAN MULTIPLIERS VALUES:
+	L(0) = 9449207.913575523
+
+PENALTY FACTOR:
+	rp(0) = 48603.51816889268
+
+BEST POSITION:
+	P(0) = 7.206439506503434	
+================================================================================

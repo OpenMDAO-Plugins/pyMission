@@ -1,0 +1,3 @@
+graft src/pyoptsparse_driver/sphinx_build/html
+recursive-include src/pyoptsparse_driver/test *.py
+
