@@ -340,6 +340,34 @@ class pyOptSparseDriverTestCase(unittest.TestCase):
 #        assert_rel_error(self, self.top.paraboloid.x[0], 7.175775, 0.01)
 #        assert_rel_error(self, self.top.paraboloid.x[1], -7.824225, 0.01)
 
+    def test_Abasic_SNOPT_derivatives_linear_constraints(self):
+
+        try:
+            from pyoptsparse import Optimization
+        except ImportError:
+            raise SkipTest("this test requires pyoptsparse to be installed")
+
+        self.top = OptimizationConstrainedDerivatives()
+        set_as_top(self.top)
+
+        try:
+            self.top.driver.optimizer = 'SNOPT'
+        except ValueError:
+            raise SkipTest("SNOPT not present on this system")
+
+        self.top.driver.title = 'Little Test with Gradient'
+        optdict = {}
+        self.top.driver.options = optdict
+
+        self.top.driver.clear_constraints()
+        self.top.driver.add_constraint('paraboloid.x-paraboloid.y >= 15.0')
+        self.top.driver.add_constraint('paraboloid.x > 7.1', linear=True)
+
+        self.top.run()
+
+        assert_rel_error(self, self.top.paraboloid.x, 7.175775, 0.01)
+        assert_rel_error(self, self.top.paraboloid.y, -7.824225, 0.01)
+
     def test_basic_SNOPT_derivatives(self):
 
         try:

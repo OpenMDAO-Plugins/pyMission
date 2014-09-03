@@ -21,8 +21,8 @@ from pyMission.propulsion import SysTau
 # Ignore the numerical warnings from performing the rel error calc.
 warnings.simplefilter("ignore")
 
-NUM_ELEM = 3
-NUM_PT = 4
+NUM_ELEM = 10
+NUM_PT = 5
 
 class Testcase_pyMission_derivs(unittest.TestCase):
 
@@ -226,15 +226,15 @@ class Testcase_pyMission_derivs(unittest.TestCase):
 
         compname = 'SysTmin'
         self.setup(compname, self.arg_dict)
-        self.model.comp.tau = self.model.comp.tau/1000
+        self.model.comp.tau = 2.32 + self.model.comp.tau*10
         self.run_model()
         self.compare_derivatives()
 
-    def test_SysTmax(self):
+    def test_ASysTmax(self):
 
         compname = 'SysTmax'
         self.setup(compname, self.arg_dict)
-        self.model.comp.tau = self.model.comp.tau/1000
+        self.model.comp.tau = 2.32 + self.model.comp.tau*10
         self.run_model()
         self.compare_derivatives()
 

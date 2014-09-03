@@ -20,14 +20,15 @@ import numpy as np
 from openmdao.main.api import set_as_top
 from openmdao.lib.casehandlers.api import BSONCaseRecorder
 
-from pyopt_driver.pyopt_driver import pyOptDriver
+from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
 #num_elem = 100
 num_elem = 3000
+num_elem = 30
 num_cp_init = 10
-num_cp_max = 10#200
+num_cp_max = 10        # set to 200 for the sweep
 num_cp_step = 10
 x_range = 150.0
 
@@ -45,8 +46,10 @@ while num_cp <= num_cp_max:
     h_init = 1 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
-    model.replace('driver', pyOptDriver())
-    model.driver.optimizer = 'SNOPT'
+    from openmdao.main.test.test_derivatives import SimpleDriver
+    model.replace('driver', SimpleDriver())
+    #model.replace('driver', pyOptSparseDriver())
+    #model.driver.optimizer = 'SNOPT'
     #opt_dict = {'Iterations limit': 1000000,
     #            'Major iterations limit': 1000000,
     #            'Minor iterations limit': 1000000 }
@@ -55,12 +58,12 @@ while num_cp <= num_cp_max:
     model.driver.add_parameter('h_pt', low=0.0, high=20.0)
     #model.driver.add_parameter(('SysHBspline.h_pt', 'SysGammaBspline.h_pt'), low=0.0, high=20.0)
     model.driver.add_objective('SysFuelObj.wf_obj')
-    model.driver.add_constraint('SysHi.h_i = 0.0')
-    model.driver.add_constraint('SysHf.h_f = 0.0')
+    #model.driver.add_constraint('SysHi.h_i = 0.0')
+    #model.driver.add_constraint('SysHf.h_f = 0.0')
     model.driver.add_constraint('SysTmin.Tmin < 0.0')
     model.driver.add_constraint('SysTmax.Tmax < 0.0')
-    model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb)
-    model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub)
+    #model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb, linear=True)
+    #model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub, linear=True)
 
     model.h_pt = h_init
     #model.SysHBspline.h_pt = h_init
@@ -87,7 +90,10 @@ while num_cp <= num_cp_max:
 
     # Optimize
     model.run()
-    model.check_gradient()
+    model.driver.gradient_options.fd_step = 1e-6
+    model.driver.gradient_options.fd_form = 'central'
+    #model.driver.workflow.check_gradient(mode='forward')
+    model.driver.workflow.check_gradient(mode='adjoint')
 
     # Save final optimization results
     from openmdao.main.test.test_derivatives import SimpleDriver

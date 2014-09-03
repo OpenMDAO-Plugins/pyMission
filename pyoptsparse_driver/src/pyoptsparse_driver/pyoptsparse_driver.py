@@ -64,9 +64,8 @@ class pyOptSparseDriver(Driver):
         self.param_type = {}
         self.nparam = None
 
-        self.inputs = None
         self.objs = None
-        self.cons = None
+        self.nlcons = None
 
     def execute(self):
         """pyOpt execution. Note that pyOpt controls the execution, and the
@@ -81,6 +80,7 @@ class pyOptSparseDriver(Driver):
         # Add all parameters
         self.param_type = {}
         self.nparam = self.total_parameters()
+        param_list = []
         for name, param in self.get_parameters().iteritems():
 
             # We need to identify Enums, Lists, Dicts
@@ -112,35 +112,49 @@ class pyOptSparseDriver(Driver):
             opt_prob.addVarGroup(name, len(values), type=vartype,
                                  lower=lower_bounds, upper=upper_bounds,
                                  value=values, choices=choices)
-
-        #opt_prob.finalizeDesignVariables()
+            param_list.append(name)
 
         # Add all objectives
         for name, obj in self.get_objectives().iteritems():
             name = '%s.out0' % obj.pcomp_name
             opt_prob.addObj(name)
 
+        # Calculate and save gradient for any linear constraints.
+        lcons = self.get_constraints(linear=True)
+        if len(lcons) > 0:
+            lcon_names = ['%s.out0' % obj.pcomp_name for obj in lcons.values()]
+            lin_jacs = self.workflow.calc_gradient(param_list, lcon_names,
+                                                   return_format='dict')
+
         # Add all equality constraints
+        nlcons = []
         for name, con in self.get_eq_constraints().iteritems():
             size = con.size
-            linear = con.linear
             lower = zeros((size))
             upper = zeros((size))
             name = '%s.out0' % con.pcomp_name
-            opt_prob.addConGroup(name, size, lower=lower, upper=upper,
-                                 linear=linear)
+            if con.linear is True:
+                opt_prob.addConGroup(name, size, lower=lower, upper=upper,
+                                     linear=True, wrt=param_list,
+                                     jac=lin_jacs[name])
+            else:
+                opt_prob.addConGroup(name, size, lower=lower, upper=upper)
+                nlcons.append(name)
 
         # Add all inequality constraints
         for name, con in self.get_ineq_constraints().iteritems():
             size = con.size
-            linear = con.linear
             upper = zeros((size))
             name = '%s.out0' % con.pcomp_name
-            opt_prob.addConGroup(name, size, upper=upper, linear=linear)
+            if con.linear is True:
+                opt_prob.addConGroup(name, size, upper=upper, linear=True,
+                wrt=param_list, jac=lin_jacs[name])
+            else:
+                opt_prob.addConGroup(name, size, upper=upper)
+                nlcons.append(name)
 
-        self.inputs = self.list_param_group_targets()
         self.objs = self.list_objective_targets()
-        self.cons = self.list_constraint_targets()
+        self.nlcons = nlcons
 
         # Instantiate the requested optimizer
         optimizer = self.optimizer
@@ -272,7 +286,7 @@ class pyOptSparseDriver(Driver):
         sens_dict = {}
 
         try:
-            sens_dict = self.workflow.calc_gradient(dv_dict.keys(), self.objs + self.cons,
+            sens_dict = self.workflow.calc_gradient(dv_dict.keys(), self.objs + self.nlcons,
                                                     return_format='dict')
 
             fail = 0
