@@ -70,6 +70,7 @@ while num_cp <= num_cp_max:
     #model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub, linear=True)
 
     model.h_pt = h_init
+    model.driver.workflow._system.vec['u'].set_from_scope(model)
     #model.SysHBspline.h_pt = h_init
     #model.SysGammaBspline.h_pt = h_init
     model.v_pt = v_init
@@ -96,12 +97,20 @@ while num_cp <= num_cp_max:
     model.run()
     model.driver.gradient_options.fd_step = 1e-6
     model.driver.gradient_options.fd_form = 'central'
-    model.driver.workflow.check_gradient(outputs=['SysTau.tau'], mode='forward')
+    #model.driver.workflow.check_gradient(outputs=['SysTau.tau'], mode='forward')
     #model.driver.workflow.check_gradient(outputs=['SysTmin.Tmin', 'SysTmax.Tmax'], mode='forward')
     #model.driver.workflow.check_gradient(mode='adjoint')
     #Jdict = model.driver.workflow.calc_gradient(return_format='dict')
     #Jdict = model.driver.workflow.calc_gradient(return_format='dict', mode='fd')
     #print Jdict
+    print model.h_pt, model.Tmax, model.Tmin
+    model.h_pt = h_init + np.array([0.001, 0, 0])
+    print model.h_pt, model.Tmax, model.Tmin
+    model.run()
+    print model.h_pt, model.Tmax, model.Tmin
+    model.h_pt = h_init - np.array([0.001, 0, 0])
+    model.run()
+    print model.h_pt, model.Tmax, model.Tmin
 
     # Save final optimization results
     from openmdao.main.test.test_derivatives import SimpleDriver

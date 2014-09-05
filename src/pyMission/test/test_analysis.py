@@ -87,9 +87,9 @@ class Testcase_pyMissionSegment(unittest.TestCase):
 
             #diff = np.nan_to_num(abs(new - old) / old)
             diff = new-old
-            print key
-            print old
-            print new
+            #print key
+            #print old
+            #print new
             assert_rel_error(self, diff.max(), 0.0, 1e-12)
 
 if __name__ == "__main__":

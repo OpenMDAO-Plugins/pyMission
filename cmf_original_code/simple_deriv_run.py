@@ -55,7 +55,7 @@ print main.compute_derivatives('fwd', 'h_pt', output=False)
 print main.compute_derivatives('rev', 'h_pt', output=False)
 #print 'fwd', main.compute_derivatives('fwd', 'h_pt', output=False)[0][('CL_tar', 0)][0]
 #print 'rev', main.compute_derivatives('rev', 'h_pt', output=False)[0][('CL_tar', 0)][0]
-for ind in range(0, 6):
+for ind in range(0, 3):
     grad = main.compute_derivatives('fwd', 'h_pt', output=False, ind=ind)
     print "IND", ind
     print 'tau', grad[0][('tau', 0)]
