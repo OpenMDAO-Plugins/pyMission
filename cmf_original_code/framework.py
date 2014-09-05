@@ -1022,6 +1022,7 @@ class ParallelSystem(CompoundSystem):
         rank, size = self.comm.rank, self.comm.size
         nsubs = len(subsystems)
         if nsubs > size:
+            print nsubs, size
             raise Exception("Not enough procs to split comm")
 
         num_procs = numpy.ones(nsubs, int)

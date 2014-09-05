@@ -24,13 +24,17 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
-#num_elem = 100
 num_elem = 3000
-num_elem = 30
 num_cp_init = 10
 num_cp_max = 10        # set to 200 for the sweep
 num_cp_step = 10
 x_range = 150.0
+
+# Comparing with original John script
+num_elem = 6
+num_cp_init = 3
+num_cp_max = 3
+
 
 # define bounds for the flight path angle
 gamma_lb = np.tan(-10.0 * (np.pi/180.0))/1e-1
@@ -92,8 +96,12 @@ while num_cp <= num_cp_max:
     model.run()
     model.driver.gradient_options.fd_step = 1e-6
     model.driver.gradient_options.fd_form = 'central'
-    #model.driver.workflow.check_gradient(mode='forward')
-    model.driver.workflow.check_gradient(mode='adjoint')
+    model.driver.workflow.check_gradient(outputs=['SysTau.tau'], mode='forward')
+    #model.driver.workflow.check_gradient(outputs=['SysTmin.Tmin', 'SysTmax.Tmax'], mode='forward')
+    #model.driver.workflow.check_gradient(mode='adjoint')
+    #Jdict = model.driver.workflow.calc_gradient(return_format='dict')
+    #Jdict = model.driver.workflow.calc_gradient(return_format='dict', mode='fd')
+    #print Jdict
 
     # Save final optimization results
     from openmdao.main.test.test_derivatives import SimpleDriver

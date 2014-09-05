@@ -16,8 +16,8 @@ params = {
     'e': 0.8,
     }
 
-num_elem = 100
-num_cp = 30
+num_elem = 6
+num_cp = 3
 x_range = 150.0
 
 #h_init = numpy.ones(num_cp)*0.000005
@@ -49,16 +49,18 @@ print 'done'
 
 # Derivative checking stuff.
 # ------------------------------
-#main.check_derivatives_all(fwd=True)
+main.check_derivatives_all(fwd=True)
 #main.check_derivatives_all(fwd=False)
 print main.compute_derivatives('fwd', 'h_pt', output=False)
 print main.compute_derivatives('rev', 'h_pt', output=False)
 #print 'fwd', main.compute_derivatives('fwd', 'h_pt', output=False)[0][('CL_tar', 0)][0]
 #print 'rev', main.compute_derivatives('rev', 'h_pt', output=False)[0][('CL_tar', 0)][0]
-grad = main.compute_derivatives('fwd', 'h_pt', output=False)
-print 'wf_obj', grad[0][('wf_obj', 0)]
-print 'Tmin', grad[0][('Tmin', 0)]
-print 'Tmax', grad[0][('Tmax', 0)]
+for ind in range(0, 6):
+    grad = main.compute_derivatives('fwd', 'h_pt', output=False, ind=ind)
+    print "IND", ind
+    print 'tau', grad[0][('tau', 0)]
+    print 'Tmin', grad[0][('Tmin', 0)]
+    print 'Tmax', grad[0][('Tmax', 0)]
 
 exit()
 
