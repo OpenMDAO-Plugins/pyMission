@@ -66,6 +66,7 @@ class pyOptSparseDriver(Driver):
 
         self.objs = None
         self.nlcons = None
+        self.lin_jacs = {}
 
     def execute(self):
         """pyOpt execution. Note that pyOpt controls the execution, and the
@@ -123,7 +124,7 @@ class pyOptSparseDriver(Driver):
         lcons = self.get_constraints(linear=True)
         if len(lcons) > 0:
             lcon_names = ['%s.out0' % obj.pcomp_name for obj in lcons.values()]
-            lin_jacs = self.workflow.calc_gradient(param_list, lcon_names,
+            self.lin_jacs = self.workflow.calc_gradient(param_list, lcon_names,
                                                    return_format='dict')
 
         # Add all equality constraints
@@ -136,7 +137,7 @@ class pyOptSparseDriver(Driver):
             if con.linear is True:
                 opt_prob.addConGroup(name, size, lower=lower, upper=upper,
                                      linear=True, wrt=param_list,
-                                     jac=lin_jacs[name])
+                                     jac=self.lin_jacs[name])
             else:
                 opt_prob.addConGroup(name, size, lower=lower, upper=upper)
                 nlcons.append(name)
@@ -148,7 +149,7 @@ class pyOptSparseDriver(Driver):
             name = '%s.out0' % con.pcomp_name
             if con.linear is True:
                 opt_prob.addConGroup(name, size, upper=upper, linear=True,
-                wrt=param_list, jac=lin_jacs[name])
+                wrt=param_list, jac=self.lin_jacs[name])
             else:
                 opt_prob.addConGroup(name, size, upper=upper)
                 nlcons.append(name)
@@ -288,6 +289,8 @@ class pyOptSparseDriver(Driver):
         try:
             sens_dict = self.workflow.calc_gradient(dv_dict.keys(), self.objs + self.nlcons,
                                                     return_format='dict')
+            #for key, value in self.lin_jacs.iteritems():
+            #    sens_dict[key] = value
 
             fail = 0
 

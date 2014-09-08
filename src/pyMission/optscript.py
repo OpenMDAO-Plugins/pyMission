@@ -30,10 +30,10 @@ num_cp_max = 10        # set to 200 for the sweep
 num_cp_step = 10
 x_range = 150.0
 
-# Comparing with original John script
-num_elem = 6
-num_cp_init = 3
-num_cp_max = 3
+# Comparing with test script
+num_elem = 10
+num_cp_init = 5
+num_cp_max = 5
 
 
 # define bounds for the flight path angle
@@ -50,29 +50,25 @@ while num_cp <= num_cp_max:
     h_init = 1 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
-    from openmdao.main.test.test_derivatives import SimpleDriver
-    model.replace('driver', SimpleDriver())
-    #model.replace('driver', pyOptSparseDriver())
-    #model.driver.optimizer = 'SNOPT'
+    #from openmdao.main.test.test_derivatives import SimpleDriver
+    #model.replace('driver', SimpleDriver())
+    model.replace('driver', pyOptSparseDriver())
+    model.driver.optimizer = 'SNOPT'
     #opt_dict = {'Iterations limit': 1000000,
     #            'Major iterations limit': 1000000,
     #            'Minor iterations limit': 1000000 }
     #model.driver.options = opt_dict
 
     model.driver.add_parameter('h_pt', low=0.0, high=20.0)
-    #model.driver.add_parameter(('SysHBspline.h_pt', 'SysGammaBspline.h_pt'), low=0.0, high=20.0)
     model.driver.add_objective('SysFuelObj.wf_obj')
-    #model.driver.add_constraint('SysHi.h_i = 0.0')
-    #model.driver.add_constraint('SysHf.h_f = 0.0')
+    model.driver.add_constraint('SysHi.h_i = 0.0')
+    model.driver.add_constraint('SysHf.h_f = 0.0')
     model.driver.add_constraint('SysTmin.Tmin < 0.0')
     model.driver.add_constraint('SysTmax.Tmax < 0.0')
-    #model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb, linear=True)
-    #model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub, linear=True)
+    model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb, linear=True)
+    model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub, linear=True)
 
     model.h_pt = h_init
-    model.driver.workflow._system.vec['u'].set_from_scope(model)
-    #model.SysHBspline.h_pt = h_init
-    #model.SysGammaBspline.h_pt = h_init
     model.v_pt = v_init
 
     # Pull velocity from BSpline instead of calculating it.
@@ -95,22 +91,15 @@ while num_cp <= num_cp_max:
 
     # Optimize
     model.run()
-    model.driver.gradient_options.fd_step = 1e-6
-    model.driver.gradient_options.fd_form = 'central'
+    print 'h_pt', model.h_pt
+    #model.driver.gradient_options.fd_step = 1e-6
+    #model.driver.gradient_options.fd_form = 'central'
     #model.driver.workflow.check_gradient(outputs=['SysTau.tau'], mode='forward')
     #model.driver.workflow.check_gradient(outputs=['SysTmin.Tmin', 'SysTmax.Tmax'], mode='forward')
-    #model.driver.workflow.check_gradient(mode='adjoint')
+    #model.driver.workflow.check_gradient(mode='forward')
     #Jdict = model.driver.workflow.calc_gradient(return_format='dict')
     #Jdict = model.driver.workflow.calc_gradient(return_format='dict', mode='fd')
     #print Jdict
-    print model.h_pt, model.Tmax, model.Tmin
-    model.h_pt = h_init + np.array([0.001, 0, 0])
-    print model.h_pt, model.Tmax, model.Tmin
-    model.run()
-    print model.h_pt, model.Tmax, model.Tmin
-    model.h_pt = h_init - np.array([0.001, 0, 0])
-    model.run()
-    print model.h_pt, model.Tmax, model.Tmin
 
     # Save final optimization results
     from openmdao.main.test.test_derivatives import SimpleDriver

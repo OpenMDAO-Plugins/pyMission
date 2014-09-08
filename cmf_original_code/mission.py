@@ -3,7 +3,7 @@ import numpy
 import copy
 import os
 from framework import *
-#from optimization import *
+from optimization import *
 from bsplines import *
 from atmospherics import *
 from coupled_analysis import *
