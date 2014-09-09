@@ -16,8 +16,8 @@ params = {
     'e': 0.8,
     }
 
-num_elem = 6
-num_cp = 3
+num_elem = 10
+num_cp = 5
 x_range = 150.0
 
 #h_init = numpy.ones(num_cp)*0.000005
@@ -55,12 +55,17 @@ print main.compute_derivatives('fwd', 'h_pt', output=False)
 print main.compute_derivatives('rev', 'h_pt', output=False)
 #print 'fwd', main.compute_derivatives('fwd', 'h_pt', output=False)[0][('CL_tar', 0)][0]
 #print 'rev', main.compute_derivatives('rev', 'h_pt', output=False)[0][('CL_tar', 0)][0]
-for ind in range(0, 3):
+import pickle
+data = {}
+for ind in range(0, 5):
+    key = 'h_pt' + str(ind)
+    data[key] = {}
     grad = main.compute_derivatives('fwd', 'h_pt', output=False, ind=ind)
-    print "IND", ind
-    print 'tau', grad[0][('tau', 0)]
-    print 'Tmin', grad[0][('Tmin', 0)]
-    print 'Tmax', grad[0][('Tmax', 0)]
+    for item in grad[0].keys():
+        key2 = item[0]
+        data[key][key2] = grad[0][item]
+
+pickle.dump( data, open( "derivs.p", "wb" ) )
 
 exit()
 

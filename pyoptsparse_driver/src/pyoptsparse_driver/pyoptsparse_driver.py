@@ -6,16 +6,17 @@ constrained optimization problems.
 """
 
 # pylint: disable=E0611,F0401
-from numpy import array, zeros, float32, float64, int32, int64
+from numpy import array, zeros, ones, float32, float64, int32, int64
 
 from pyoptsparse import Optimization
 
 from openmdao.main.api import Driver
 from openmdao.main.datatypes.api import Bool, Dict, Enum, Str
 from openmdao.main.interfaces import IHasParameters, IHasConstraints, \
-                                     IHasObjective, implements, IOptimizer
+                                     IHasObjective, implements, IOptimizer, \
+                                     IHas2SidedConstraints
 from openmdao.main.hasparameters import HasParameters
-from openmdao.main.hasconstraints import HasConstraints
+from openmdao.main.hasconstraints import HasConstraints, Has2SidedConstraints
 from openmdao.main.hasobjective import HasObjectives
 from openmdao.util.decorators import add_delegate
 
@@ -37,12 +38,14 @@ def _check_imports():
     return optlist
 
 
-@add_delegate(HasParameters, HasConstraints, HasObjectives)
+@add_delegate(HasParameters, HasConstraints, HasObjectives,
+              Has2SidedConstraints)
 class pyOptSparseDriver(Driver):
     """ Driver wrapper for pyOpt.
     """
 
-    implements(IHasParameters, IHasConstraints, IHasObjective, IOptimizer)
+    implements(IHasParameters, IHasConstraints, IHasObjective, IOptimizer,
+               IHas2SidedConstraints)
 
     optimizer = Enum('ALPSO', _check_imports(), iotype='in',
                      desc='Name of optimizers to use')
@@ -121,9 +124,10 @@ class pyOptSparseDriver(Driver):
             opt_prob.addObj(name)
 
         # Calculate and save gradient for any linear constraints.
-        lcons = self.get_constraints(linear=True)
+        lcons = self.get_constraints(linear=True).values() + \
+                self.get_2sided_constraints(linear=True).values()
         if len(lcons) > 0:
-            lcon_names = ['%s.out0' % obj.pcomp_name for obj in lcons.values()]
+            lcon_names = ['%s.out0' % obj.pcomp_name for obj in lcons]
             self.lin_jacs = self.workflow.calc_gradient(param_list, lcon_names,
                                                    return_format='dict')
 
@@ -152,6 +156,20 @@ class pyOptSparseDriver(Driver):
                 wrt=param_list, jac=self.lin_jacs[name])
             else:
                 opt_prob.addConGroup(name, size, upper=upper)
+                nlcons.append(name)
+
+        # Add all double_sided constraints
+        for name, con in self.get_2sided_constraints().iteritems():
+            size = con.size
+            upper = con.high * ones((size))
+            lower = con.low * ones((size))
+            name = '%s.out0' % con.pcomp_name
+            if con.linear is True:
+                opt_prob.addConGroup(name, size, upper=upper, lower=lower,
+                                     linear=True, wrt=param_list,
+                                     jac=self.lin_jacs[name])
+            else:
+                opt_prob.addConGroup(name, size, upper=upper, lower=lower)
                 nlcons.append(name)
 
         self.objs = self.list_objective_targets()

@@ -65,8 +65,10 @@ while num_cp <= num_cp_max:
     model.driver.add_constraint('SysHf.h_f = 0.0')
     model.driver.add_constraint('SysTmin.Tmin < 0.0')
     model.driver.add_constraint('SysTmax.Tmax < 0.0')
-    model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb, linear=True)
-    model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub, linear=True)
+    model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % \
+                                (gamma_lb, gamma_ub), linear=True)
+    #model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb, linear=True)
+    #model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub, linear=True)
 
     model.h_pt = h_init
     model.v_pt = v_init
