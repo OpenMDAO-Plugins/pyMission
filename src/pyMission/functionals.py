@@ -447,7 +447,7 @@ class SysFuelObj(Component):
 
         # Outputs
         self.add('wf_obj', Float(0.0, iotype='out',
-                               desc = 'Objective fual burn (initial fuel carried)'))
+                               desc = 'Objective fuel burn (initial fuel carried)'))
 
     def execute(self):
         """ Set objective fuel weight to initial fuel carried (required for

@@ -78,7 +78,7 @@ while num_cp <= num_cp_max:
     model.S = 427.8/1e2
     model.ac_w = 210000*9.81/1e6
     model.thrust_sl = 1020000.0/1e6
-    model.SFCSL = 40.0
+    model.SFCSL = 8.951*9.81
     model.AR = 8.68
     model.oswald = 0.8
 
