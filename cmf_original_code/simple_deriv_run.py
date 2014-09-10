@@ -61,9 +61,10 @@ for ind in range(0, 5):
     key = 'h_pt' + str(ind)
     data[key] = {}
     grad = main.compute_derivatives('fwd', 'h_pt', output=False, ind=ind)
+    print grad[0][('wf_obj', 0)]
     for item in grad[0].keys():
         key2 = item[0]
-        data[key][key2] = grad[0][item]
+        data[key][key2] = grad[0][item].copy()
 
 pickle.dump( data, open( "derivs.p", "wb" ) )
 

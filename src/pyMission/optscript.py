@@ -28,12 +28,12 @@ num_elem = 3000
 num_cp_init = 10
 num_cp_max = 10        # set to 200 for the sweep
 num_cp_step = 10
-x_range = 150.0
+x_range = 15000.0
 
 # Comparing with test script
-num_elem = 10
-num_cp_init = 5
-num_cp_max = 5
+#num_elem = 10
+#num_cp_init = 5
+#num_cp_max = 5
 
 
 # define bounds for the flight path angle
@@ -67,8 +67,6 @@ while num_cp <= num_cp_max:
     model.driver.add_constraint('SysTmax.Tmax < 0.0')
     model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % \
                                 (gamma_lb, gamma_ub), linear=True)
-    #model.driver.add_constraint('SysGammaBspline.Gamma > %.15f' % gamma_lb, linear=True)
-    #model.driver.add_constraint('SysGammaBspline.Gamma < %.15f' % gamma_ub, linear=True)
 
     model.h_pt = h_init
     model.v_pt = v_init
@@ -79,8 +77,8 @@ while num_cp <= num_cp_max:
     # Initial design parameters
     model.S = 427.8/1e2
     model.ac_w = 210000*9.81/1e6
-    model.thrust_sl = 1020000.0/1e6/3
-    model.SFCSL = 8.951
+    model.thrust_sl = 1020000.0/1e6
+    model.SFCSL = 40.0
     model.AR = 8.68
     model.oswald = 0.8
 
@@ -110,6 +108,5 @@ while num_cp <= num_cp_max:
     model.recorders = [BSONCaseRecorder(filename)]
     model.includes = ['*']
     model.run()
-    # TODO
 
     num_cp += num_cp_step

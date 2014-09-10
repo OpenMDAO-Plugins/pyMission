@@ -89,6 +89,9 @@ class Optimization(object):
                     system.variables[var]['u'] /\
                     system.variables[var]['u0']
 
+        print 'func', dv_dict, func_dict
+        print 'everything'
+        print system.vec['u']
         return func_dict, fail
 
     def sens_func(self, dv_dict, func_dict):
@@ -168,6 +171,7 @@ class Optimization(object):
             size = system.vec['u'](dv_id).shape[0]
             opt_prob.addVarGroup(dv_name, size, value=value,
                                  lower=lower, upper=upper)
+            print 'initial', dv_name, value
         opt_prob.finalizeDesignVariables()
         for func_name in variables['func'].keys():
             func = variables['func'][func_name]

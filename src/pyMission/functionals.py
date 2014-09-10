@@ -86,7 +86,7 @@ class SysHf(Component):
     def execute(self):
         """ Assign system to the final altitude point. """
 
-        self.h_f = self.h[0]
+        self.h_f = self.h[-1]
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
@@ -102,12 +102,12 @@ class SysHf(Component):
     def apply_deriv(self, arg, result):
         """ derivative of this is same as final altitude point """
 
-        result['h_f'] += arg['h'][0]
+        result['h_f'] += arg['h'][-1]
 
     def apply_derivT(self, arg, result):
         """ derivative of this is same as final altitude point """
 
-        result['h'][0] += arg['h_f']
+        result['h'][-1] += arg['h_f']
 
 
 class SysTmin(Component):

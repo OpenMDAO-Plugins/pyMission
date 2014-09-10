@@ -265,6 +265,11 @@ class pyOptSparseDriver(Driver):
                 name = '%s.out0' % con.pcomp_name
                 func_dict[name] = array(con.evaluate(self.parent))
 
+            # Get the double-sided constraint evaluations
+            for key, con in self.get_2sided_constraints().iteritems():
+                name = '%s.out0' % con.pcomp_name
+                func_dict[name] = array(con.evaluate(self.parent))
+
             fail = 0
 
         except Exception as msg:
@@ -277,7 +282,6 @@ class pyOptSparseDriver(Driver):
             traceback.print_exc()
             print 70*"="
 
-        #print dv_dict, func_dict
         return func_dict, fail
 
     def gradfunc(self, dv_dict, func_dict):
@@ -322,6 +326,5 @@ class pyOptSparseDriver(Driver):
             traceback.print_exc()
             print 70*"="
 
-        #print sens_dict
         return sens_dict, fail
 
