@@ -19,162 +19,109 @@ import sys
 from framework import *
 import numpy
 
-class SysCLSurrogate(ExplicitSystem):
+class SysAeroSurrogate(ExplicitSystem):
+    """ simulates the presence of an aero surrogate mode using
+        linear aerodynamic model
+    """
 
     def _declare(self):
+        """ owned variables: CL (lift coefficient),
+                             CD (drag coefficient),
+            dependencies: alpha (angle of attack),
+                          eta (tail rotation angle),
+                          AR (aspect ratio),
+                          e (Oswald's efficiency)
+        """
+
         self.num_elem = self.kwargs['num_elem']
         ind_pts = range(self.num_elem+1)
 
         self._declare_variable('CL', size=self.num_elem+1)
+        self._declare_variable('CD', size=self.num_elem+1)
         self._declare_argument('alpha', indices=ind_pts)
         self._declare_argument('eta', indices=ind_pts)
+        self._declare_argument('AR', indices=[0])
+        self._declare_argument('e', indices=[0])
 
     def apply_G(self):
+        """ compute lift and drag coefficient using angle of attack
+            and tail rotation angles. linear aerodynamics assumed
+        """
+
         pvec = self.vec['p']
         uvec = self.vec['u']
 
-        lift_c = uvec('CL')
         alpha = pvec('alpha') * 1e-1
         eta = pvec('eta') * 1e-1
+        aspect_ratio = pvec(['AR', 0])
+        oswald = pvec(['e', 0])
+        lift_c = uvec('CL')
+        drag_c = uvec('CD')
 
         lift_c0 = 0.26
         lift_ca = 4.24
         lift_ce = 0.27
+        drag_c0 = 0.018
 
         lift_c[:] = lift_c0 + lift_ca * alpha + lift_ce * eta
+        drag_c[:] = (drag_c0 + lift_c[:]**2 / 
+                     (numpy.pi * aspect_ratio * oswald)) / 1e-1
 
     def apply_dGdp(self, args):
+        """ compute the derivatives of lift and drag coefficient wrt
+            alpha, eta, aspect ratio, and osawlds efficiency
+        """
+
         dpvec = self.vec['dp']
         dgvec = self.vec['dg']
+        pvec = self.vec['p']
+        uvec = self.vec['u']
 
         dalpha = dpvec('alpha')
         deta = dpvec('eta')
+        daspect_ratio = dpvec('AR')
+        doswald = dpvec('e')
         dlift_c = dgvec('CL')
+        ddrag_c = dgvec('CD')
+
+        aspect_ratio = pvec('AR')
+        oswald = pvec('e')
+        lift_c = uvec('CL')
 
         lift_ca = 4.24
         lift_ce = 0.27
 
         if self.mode == 'fwd':
             dlift_c[:] = 0.0
+            ddrag_c[:] = 0.0
             if self.get_id('alpha') in args:
                 dlift_c[:] += lift_ca * dalpha * 1e-1
+                ddrag_c[:] += 2 * lift_c * lift_ca / (numpy.pi * oswald *
+                                                     aspect_ratio) * dalpha
             if self.get_id('eta') in args:
                 dlift_c[:] += lift_ce * deta * 1e-1
-        if self.mode == 'rev':
-            dalpha[:] = 0.0
-            deta[:] = 0.0
-            if self.get_id('alpha') in args:
-                dalpha[:] += lift_ca * dlift_c * 1e-1
-            if self.get_id('eta') in args:
-                deta[:] += lift_ce * dlift_c * 1e-1
-
-class SysCDSurrogate(ExplicitSystem):
-    """ simulates the presence of an aero surrogate mode using
-        linear aerodynamic model
-    """
-
-    def _declare(self):
-        self.num_elem = self.kwargs['num_elem']
-        ind_pts = range(self.num_elem+1)
-
-        self._declare_variable('CD', size=self.num_elem+1)
-        self._declare_argument('CL', indices=ind_pts)
-        self._declare_argument('M', indices=ind_pts)
-        self._declare_argument('AR', indices=[0])
-        self._declare_argument('e', indices=[0])
-        self._declare_argument('t_c', indices=[0])
-        self._declare_argument('sweep', indices=[0])
-
-    def apply_G(self):
-        pvec = self.vec['p']
-        uvec = self.vec['u']
-
-        Mach = pvec('M')
-        aspect_ratio = pvec(['AR', 0])
-        oswald = pvec(['e', 0])
-        t_c = pvec(['t_c', 0])
-        sweep = pvec(['sweep', 0])
-        lift_c = pvec('CL')
-        drag_c = uvec('CD')
-
-        drag_c0 = 0.018
-
-        M_dd = (0.95/numpy.cos(sweep) - t_c/(10*(numpy.cos(sweep))**2)) *\
-            numpy.ones(self.num_elem+1)
-        M_dd -= lift_c/(numpy.cos(sweep))**3
-        M_crit = M_dd - (0.1/80)**(0.333)*numpy.ones(self.num_elem+1)
-
-        drag_c[:] = (drag_c0 - lift_c[:]**2 /
-                     (numpy.pi * aspect_ratio * oswald)) / 1e-1
-
-        for index in xrange(self.num_elem+1):
-            if Mach[index] >= M_crit[index]:
-                drag_c[index] -= 20*(Mach[index]-M_crit[index])**4 / 1e-1
-
-    def apply_dGdp(self, args):
-        dpvec = self.vec['dp']
-        dgvec = self.vec['dg']
-        pvec = self.vec['p']
-
-        dMach = dpvec('M')
-        daspect_ratio = dpvec('AR')
-        doswald = dpvec('e')
-        dt_c = dpvec('t_c')
-        dsweep = dpvec('sweep')
-        dlift_c = dpvec('CL')
-        ddrag_c = dgvec('CD')
-
-        Mach = pvec('M')
-        aspect_ratio = pvec('AR')
-        oswald = pvec('e')
-        t_c = pvec('t_c')
-        sweep = pvec('sweep')
-        lift_c = pvec('CL')
-
-        if self.mode == 'fwd':
-            ddrag_c[:] = 0.0
+                ddrag_c[:] += 2 * lift_c * lift_ce / (numpy.pi * oswald *
+                                                      aspect_ratio) * deta
             if self.get_id('AR') in args:
                 ddrag_c[:] -= lift_c**2 / (numpy.pi * aspect_ratio**2 *
                                            oswald) * daspect_ratio / 1e-1
             if self.get_id('e') in args:
                 ddrag_c[:] -= lift_c**2 / (numpy.pi * aspect_ratio *
                                            oswald**2) * doswald / 1e-1
-            if self.get_id('CL') in args:
-                ddrag_c[:] += (2 * lift_c * dlift_c /
-                               (numpy.pi * aspect_ratio * oswald)) /1e-1
-
-            M_dd = (0.95/numpy.cos(sweep) - t_c/(10*(numpy.cos(sweep))**2)) *\
-                numpy.ones(self.num_elem+1)
-            M_dd -= lift_c/(numpy.cos(sweep))**3
-            M_crit = M_dd - (0.1/80)**(0.333)*numpy.ones(self.num_elem+1)
-
-            for index in xrange(self.num_elem+1):
-                if Mach[index] >= M_crit[index]:
-                    if self.get_id('CL') in args:
-                        dM_dd = -1/(numpy.cos(sweep))**3
-                        ddrag_c[index] += 80 * (Mach[index] - M_crit[index])**3 *\
-                            dM_dd * dlift_c[index] / 1e-1
-                    if self.get_id('M') in args:
-                        ddrag_c[index] += 80 * (Mach[index] - M_crit[index])**3 *\
-                            dMach[index] / 1e-1
-                    if self.get_id('t_c') in args:
-                        dM_dd = -dt_c[0]/(10*(numpy.cos(sweep))**2)
-                        ddrag_c[index] -= 80 * (Mach[index] - M_crit[index])**3 *\
-                            dM_dd / 1e-1
-                    if self.get_id('sweep') in args:
-                        dM_dd = (0.95/(numpy.cos(sweep))**2 -
-                                 t_c/(5*(numpy.cos(sweep))**3) -
-                                 (3*lift_c[index])/(numpy.cos(sweep))**4)*numpy.sin(sweep)
-                        ddrag_c[index] -= 80 * (Mach[index] - M_crit[index])**3 *\
-                            dM_dd * dsweep[0] / 1e-1
 
         elif self.mode == 'rev':
-            dlift_c[:] = 0.0
-            dMach[:] = 0.0
+            dalpha[:] = 0.0
+            deta[:] = 0.0
             daspect_ratio[:] = 0.0
             doswald[:] = 0.0
-            dt_c[:] = 0.0
-            dsweep[:] = 0.0
+            if self.get_id('alpha') in args:
+                dalpha[:] += lift_ca * dlift_c * 1e-1
+                dalpha[:] += 2 * lift_c * lift_ca / (numpy.pi * oswald *
+                                                     aspect_ratio) * ddrag_c
+            if self.get_id('eta') in args:
+                deta[:] += lift_ce * dlift_c * 1e-1
+                deta[:] += 2 * lift_c * lift_ce / (numpy.pi * oswald *
+                                                   aspect_ratio) * ddrag_c
             if self.get_id('AR') in args:
                 daspect_ratio[:] -= numpy.sum((lift_c**2 / 
                                                (numpy.pi * oswald *
@@ -185,34 +132,6 @@ class SysCDSurrogate(ExplicitSystem):
                                          (numpy.pi * oswald**2 *
                                           aspect_ratio) *
                                          ddrag_c)) / 1e-1
-            if self.get_id('CL') in args:
-                dlift_c[:] += (2 * lift_c * ddrag_c /
-                               (numpy.pi * aspect_ratio * oswald)) /1e-1
-
-            M_dd = (0.95/numpy.cos(sweep) - t_c/(10*(numpy.cos(sweep))**2)) *\
-                numpy.ones(self.num_elem+1)
-            M_dd -= lift_c/(numpy.cos(sweep))**3
-            M_crit = M_dd - (0.1/80)**(1/3)
-
-            for index in xrange(self.num_elem+1):
-                if Mach[index] >= M_crit[index]:
-                    if self.get_id('M') in args:
-                        dMach[index] += 80 * (Mach[index] - M_crit[index])**3 *\
-                            ddrag_c[index] / 1e-1
-                    if self.get_id('CL') in args:
-                        dM_dd = -1/(numpy.cos(sweep))**3
-                        dlift_c[index] += 80 * (Mach[index] - M_crit[index])**3 *\
-                            dM_dd * ddrag_c[index] / 1e-1
-                    if self.get_id('t_c') in args:
-                        dM_dd = -1/(10*(numpy.cos(sweep))**2)
-                        dt_c[0] -= 80 * (Mach[index] - M_crit[index])**3 *\
-                            dM_dd * ddrag_c[index] / 1e-1
-                    if self.get_id('sweep') in args:
-                        dM_dd = (0.95/(numpy.cos(sweep))**2 -
-                                 t_c/(5*(numpy.cos(sweep))**3) -
-                                 (3*lift_c[index])/(numpy.cos(sweep))**4)*numpy.sin(sweep)
-                        dsweep[0] -= 80 * (Mach[index] - M_crit[index])**3 *\
-                            dM_dd * ddrag_c[index] / 1e-1
 
 class SysCM(ImplicitSystem):
     """ compute the tail rotation angle necessary to maintain pitch moment

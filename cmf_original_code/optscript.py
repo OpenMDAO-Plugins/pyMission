@@ -29,16 +29,14 @@ params = {
     'SFCSL': 8.951*9.81,
     'AR': 8.68,
     'e': 0.8,
-    't_c': 0.09,
-    'sweep': 31.6 * numpy.pi/180,
     }
 
-num_elem = 10#00
+num_elem = 1000
 num_cp_init = 10
 num_cp_max = 110
-num_cp_step = 100
-x_range = 5500.0      # range in nautical miles!
-folder_path = '/home/jason/Documents/Results/TIME-OptTest_'
+num_cp_step = 50
+x_range = 15000.0
+folder_path = '/home/jason/Documents/Results/PlotTest_'
 
 # END USER SPECIFIED DATA
 ##########################
@@ -48,21 +46,19 @@ if ((num_cp_max - num_cp_init)%num_cp_step) != 0:
     raise Exception('Specified max control pts and step do not agree!')
 
 # determine folder name
-name = '%inm_i%i_d%i_f%i_p%i' % (int(x_range),
+name = '%ikm_i%i_d%i_f%i_p%i' % (int(x_range),
                                  num_cp_init,
                                  num_cp_step,
                                  num_cp_max,
                                  num_elem)
 
+
 # define bounds for the flight path angle
 gamma_lb = numpy.tan(-35.0 * (numpy.pi/180.0))/1e-1
 gamma_ub = numpy.tan(35.0 * (numpy.pi/180.0))/1e-1
-takeoff_speed = 83.3
-landing_speed = 72.2
 
 # define initial altitude profile, as well as fixed profile for
 # x-distance and airspeed
-x_range *= 1.852
 x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
 v_init = numpy.ones(num_cp)*2.3
 h_init = 1 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
@@ -92,14 +88,9 @@ while num_cp <= num_cp_max:
 
     main.compute(output=True)
 
-    main.check_derivatives_all()
-    exit()
-
     # initialize the trajectory optimization problem using the framework
     # instance initialized before with Optimization.py
     traj.set_gamma_bound(gamma_lb, gamma_ub)
-    traj.set_takeoff_speed(takeoff_speed)
-    traj.set_landing_speed(landing_speed)
     opt = traj.initialize_opt(main)
 
     # start timing, and perform optimization
@@ -113,11 +104,7 @@ while num_cp <= num_cp_max:
     num_cp += num_cp_step
     first = False
     
-print 'OPTIMIZATION TIME:', time.time() - start
-seconds = main.vec['u']('time') * 1e4
-mnt, sec = divmod(seconds, 60)
-hrs, mnt = divmod(mnt, 60)
-print 'FLIGHT TIME:', '%d:%02d:%02d' % (hrs, mnt, sec)
+print 'OPTIMIZATION TIME', time.time() - start
 traj.history.print_max_min(main.vec['u'])
 
 

@@ -49,7 +49,7 @@ class SysSFC(Component):
         alt = self.h * 1e3
         sfcsl = self.SFCSL * 1e-6
 
-        sfc_temp = sfcsl + (6.39e-13) * alt
+        sfc_temp = sfcsl + (6.39e-13*9.81) * alt
         self.SFC = sfc_temp / 1e-6
 
     def list_deriv_vars(self):
@@ -68,7 +68,7 @@ class SysSFC(Component):
         Forward mode
         """
 
-        dsfc_dalt = 6.39e-13
+        dsfc_dalt = 6.39e-13*9.81
 
         if 'h' in arg:
             result['SFC'] += (dsfc_dalt * arg['h']) * 1e3/1e-6

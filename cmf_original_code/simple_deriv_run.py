@@ -20,10 +20,6 @@ num_elem = 10
 num_cp = 5
 x_range = 150.0
 
-#h_init = numpy.ones(num_cp)*0.000005
-#h_init[0] = 0.0
-#h_init[-1] = 0.0
-
 v_init = numpy.ones(num_cp)*2.3
 x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
 h_init = 1 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
@@ -31,12 +27,13 @@ h_init = 1 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
 gamma_lb = numpy.tan(-20.0 * (numpy.pi/180.0))/1e-1
 gamma_ub = numpy.tan(20.0 * (numpy.pi/180.0))/1e-1
 
-traj = OptTrajectory(num_elem, num_cp)
+traj = OptTrajectory(num_elem, num_cp, first=True)
 traj.set_init_h(h_init)
 traj.set_init_v(v_init)
 traj.set_init_x(x_init)
 traj.set_params(params)
-traj.set_folder_name('.')
+traj.set_folder('.')
+traj.set_name('zzz')
 traj.setup_MBI()
 main = traj.initialize_framework()
 
@@ -49,7 +46,7 @@ print 'done'
 
 # Derivative checking stuff.
 # ------------------------------
-main.check_derivatives_all(fwd=True)
+#main.check_derivatives_all(fwd=True)
 #main.check_derivatives_all(fwd=False)
 print main.compute_derivatives('fwd', 'h_pt', output=False)
 print main.compute_derivatives('rev', 'h_pt', output=False)
