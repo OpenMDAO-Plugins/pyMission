@@ -30,16 +30,9 @@ num_cp_max = 10        # set to 200 for the sweep
 num_cp_step = 10
 x_range = 15000.0
 
-# Comparing with test script
-#num_elem = 10
-#num_cp_init = 5
-#num_cp_max = 5
-
-
 # define bounds for the flight path angle
 gamma_lb = np.tan(-10.0 * (np.pi/180.0))/1e-1
 gamma_ub = np.tan(10.0 * (np.pi/180.0))/1e-1
-
 
 start = time.time()
 num_cp = num_cp_init
@@ -50,8 +43,6 @@ while num_cp <= num_cp_max:
     h_init = 1 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
-    #from openmdao.main.test.test_derivatives import SimpleDriver
-    #model.replace('driver', SimpleDriver())
     model.replace('driver', pyOptSparseDriver())
     model.driver.optimizer = 'SNOPT'
     #opt_dict = {'Iterations limit': 1000000,
@@ -59,6 +50,7 @@ while num_cp <= num_cp_max:
     #            'Minor iterations limit': 1000000 }
     #model.driver.options = opt_dict
 
+    # Add parameters, objectives, constraints
     model.driver.add_parameter('h_pt', low=0.0, high=20.0)
     model.driver.add_objective('SysFuelObj.wf_obj')
     model.driver.add_constraint('SysHi.h_i = 0.0')
@@ -68,6 +60,7 @@ while num_cp <= num_cp_max:
     model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % \
                                 (gamma_lb, gamma_ub), linear=True)
 
+    # Initial value of the parameter
     model.h_pt = h_init
     model.v_pt = v_init
 
@@ -82,7 +75,8 @@ while num_cp <= num_cp_max:
     model.AR = 8.68
     model.oswald = 0.8
 
-    # Recording the results
+    # Recording the results - This records just the parameters, objective,
+    # and constraints to mission_history_cp_#.bson
     filename = 'mission_history_cp_%d.bson' % num_cp
     model.recorders = [BSONCaseRecorder(filename)]
     model.includes = model.driver.list_param_targets()
@@ -92,16 +86,9 @@ while num_cp <= num_cp_max:
     # Optimize
     model.run()
     print 'h_pt', model.h_pt
-    #model.driver.gradient_options.fd_step = 1e-6
-    #model.driver.gradient_options.fd_form = 'central'
-    #model.driver.workflow.check_gradient(outputs=['SysTau.tau'], mode='forward')
-    #model.driver.workflow.check_gradient(outputs=['SysTmin.Tmin', 'SysTmax.Tmax'], mode='forward')
-    #model.driver.workflow.check_gradient(mode='forward')
-    #Jdict = model.driver.workflow.calc_gradient(return_format='dict')
-    #Jdict = model.driver.workflow.calc_gradient(return_format='dict', mode='fd')
-    #print Jdict
 
-    # Save final optimization results
+    # Save final optimization results. This records the final value of every
+    # variable in the model, and saves them in mission_final_cp_#.bson
     from openmdao.main.test.test_derivatives import SimpleDriver
     model.replace('driver', SimpleDriver())
     filename = 'mission_final_cp_%d.bson' % num_cp
