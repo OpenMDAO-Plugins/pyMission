@@ -27,38 +27,63 @@ from openmdao.main.datatypes.api import Array, Float, Bool
 # Allow non-standard variable names for scientific calc
 # pylint: disable=C0103
 
-class SysSFC(Component):
-    """ Linear SFC model wrt altitude """
+class SysTemp(Component):
+    """ Linear temperature model using standard atmosphere with smoothing
+    at the temperature discontinuity.
+    """
 
     def __init__(self, num_elem=10):
-        super(SysSFC, self).__init__()
+        super(SysTemp, self).__init__()
 
         # Inputs
         self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude'))
-        self.add('SFCSL', Float(0.0, iotype='in',
-                                desc = 'sea-level SFC value'))
 
         # Outputs
-        self.add('SFC', Array(np.zeros((num_elem+1, )), iotype='out',
-                              desc = 'Specific Fuel Consumption'))
+        self.add('temp', Array(np.zeros((num_elem+1, )), iotype='out', low=0.001,
+                            desc = 'Temperature'))
+
+        self.epsilon = 500
+        h_lower = 11000 - self.epsilon
+        h_upper = 11000 + self.epsilon
+
+        matrix = np.array([[h_lower**3, h_lower**2, h_lower, 1],
+                           [h_upper**3, h_upper**2, h_upper, 1],
+                           [3*h_lower**2, 2*h_lower, 1, 0],
+                           [3*h_upper**2, 2*h_upper, 1, 0]])
+        rhs = np.array([288.16-(6.5e-3)*h_lower, 216.65,
+                           -6.5e-3, 0])
+        self.coefs = np.linalg.solve(matrix, rhs)
 
     def execute(self):
-        """ Compute SFC value using sea level SFC and altitude the model is a
-        linear correction for altitude changes.
+        """ Temperature model extracted from linear portion and constant
+        portion of the standard atmosphere.
         """
 
         alt = self.h * 1e3
-        sfcsl = self.SFCSL * 1e-6
+        alt_boundary = 11000
+        n_elem = len(self.h)
+        temp = self.temp
 
-        sfc_temp = sfcsl + (6.39e-13) * alt
-        self.SFC = sfc_temp / 1e-6
+        a = self.coefs[0]
+        b = self.coefs[1]
+        c = self.coefs[2]
+        d = self.coefs[3]
+
+        for index in xrange(n_elem):
+            if alt[index] <= (alt_boundary - self.epsilon):
+                temp[index] = (288.16 - (6.5e-3) * alt[index]) / 1e2
+            elif alt[index] >= (alt_boundary + self.epsilon):
+                temp[index] = 216.65 / 1e2
+            else:
+                h_star = alt[index]
+                temp[index] = (a*h_star**3 + b*h_star**2 + c*h_star + d) / 1e2
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
         """
-        input_keys = ['h', 'SFCSL']
-        output_keys = ['SFC']
+        input_keys = ['h']
+        output_keys = ['temp']
         return input_keys, output_keys
 
     def provideJ(self):
@@ -66,36 +91,57 @@ class SysSFC(Component):
         pass
 
     def apply_deriv(self, arg, result):
-        """ Compute SFC derivatives wrt sea level SFC and altitude.
-        Forward mode
+        """ Compute temperature derivative wrt altitude
+        Forward mode.
         """
 
-        dsfc_dalt = 6.39e-13
+        alt = self.h * 1e3
+        alt_boundary = 11000
+        n_elem = len(self.h)
 
-        if 'h' in arg:
-            result['SFC'] += (dsfc_dalt * arg['h']) * 1e3/1e-6
-        if 'SFCSL' in arg:
-            result['SFC'] += arg['SFCSL']
+        a = self.coefs[0]
+        b = self.coefs[1]
+        c = self.coefs[2]
+
+        for index in xrange(n_elem):
+            if alt[index] <= (alt_boundary - self.epsilon):
+                result['temp'][index] += -6.5e-3 *  arg['h'][index] * 1e3/1e2
+            elif alt[index] >= (alt_boundary + self.epsilon):
+                result['temp'][index] += 0.0
+            else:
+                h_star = alt[index]
+                result['temp'][index] += (3*a*h_star**2 + 2*b*h_star
+                                 + c) *  arg['h'][index] * 1e3/1e2
 
     def apply_derivT(self, arg, result):
-        """ Compute SFC derivatives wrt sea level SFC and altitude.
-        Adjoint mode
+        """ Compute temperature derivative wrt altitude
+        Adjoint mode.
         """
 
-        dsfc_dalt = 6.39e-13
-        dsfc = arg['SFC']
+        alt = self.h * 1e3
+        alt_boundary = 11000
+        n_elem = len(self.h)
 
-        if 'h' in result:
-            result['h'] += dsfc_dalt * dsfc * 1e3/1e-6
-        if 'SFCSL' in result:
-            result['SFCSL'] += np.sum(dsfc)
+        a = self.coefs[0]
+        b = self.coefs[1]
+        c = self.coefs[2]
+
+        for index in xrange(n_elem):
+            if alt[index] <= (alt_boundary - self.epsilon):
+                result['h'][index] += -6.5e-3 * arg['temp'][index] * 1e3/1e2
+            elif alt[index] >= (alt_boundary + self.epsilon):
+                result['h'][index] += 0.0
+            else:
+                h_star = alt[index]
+                result['h'][index] += (3*a*h_star**2 + 2*b*h_star
+                                + c) * arg['temp'][index] * 1e3/1e2
 
 
-class SysTemp(Component):
+class SysTempOld(Component):
     """ Linear temperature model using the standard atmosphere """
 
     def __init__(self, num_elem=10):
-        super(SysTemp, self).__init__()
+        super(SysTempOld, self).__init__()
 
         # Inputs
         self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
@@ -145,10 +191,203 @@ class SysTemp(Component):
 
 
 class SysRho(Component):
-    """ Density model using the linear temperature std atm model """
+    """ Density model using standard atmosphere model with troposphere,
+    stratosphere.
+    """
 
     def __init__(self, num_elem=10):
         super(SysRho, self).__init__()
+
+        # Inputs
+        self.add('temp', Array(np.zeros((num_elem+1, )), iotype='in',
+                            desc = 'Temperature'))
+        self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
+                            desc = 'Altitude'))
+
+        # Outputs
+        self.add('rho', Array(np.zeros((num_elem+1, )), iotype='out', low=0.001,
+                            desc = 'Density'))
+
+        self.epsilon = 500
+        h_lower = 11000 - self.epsilon
+        h_upper = 11000 + self.epsilon
+        matrix = np.array([[h_lower**3, h_lower**2, h_lower, 1],
+                           [h_upper**3, h_upper**2, h_upper, 1],
+                           [3*h_lower**2, 2*h_lower, 1, 0],
+                           [3*h_upper**2, 2*h_upper, 1, 0]])
+        rhs = np.array([101325*(1-0.0065*h_lower/288.16)**5.2561,
+                        22632*np.exp(-9.81*self.epsilon/(288*216.65)),
+                        (-101325*5.2561*(0.0065/288.16)*
+                         (1-0.0065*h_lower/288.15)**4.2561),
+                        (22632*(-9.81/(288*216.65))*
+                         np.exp(-9.81*self.epsilon/(288*216.65)))])
+        self.coefs = np.linalg.solve(matrix, rhs)
+
+    def execute(self):
+        """ Density model extracted from the standard atmosphere. Depends on
+        the temperature and the altitude. Model is valid for troposphere and
+        stratosphere, and accounts for the linear decreasing temperature
+        segment (troposphere), and the constant temperature segment.
+        (stratosphere)
+        """
+
+        temp = self.temp * 1e2
+        alt = self.h * 1e3
+        n_elem = len(self.h)
+        rho = self.rho
+
+        alt_boundary = 11000
+        a = self.coefs[0]
+        b = self.coefs[1]
+        c = self.coefs[2]
+        d = self.coefs[3]
+
+        for index in xrange(n_elem):
+            if alt[index] <= (alt_boundary - self.epsilon):
+                pressure = 101325*(1-0.0065*alt[index]/288.16)**5.2561
+                rho[index] = pressure / (288 * temp[index])
+            elif alt[index] >= (alt_boundary + self.epsilon):
+                pressure = 22632*np.exp(-9.81*(alt[index]-alt_boundary)/
+                                             (288*216.65))
+                rho[index] = pressure / (288 * temp[index])
+            else:
+                h_star = alt[index]
+                pressure = a*h_star**3 + b*h_star**2 + c*h_star + d
+                rho[index] = pressure / (288 * temp[index])
+
+    def list_deriv_vars(self):
+        """ Return lists of inputs and outputs where we defined derivatives.
+        """
+        input_keys = ['temp', 'h']
+        output_keys = ['rho']
+        return input_keys, output_keys
+
+    def provideJ(self):
+        """ Calculate and save derivatives. (i.e., Jacobian) """
+        pass
+
+    def apply_deriv(self, arg, result):
+        """ Compute density derivative wrt altitude and temperature.
+        Forward mode.
+        """
+
+        alt = self.h * 1e3
+        n_elem = len(alt)
+        temp = self.temp * 1e2
+        alt_boundary = 11000
+
+        a = self.coefs[0]
+        b = self.coefs[1]
+        c = self.coefs[2]
+        d = self.coefs[3]
+
+        drho = result['rho']
+
+        if 'h' in arg:
+            dalt = arg['h']
+            for index in xrange(n_elem):
+                if alt[index] <= (alt_boundary - self.epsilon):
+                    dpressure = 101325*5.2561*(-0.0065/288.16)*\
+                        (1-0.0065*alt[index]/288.16)**4.2561
+                    drho[index] += dpressure * dalt[index] /\
+                        (288*temp[index])*1e3
+                elif alt[index] >= (alt_boundary + self.epsilon):
+                    dpressure = (22632*(-9.81/(288*216.65))*
+                                 np.exp(9.81*11000/(288*216.65))*
+                                 np.exp(-9.81*alt[index]/
+                                            (288*216.65)))
+                    drho[index] += dpressure * dalt[index] /\
+                        (288*temp[index])*1e3
+                else:
+                    h_star = alt[index]
+                    dpressure = 3*a*h_star**2 + 2*b*h_star + c
+                    drho[index] += dpressure * dalt[index] /\
+                        (288*temp[index])*1e3
+        if 'temp' in arg:
+            dtemp = arg['temp']
+            for index in xrange(n_elem):
+                if alt[index] <= (alt_boundary - self.epsilon):
+                    pressure = 101325*(1-0.0065*alt[index]/
+                                       288.16)**5.2561
+                    drho[index] += -pressure / (288*temp[index]**2) *\
+                        dtemp[index] * 1e2
+                elif alt[index] >= (alt_boundary + self.epsilon):
+                    pressure = 22632*np.exp(-9.81*(alt[index]-
+                                                      alt_boundary)/
+                                                (288*216.65))
+                    drho[index] += -pressure / (288*temp[index]**2) *\
+                        dtemp[index] * 1e2
+                else:
+                    h_star = alt[index]
+                    pressure = (a*h_star**3 + b*h_star**2 + c*h_star +
+                                d)
+                    drho[index] += -pressure / (288*temp[index]**2) *\
+                        dtemp[index] * 1e2
+
+    def apply_derivT(self, arg, result):
+        """ Compute density derivative wrt altitude and temperature.
+        Adjoint mode.
+        """
+
+        alt = self.h * 1e3
+        n_elem = len(alt)
+        temp = self.temp * 1e2
+        alt_boundary = 11000
+
+        a = self.coefs[0]
+        b = self.coefs[1]
+        c = self.coefs[2]
+        d = self.coefs[3]
+
+        drho = arg['rho']
+
+        if 'h' in result:
+            dalt = result['h']
+            for index in xrange(n_elem):
+                if alt[index] <= (alt_boundary - self.epsilon):
+                    dpressure = 101325*5.2561*(-0.0065/288.16)*\
+                        (1-0.0065*alt[index]/288.16)**4.2561
+                    dalt[index] += dpressure * drho[index] /\
+                        (288*temp[index])*1e3
+                elif alt[index] >= (alt_boundary + self.epsilon):
+                    dpressure = (22632*(-9.81/(288*216.65))*
+                                 np.exp(9.81*11000/(288*216.65))*
+                                 np.exp(-9.81*alt[index]/
+                                            (288*216.65)))
+                    dalt[index] += dpressure * drho[index] /\
+                        (288*temp[index])*1e3
+                else:
+                    h_star = alt[index]
+                    dpressure = 3*a*h_star**2 + 2*b*h_star + c
+                    dalt[index] += dpressure * drho[index] /\
+                        (288*temp[index])*1e3
+        if 'temp' in result:
+            dtemp = result['temp']
+            for index in xrange(n_elem):
+                if alt[index] <= (alt_boundary - self.epsilon):
+                    pressure = 101325*(1-0.0065*alt[index]/
+                                       288.16)**5.2561
+                    dtemp[index] += -pressure / (288*temp[index]**2) *\
+                        drho[index] * 1e2
+                elif alt[index] >= (alt_boundary + self.epsilon):
+                    pressure = 22632*np.exp(-9.81*(alt[index]-
+                                                      alt_boundary)/
+                                                (288*216.65))
+                    dtemp[index] += -pressure / (288*temp[index]**2) *\
+                        drho[index] * 1e2
+                else:
+                    h_star = alt[index]
+                    pressure = (a*h_star**3 + b*h_star**2 + c*h_star +
+                                d)
+                    dtemp[index] += -pressure / (288*temp[index]**2) *\
+                        drho[index] * 1e2
+
+
+class SysRhoOld(Component):
+    """ Density model using the linear temperature std atm model """
+
+    def __init__(self, num_elem=10):
+        super(SysRhoOld, self).__init__()
 
         # Inputs
         self.add('temp', Array(np.zeros((num_elem+1, )), iotype='in', low=0.001,

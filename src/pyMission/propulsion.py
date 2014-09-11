@@ -25,6 +25,70 @@ from openmdao.main.datatypes.api import Array, Float
 # Allow non-standard variable names for scientific calc
 # pylint: disable=C0103
 
+class SysSFC(Component):
+    """ Linear SFC model wrt altitude """
+
+    def __init__(self, num_elem=10):
+        super(SysSFC, self).__init__()
+
+        # Inputs
+        self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
+                            desc = 'Altitude'))
+        self.add('SFCSL', Float(0.0, iotype='in',
+                                desc = 'sea-level SFC value'))
+
+        # Outputs
+        self.add('SFC', Array(np.zeros((num_elem+1, )), iotype='out',
+                              desc = 'Specific Fuel Consumption'))
+
+    def execute(self):
+        """ Compute SFC value using sea level SFC and altitude the model is a
+        linear correction for altitude changes.
+        """
+
+        alt = self.h * 1e3
+        sfcsl = self.SFCSL * 1e-6
+
+        sfc_temp = sfcsl + (6.39e-13) * alt
+        self.SFC = sfc_temp / 1e-6
+
+    def list_deriv_vars(self):
+        """ Return lists of inputs and outputs where we defined derivatives.
+        """
+        input_keys = ['h', 'SFCSL']
+        output_keys = ['SFC']
+        return input_keys, output_keys
+
+    def provideJ(self):
+        """ Calculate and save derivatives. (i.e., Jacobian) """
+        pass
+
+    def apply_deriv(self, arg, result):
+        """ Compute SFC derivatives wrt sea level SFC and altitude.
+        Forward mode
+        """
+
+        dsfc_dalt = 6.39e-13
+
+        if 'h' in arg:
+            result['SFC'] += (dsfc_dalt * arg['h']) * 1e3/1e-6
+        if 'SFCSL' in arg:
+            result['SFC'] += arg['SFCSL']
+
+    def apply_derivT(self, arg, result):
+        """ Compute SFC derivatives wrt sea level SFC and altitude.
+        Adjoint mode
+        """
+
+        dsfc_dalt = 6.39e-13
+        dsfc = arg['SFC']
+
+        if 'h' in result:
+            result['h'] += dsfc_dalt * dsfc * 1e3/1e-6
+        if 'SFCSL' in result:
+            result['SFCSL'] += np.sum(dsfc)
+
+
 class SysTau(Component):
     """ Throttle setting determined primarily by thrust coefficient A simple
     linear relationship using the sea-level max thrust and a linear

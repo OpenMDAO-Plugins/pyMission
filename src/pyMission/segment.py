@@ -21,13 +21,13 @@ from openmdao.main.api import Assembly, set_as_top
 from openmdao.main.datatypes.api import Array, Float
 
 from pyMission.aerodynamics import SysAeroSurrogate, SysCM
-from pyMission.atmospherics import SysSFC, SysTemp, SysRho, SysSpeed
+from pyMission.atmospherics import SysTemp, SysRho, SysSpeed
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
                                   SysFuelObj, SysHi, SysHf
-from pyMission.propulsion import SysTau
+from pyMission.propulsion import SysSFC, SysTau
 
 
 class MissionSegment(Assembly):
@@ -99,6 +99,7 @@ class MissionSegment(Assembly):
         self.connect('SFCSL', 'SysSFC.SFCSL')
         self.connect('SysHBspline.h', 'SysSFC.h')
         self.connect('SysHBspline.h', 'SysTemp.h')
+        self.connect('SysHBspline.h', 'SysRho.h')
         self.connect('SysTemp.temp', 'SysRho.temp')
         self.connect('SysTemp.temp', 'SysSpeed.temp')
         self.connect('SysMVBspline.M', 'SysSpeed.M')

@@ -16,6 +16,7 @@ class Optimization(object):
         """ Takes system containing all DVs and outputs """
         self._system = system
         self._variables = {'dv': {}, 'func': {}}
+        self.sens_callback = None
 
     def _get_name(self, var_id):
         """ Returns unique string for the variable """
@@ -34,7 +35,7 @@ class Optimization(object):
                                           'get_jacs': get_jacs,
                                           'linear': linear}
 
-    def add_design_variable(self, var, value=0.0,
+    def add_design_variable(self, var, value=0.0, 
                             lower=None, upper=None):
         """ Self-explanatory; part of API """
         self._add_var('dv', var, value=value,
@@ -49,6 +50,9 @@ class Optimization(object):
         """ Self-explanatory; part of API """
         self._add_var('func', var, lower=lower, upper=upper,
                       get_jacs=get_jacs, linear=linear)
+
+    def add_sens_callback(self, callback):
+        self.sens_callback = callback
 
     def obj_func(self, dv_dict):
         """ Objective function passed to pyOptSparse """
@@ -89,9 +93,6 @@ class Optimization(object):
                     system.variables[var]['u'] /\
                     system.variables[var]['u0']
 
-        print 'func', dv_dict, func_dict
-        print 'everything'
-        print system.vec['u']
         return func_dict, fail
 
     def sens_func(self, dv_dict, func_dict):
@@ -102,7 +103,7 @@ class Optimization(object):
         print '**********************'
         print 'Evaluating derivatives'
         print '**********************'
-        print
+        print 
 
         fail = False
         sens_dict = {}
@@ -122,7 +123,7 @@ class Optimization(object):
                         = numpy.zeros((nfunc, ndv))
 
                 for ind in xrange(nfunc):
-                    temp, success = system.compute_derivatives('fwd', func_id, ind, False)
+                    temp, success = system.compute_derivatives('rev', func_id, ind, False)
                     fail = fail or not success
 
                     for dv_name in variables['dv'].keys():
@@ -154,6 +155,9 @@ class Optimization(object):
         if fail:
             system.vec['du'].array[:] = 0.0
 
+        if self.sens_callback is not None:
+            self.sens_callback()
+
         return sens_dict, fail
 
     def __call__(self, optimizer, options=None):
@@ -171,7 +175,6 @@ class Optimization(object):
             size = system.vec['u'](dv_id).shape[0]
             opt_prob.addVarGroup(dv_name, size, value=value,
                                  lower=lower, upper=upper)
-            print 'initial', dv_name, value
         opt_prob.finalizeDesignVariables()
         for func_name in variables['func'].keys():
             func = variables['func'][func_name]

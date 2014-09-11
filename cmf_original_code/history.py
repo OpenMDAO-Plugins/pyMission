@@ -17,6 +17,7 @@ copyright July 2014
 from __future__ import division
 import os
 import numpy
+import copy
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab
@@ -24,7 +25,7 @@ import matplotlib.pylab
 class History(object):
     """ class used to write optimization history onto disk """
 
-    def __init__(self, num_elem, num_cp, x_range, folder_name):
+    def __init__(self, num_elem, num_cp, x_range, folder_path, name, first=False):
         """ initialize variables, set folder name to 
             distxxxxkm-yyyy-zzzz-nnn/
             where xxxx is the distance of the mission
@@ -37,20 +38,26 @@ class History(object):
         self.num_elem = num_elem
         self.num_cp = num_cp
         self.x_range = x_range
-        self.folder_name = folder_name + 'dist'+\
-            str(int(x_range*1e3))+'km-'\
-            +str(num_cp)+'-'+str(num_elem)
+        self.folder_name = folder_path + name
+        self.name = name
+
         index = 0
-        while os.path.exists(self.folder_name+'-'+str(index)):
+        while os.path.exists(self.folder_name+'_%03i' % (index)):
             index += 1
-        self.folder_name = self.folder_name+'-'+str(index)+'/'
-        os.makedirs(self.folder_name)
-        self.index = index
+
+        if first == True:
+            self.folder_name = self.folder_name+'_%03i/' % (index)
+            os.makedirs(self.folder_name)
+            self.index = index
+        else:
+            index -= 1
+            self.folder_name = self.folder_name+'_%03i/' % (index)
+            self.index = index
 
         self.hist_counter = 0
 
-        self.variable_max = numpy.zeros(15)
-        self.variable_min = numpy.zeros(15)
+        self.variable_max = numpy.zeros(16)
+        self.variable_min = numpy.zeros(16)
 
     def get_index(self):
         """ returns the case number (self.index), and the iteration number
@@ -85,10 +92,8 @@ class History(object):
         temp = vecu('Temp') * 1e2
         SFC = vecu('SFC') * 1e-6
 
-        file_name = '%ikm-%i-%i-%04i.dat' % (int(self.x_range*1e3),
-                                             self.num_cp,
-                                             self.num_elem,
-                                             self.hist_counter)
+        file_name = self.name + '_%04i_%04i.dat' % (self.num_cp,
+                                                  self.hist_counter)
 
         output_file = self.folder_name + file_name
 
@@ -133,11 +138,147 @@ class History(object):
             self.variable_min[index] = min(variable)
             index += 1
 
+        opt_alt = self.compute_est(vecu)
+        self.variable_min[index] = opt_alt[0]
+        self.variable_max[index] = opt_alt[1]
+
         file_array = [self.variable_min, self.variable_max]
-        file_name = str(int(self.x_range*1e3))+'km-'+str(self.num_cp)+'-'\
-            +str(self.num_elem)+'-maxmin.dat'
+        file_name = self.name + '_maxmin.dat'
         output_file = self.folder_name+file_name
         numpy.savetxt(output_file, file_array)
+
+    def compute_est(self, vecu):
+        """ computes the estimated optimal flight altitude with
+            empty weight and takeoff gross weight. this data is
+            intended to be stored in the max-min file and be used
+            in pltscript.py to provide a sanity check on the
+            results on the final plot.
+        """
+
+        self.epsilon = 500
+        h_lower = 11000 - self.epsilon
+        h_upper = 11000 + self.epsilon
+        matrix = numpy.array([[h_lower**3, h_lower**2, h_lower, 1],
+                              [h_upper**3, h_upper**2, h_upper, 1],
+                              [3*h_lower**2, 2*h_lower, 1, 0],
+                              [3*h_upper**2, 2*h_upper, 1, 0]])
+        rhs = numpy.array([288.16-(6.5e-3)*h_lower, 216.65,
+                           -6.5e-3, 0])
+        coefs_temp = numpy.linalg.solve(matrix, rhs)
+
+        rhs = numpy.array([101325*(1-0.0065*h_lower/288.16)**5.2561,
+                           22632*numpy.exp(-9.81*self.epsilon/(288*216.65)),
+                           (-101325*5.2561*(0.0065/288.16)*
+                             (1-0.0065*h_lower/288.15)**4.2561),
+                           (22632*(-9.81/(288*216.65))*
+                            numpy.exp(-9.81*self.epsilon/(288*216.65)))])
+        coefs_dens = numpy.linalg.solve(matrix, rhs)
+
+        params = {
+            'SFCSL': vecu('SFCSL') * 1e-6,
+            'wing_area': vecu('S') * 1e2,
+            'weight': (vecu('ac_w') + vecu('fuel_w')[0]) * 1e6,
+            'aspect_ratio': vecu('AR'),
+            'oswald': vecu('e'),
+            'coefs_t': coefs_temp,
+            'coefs_d': coefs_dens,
+            }
+
+        h_1 = 10000
+        h_2 = 15000
+        res = 1.0
+        M_guess = 0.82
+        f_1 = self.alt_est_obj(params, h_1, M_guess)
+        f_2 = self.alt_est_obj(params, h_2, M_guess)
+
+        while numpy.abs(res) > 1e-6:
+            h_guess = (h_1*f_2 - h_2*f_1)/(f_2 - f_1)
+            h_1 = copy.copy(h_2)
+            h_2 = copy.copy(h_guess)
+            f_1 = copy.copy(f_2)
+            f_2 = self.alt_est_obj(params, h_2, M_guess)
+            res = f_2
+        h_to = copy.copy(h_guess)
+
+        params['weight'] = vecu('ac_w') * 1e6
+        h_1 = 10000
+        h_2 = 15000
+        res = 1.0
+        f_1 = self.alt_est_obj(params, h_1, M_guess)
+        f_2 = self.alt_est_obj(params, h_2, M_guess)
+
+        while numpy.abs(res) > 1e-6:
+            h_guess = (h_1*f_2 - h_2*f_1)/(f_2 - f_1)
+            h_1 = copy.copy(h_2)
+            h_2 = copy.copy(h_guess)
+            f_1 = copy.copy(f_2)
+            f_2 = self.alt_est_obj(params, h_2, M_guess)
+            res = f_2
+        h_empty = copy.copy(h_guess)
+
+        return [h_empty, h_to]
+
+    def alt_est_obj(self, params, h_guess, M_guess):
+        """ the expression to be minimized to obtain the
+            back-of-the-envelope estimation of the optimal
+            cruise altitude
+        """
+
+        SFCSL = params['SFCSL']
+        wing_area = params['wing_area']
+        weight = params['weight']
+        aspect_ratio = params['aspect_ratio']
+        oswald = params['oswald']
+        SFC_slp = 6.39e-13 * 9.81
+        cd0 = 0.018
+        coefs_temp = params['coefs_t']
+        coefs_dens = params['coefs_d']
+
+        if h_guess <= (11000-self.epsilon):
+            temp = 288.16 - (6.5e-3) * h_guess
+            dtdh = -6.5e-3
+            pressure = 101325*(1-0.0065*h_guess/288.16)**5.2561
+            dpdh = 101325*5.2561*(-0.0065/288.16)*\
+                (1-0.0065*h_guess/288.16)**4.2561
+            rho = pressure / (288 * temp)
+            drho = dpdh/(288*temp) - (pressure*dtdh)/(288*temp**2)
+        elif h_guess >= (11000+self.epsilon):
+            temp = 216.65
+            dtdh = 0.0
+            pressure = 22632*numpy.exp(-9.81*(h_guess-11000)/
+                                        (288*216.65))
+            dpdh = (22632*(-9.81/(288*216.65))*
+                    numpy.exp(9.81*11000/(288*216.65))*
+                    numpy.exp(-9.81*h_guess/(288*216.65)))
+            rho = pressure / (288 * temp)
+            drho = dpdh/(288*temp) - (pressure*dtdh)/(288*temp**2)
+        else:
+            a = coefs_temp[0]
+            b = coefs_temp[1]
+            c = coefs_temp[2]
+            d = coefs_temp[3]
+            temp = a*h_guess**3 + b*h_guess**2 + c*h_guess + d
+            dtdh = 3*a*h_guess**2 + 2*b*h_guess + c
+            a = coefs_dens[0]
+            b = coefs_dens[1]
+            c = coefs_dens[2]
+            d = coefs_dens[3]
+            pressure = a*h_guess**3 + b*h_guess**2 + c*h_guess + d
+            dpdh = 3*a*h_guess**2 + 2*b*h_guess + c
+            rho = pressure / (288 * temp)
+            drho = dpdh/(288*temp) - (pressure*dtdh)/(288*temp**2)
+
+        speed = numpy.sqrt(1.4*288*temp) * M_guess
+        dspeed = 0.5*M_guess*numpy.sqrt(1.4*288/temp)*dtdh
+
+        obj = (SFC_slp * ((0.5*rho*speed**2*wing_area*cd0)/weight +
+                          weight/(0.5*rho*speed**2*numpy.pi*aspect_ratio*oswald)) +
+               (SFCSL + SFC_slp*h_guess)*
+               ((0.5*wing_area*cd0*(drho*speed**2 + rho*speed*dspeed))/weight -
+                (weight/(0.5*wing_area*numpy.pi*aspect_ratio*oswald*(rho*speed**2)**2)) *
+                (drho*speed**2 + rho*speed*dspeed)))
+
+        return obj
 
 class Plotting(object):
     """ generate the figures described by the outputted data from the

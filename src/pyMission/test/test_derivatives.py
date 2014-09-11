@@ -9,13 +9,14 @@ from openmdao.main.test.test_derivatives import SimpleDriver
 from openmdao.util.testutil import assert_rel_error
 
 from pyMission.aerodynamics import SysAeroSurrogate, SysCM
-from pyMission.atmospherics import SysSFC, SysTemp, SysRho, SysSpeed
+from pyMission.atmospherics import SysTemp, SysRho, SysSpeed, \
+                                   SysRhoOld, SysTempOld
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
                                   SysFuelObj, SysHi, SysHf
-from pyMission.propulsion import SysTau
+from pyMission.propulsion import SysSFC, SysTau
 
 
 # Ignore the numerical warnings from performing the rel error calc.
@@ -157,9 +158,23 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         self.run_model()
         self.compare_derivatives()
 
+    def test_SysTempOld(self):
+
+        compname = 'SysTempOld'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
     def test_SysRho(self):
 
         compname = 'SysRho'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives(rel_error=True)
+
+    def test_SysRhoOld(self):
+
+        compname = 'SysRhoOld'
         self.setup(compname, self.arg_dict)
         self.run_model()
         self.compare_derivatives()

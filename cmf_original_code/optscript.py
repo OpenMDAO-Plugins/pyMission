@@ -26,17 +26,19 @@ params = {
     'S': 427.8/1e2,
     'ac_w': 210000*9.81/1e6,
     'thrust_sl': 1020000.0/1e6,
-    'SFCSL': 40,#8.951,
+    'SFCSL': 8.951*9.81,
     'AR': 8.68,
     'e': 0.8,
+    't_c': 0.09,
+    'sweep': 31.6 * numpy.pi/180,
     }
 
-num_elem = 100
+num_elem = 10#00
 num_cp_init = 10
-num_cp_max = 200
-num_cp_step = 10
-x_range = 1000.0
-folder_name = '/home/jason/Documents/Results/MGtest-'
+num_cp_max = 110
+num_cp_step = 100
+x_range = 5500.0      # range in nautical miles!
+folder_path = '/home/jason/Documents/Results/TIME-OptTest_'
 
 # END USER SPECIFIED DATA
 ##########################
@@ -45,18 +47,29 @@ num_cp = num_cp_init
 if ((num_cp_max - num_cp_init)%num_cp_step) != 0:
     raise Exception('Specified max control pts and step do not agree!')
 
+# determine folder name
+name = '%inm_i%i_d%i_f%i_p%i' % (int(x_range),
+                                 num_cp_init,
+                                 num_cp_step,
+                                 num_cp_max,
+                                 num_elem)
+
 # define bounds for the flight path angle
-gamma_lb = numpy.tan(-10.0 * (numpy.pi/180.0))/1e-1
-gamma_ub = numpy.tan(10.0 * (numpy.pi/180.0))/1e-1
+gamma_lb = numpy.tan(-35.0 * (numpy.pi/180.0))/1e-1
+gamma_ub = numpy.tan(35.0 * (numpy.pi/180.0))/1e-1
+takeoff_speed = 83.3
+landing_speed = 72.2
 
 # define initial altitude profile, as well as fixed profile for
 # x-distance and airspeed
-v_init = numpy.ones(num_cp)*2.3
+x_range *= 1.852
 x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
+v_init = numpy.ones(num_cp)*2.3
 h_init = 1 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
 
 altitude = numpy.zeros(num_elem+1)
 
+first = True
 start = time.time()
 while num_cp <= num_cp_max:
 
@@ -66,35 +79,46 @@ while num_cp <= num_cp_max:
     x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
 
     # initialize the mission analysis problem with the framework
-    traj = OptTrajectory(num_elem, num_cp)
+    traj = OptTrajectory(num_elem, num_cp, first)
     traj.set_init_h(h_init)
     traj.set_init_v(v_init)
     traj.set_init_x(x_init)
     traj.set_params(params)
-    traj.set_folder_name(folder_name)
+    traj.set_folder(folder_path)
+    traj.set_name(name)
     traj.setup_MBI()
     traj.set_init_h_pt(altitude)
     main = traj.initialize_framework()
 
-    main.compute(True)
+    main.compute(output=True)
+
+    main.check_derivatives_all()
+    exit()
 
     # initialize the trajectory optimization problem using the framework
     # instance initialized before with Optimization.py
     traj.set_gamma_bound(gamma_lb, gamma_ub)
+    traj.set_takeoff_speed(takeoff_speed)
+    traj.set_landing_speed(landing_speed)
     opt = traj.initialize_opt(main)
 
     # start timing, and perform optimization
     opt('SNOPT')
 
+    run_case, last_itr = traj.history.get_index()
+    folder_name = folder_path + name + '_%03i/' % (run_case)
+    call (["mv", "./SNOPT_print.out", folder_name + 'SNOPT_%04i_print.out' %(num_cp)])
+    call (["mv", "./hist.hst", folder_name + 'hist_%04i.hst' %(num_cp)])
     altitude = main.vec['u']('h')
     num_cp += num_cp_step
+    first = False
     
-print 'OPTIMIZATION TIME', time.time() - start
-main.history.print_max_min(main.vec['u'])
-run_case, last_itr = main.history.get_index()
+print 'OPTIMIZATION TIME:', time.time() - start
+seconds = main.vec['u']('time') * 1e4
+mnt, sec = divmod(seconds, 60)
+hrs, mnt = divmod(mnt, 60)
+print 'FLIGHT TIME:', '%d:%02d:%02d' % (hrs, mnt, sec)
+traj.history.print_max_min(main.vec['u'])
 
-# move SNOPT output file to specified folder
-folder_name = folder_name + 'dist'+str(int(x_range))\
-    +'km-'+str(num_cp)+'-'+str(num_elem)+'-'+str(run_case)+'/.'
-call (["mv", "./SNOPT_print.out", folder_name])
+
 

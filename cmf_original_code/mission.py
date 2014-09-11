@@ -19,80 +19,24 @@ from history import *
 
 class GlobalizedSystem(SerialSystem):
     ''' doc string '''
-
+    
     def solve_F(self):
         """ Solve f for u, p |-> u """
 
         kwargs = self.kwargs
-        #self.solvers['NL']['NLN_GS'](ilimit=kwargs['GL_GS_ilimit'],
-        #                             atol=kwargs['GL_GS_atol'],
-        #                             rtol=kwargs['GL_GS_rtol'])
+        self.solvers['NL']['NLN_GS'](ilimit=kwargs['GL_GS_ilimit'],
+                                     atol=kwargs['GL_GS_atol'],
+                                     rtol=kwargs['GL_GS_rtol'])
         return self.solvers['NL']['NEWTON'](ilimit=kwargs['GL_NT_ilimit'],
                                             atol=kwargs['GL_NT_atol'],
                                             rtol=kwargs['GL_NT_rtol'])
 
-class Top(SerialSystem):
-
-    def initialize_plotting(self):
-        #self.fig = matplotlib.pylab.figure(figsize=(12.0,12.0))
-        self.counter = 0
-
-    def initialize_history(self, num_elem, num_cp, x_range, folder_name):
-        self.history = History(num_elem, num_cp, x_range, folder_name)
-        self.hist_counter = 0
-
-    def compute0(self, output=False):
-        fig = self.fig
-        fig.clf()
-        temp, success = super(Top, self).compute(output)
-        v = self.vec['u']
-        nr, nc = 6, 2
-        fig.add_subplot(nr,nc,1).plot(v('x')*1000.0, v('h'))
-        fig.add_subplot(nr,nc,1).set_ylabel('Altitude (km)')
-        fig.add_subplot(nr,nc,2).plot(v('x')*1000.0, v('v')*1e2)
-        fig.add_subplot(nr,nc,2).set_ylabel('Velocity (m/s)')
-        fig.add_subplot(nr,nc,3).plot(v('x')*1000.0, v('alpha')*1e-1*180.0/numpy.pi)
-        fig.add_subplot(nr,nc,3).set_ylabel('AoA (deg)')
-        fig.add_subplot(nr,nc,4).plot(v('x')*1000.0, v('tau'))
-        fig.add_subplot(nr,nc,4).set_ylabel('Throttle')
-        fig.add_subplot(nr,nc,5).plot(v('x')*1000.0, v('eta')*1e-1*180.0/numpy.pi)
-        fig.add_subplot(nr,nc,5).set_ylabel('Trim Angle (deg)')
-        fig.add_subplot(nr,nc,6).plot(v('x')*1000.0, v('fuel_w')*1e6/(9.81*0.804))
-        fig.add_subplot(nr,nc,6).set_ylabel('Fuel (L)')
-        fig.add_subplot(nr,nc,7).plot(v('x')*1000.0, v('rho'))
-        fig.add_subplot(nr,nc,7).set_ylabel('rho')
-        fig.add_subplot(nr,nc,8).plot(v('x')*1000.0, v('CL_tar'))
-        fig.add_subplot(nr,nc,8).set_ylabel('CL_tar')
-        fig.add_subplot(nr,nc,9).plot(v('x')*1000.0, v('CD')*0.1)
-        fig.add_subplot(nr,nc,9).set_ylabel('CD')
-        fig.add_subplot(nr,nc,10).plot(v('x')*1000.0, v('CT_tar')*0.1)
-        fig.add_subplot(nr,nc,10).set_ylabel('CT_tar')
-        fig.add_subplot(nr,nc,11).plot(v('x')*1000.0, v('gamma')*0.1*180/numpy.pi)
-        fig.add_subplot(nr,nc,11).set_ylabel('gamma')
-        fig.add_subplot(nr,nc,12).plot(v('x')*1000.0, (v('fuel_w')+v('ac_w'))*1e6/9.81*2.2)
-        fig.add_subplot(nr,nc,12).set_ylabel('W (lb)')
-        fig.add_subplot(nr,nc,6).set_xlabel('Distance (km)')
-        fig.add_subplot(nr,nc,12).set_xlabel('Distance (km)')
-        fig.savefig("plots/OptFig_%i.pdf"%(self.counter))
-        fig.savefig("plots/OptFig_%i.png"%(self.counter))
-        self.counter += 1
-
-        return temp, success
-
-    def compute_derivatives(self, mode, var, ind=0, output=False):
-        temp, success = super(Top, self).compute_derivatives(mode, var, ind,
-                                                             output)
-        if var == ('wf_obj', 0):
-            self.history.save_history(self.vec['u'])
-
-        return temp, success
-
 class OptTrajectory(object):
     """ class used to define and setup trajectory optimization problem """
 
-    def __init__(self, num_elem, num_cp):
+    def __init__(self, num_elem, num_cp, first):
         self.num_elem = num_elem
-        self.num_pt = num_cp
+        self.num_cp = num_cp
         self.h_pts = numpy.zeros(num_cp)
         self.M_pts = numpy.zeros(num_cp)
         self.v_pts = numpy.zeros(num_cp)
@@ -106,7 +50,9 @@ class OptTrajectory(object):
         self.v_specified = 0
         self.gamma_lb = numpy.tan(-30.0 * (numpy.pi/180.0))/1e-1
         self.gamma_ub = numpy.tan(30.0 * (numpy.pi/180.0))/1e-1
-        self.folder_name = None
+        self.folder_path = None
+        self.name = None
+        self.first = first
 
     def set_init_h(self, h_init):
         self.h_pts = h_init
@@ -132,11 +78,11 @@ class OptTrajectory(object):
         """ generate jacobians for b-splines using MBI package """
 
         num_pts = self.num_elem + 1
-        num_cp = self.num_pt
+        num_cp = self.num_cp
 
         alt = numpy.linspace(0, 16, num_pts)
         x_dist = numpy.linspace(0, self.x_pts[-1], num_pts)/1e6
-
+        
         arr = MBI.MBI(alt, [x_dist], [num_cp], [4])
         jac = arr.getJacobian(0, 0)
         jacd = arr.getJacobian(1, 0)
@@ -160,23 +106,28 @@ class OptTrajectory(object):
         self.sfc_sl = kw['SFCSL']
         self.aspect_ratio = kw['AR']
         self.oswald = kw['e']
+        self.t_c = kw['t_c']
+        self.sweep = kw['sweep']
 
-    def set_folder_name(self, folder_name):
-        self.folder_name = folder_name
+    def set_folder(self, folder_path):
+        self.folder_path = folder_path
+
+    def set_name(self, name):
+        self.name = name
 
     def initialize_framework(self):
 
-        self.main = Top('mission',
-                        NL='NLN_GS',
-                        LN='LIN_GS',
-                        LN_ilimit=1,
-                        NL_ilimit=1,
-                        NL_rtol=1e-6,
-                        NL_atol=1e-10,
-                        LN_rtol=1e-6,
-                        LN_atol=1e-10,
-                        output=True,
-                        subsystems=[
+        self.main = SerialSystem('mission',
+                                 NL='NLN_GS',
+                                 LN='LIN_GS',
+                                 LN_ilimit=1,
+                                 NL_ilimit=1,
+                                 NL_rtol=1e-6,
+                                 NL_atol=1e-10,
+                                 LN_rtol=1e-6,
+                                 LN_atol=1e-10,
+                                 output=True,
+                                 subsystems=[
                 SerialSystem('mission_param',
                              NL='NLN_GS',
                              LN='LIN_GS',
@@ -190,6 +141,8 @@ class OptTrajectory(object):
                         IndVar('SFCSL', val=self.sfc_sl, size=1),
                         IndVar('AR', val=self.aspect_ratio, size=1),
                         IndVar('e', val=self.oswald, size=1),
+                        IndVar('t_c', val=self.t_c, size=1),
+                        IndVar('sweep', val=self.sweep, size=1),
                         ]),
                 SerialSystem('segment',
                              NL='NLN_GS',
@@ -210,21 +163,21 @@ class OptTrajectory(object):
                                 IndVar('M_pt', val=self.M_pts, lower=0),
                                 IndVar('v_pt', val=self.v_pts, lower=0),
                                 SysXBspline('x', num_elem=self.num_elem,
-                                            num_pt=self.num_pt,
+                                            num_cp=self.num_cp,
                                             x_init=self.x_pts,
                                             x_0=numpy.linspace(0.0, self.x_pts[-1], self.num_elem+1),
                                             jac_h=self.jac_h),
                                 SysHBspline('h', num_elem=self.num_elem,
-                                            num_pt=self.num_pt,
+                                            num_cp=self.num_cp,
                                             x_init=self.x_pts,
                                             jac_h=self.jac_h),
                                 SysMVBspline('M', num_elem=self.num_elem,
-                                             num_pt=self.num_pt,
+                                             num_cp=self.num_cp,
                                              x_init=self.x_pts,
                                              jac_h=self.jac_h),
                                 SysGammaBspline('gamma',
                                                 num_elem=self.num_elem,
-                                                num_pt=self.num_pt,
+                                                num_cp=self.num_cp,
                                                 x_init=self.x_pts,
                                                 jac_gamma=self.jac_gamma),
                                 ]),
@@ -243,19 +196,19 @@ class OptTrajectory(object):
                                 ]),
                         GlobalizedSystem('coupled_analysis',
                                          LN='KSP_PC',
-                                         #PC='LIN_GS',
+                                         PC='LIN_GS',
                                          LN_ilimit=8,
                                          GL_GS_ilimit=5,
                                          GL_NT_ilimit=8,
-                                         #PC_ilimit=3,
+                                         PC_ilimit=3,
                                          GL_GS_rtol=1e-6,
                                          GL_GS_atol=1e-10,
                                          GL_NT_rtol=1e-14,
                                          GL_NT_atol=1e-14,
                                          LN_rtol=1e-14,
                                          LN_atol=1e-14,
-                                         #PC_rtol=1e-6,
-                                         #PC_atol=1e-10,
+                                         PC_rtol=1e-6,
+                                         PC_atol=1e-10,
                                          output=True,
                                          subsystems=[
                                 SerialSystem('vert_eqlm',
@@ -276,13 +229,14 @@ class OptTrajectory(object):
                                              LN='KSP_PC',
                                              LN_ilimit=15,
                                              NL_ilimit=15,
-                                             #PC_ilimit=2,
+                                             PC_ilimit=2,
                                              NL_rtol=1e-10,
                                              NL_atol=1e-10,
                                              LN_rtol=1e-10,
                                              LN_atol=1e-10,
                                              subsystems=[
-                                        SysAeroSurrogate('CL', num_elem=self.num_elem),
+                                        SysCLSurrogate('CL', num_elem=self.num_elem),
+                                        SysCDSurrogate('CD', num_elem=self.num_elem),
                                         SysAlpha('alpha',
                                                  num_elem=self.num_elem),
                                         ]),
@@ -347,12 +301,15 @@ class OptTrajectory(object):
                                             num_elem=self.num_elem),
                                 SysSlopeMax('gamma_max',
                                             num_elem=self.num_elem),
+                                SysVi('v_i'),
+                                SysVf('v_f', num_elem=self.num_elem),
+                                SysBlockTime('time', num_elem=self.num_elem),
                                 ]),
                         ]),
                  ]).setup()
-        #self.main.initialize_plotting()
-        self.main.initialize_history(self.num_elem, self.num_pt,
-                                     self.x_pts[-1], self.folder_name)
+
+        self.history = History(self.num_elem, self.num_cp, self.x_pts[-1], 
+                               self.folder_path, self.name, self.first)
 
         return self.main
 
@@ -360,12 +317,19 @@ class OptTrajectory(object):
         self.gamma_lb = gamma_lb
         self.gamma_ub = gamma_ub
 
+    def set_takeoff_speed(self, v_to):
+        self.v_to = v_to
+
+    def set_landing_speed(self, v_ld):
+        self.v_ld = v_ld
+
     def initialize_opt(self, main):
         gamma_lb = self.gamma_lb
         gamma_ub = self.gamma_ub
 
         opt = Optimization(main)
         opt.add_design_variable('h_pt', value=self.h_pts, lower=0.0, upper=20.0)
+        opt.add_design_variable('v_pt', value=self.v_pts, lower=0.0, upper=10.0)
         opt.add_objective('wf_obj')
         opt.add_constraint('h_i', lower=0.0, upper=0.0)
         opt.add_constraint('h_f', lower=0.0, upper=0.0)
@@ -373,5 +337,12 @@ class OptTrajectory(object):
         opt.add_constraint('Tmax', upper=0.0)
         opt.add_constraint('gamma', lower=gamma_lb, upper=gamma_ub,
                            get_jacs=main('gamma').get_jacs, linear=True)
+        opt.add_constraint('v_i', lower=self.v_to, upper=self.v_to)
+        opt.add_constraint('v_f', lower=self.v_ld, upper=self.v_ld)
+        opt.add_constraint('time', lower=0.0, upper=11*3600.0)
+        opt.add_sens_callback(self.callback)
         return opt
+
+    def callback(self):        
+        self.history.save_history(self.main.vec['u'])
 

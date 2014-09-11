@@ -31,12 +31,12 @@ class SysXBspline(ExplicitSystem):
         """
 
         self.num_pts = self.kwargs['num_elem']+1
-        self.num_pt = self.kwargs['num_pt']
+        self.num_cp = self.kwargs['num_cp']
         self.x_init = self.kwargs['x_init']
         x_0 = self.kwargs['x_0']
 
         self._declare_variable('x', size=self.num_pts, val=x_0)
-        self._declare_argument('x_pt', indices=range(self.num_pt))
+        self._declare_argument('x_pt', indices=range(self.num_cp))
 
     def apply_G(self):
         """ compute x b-spline values with x control point values
@@ -75,11 +75,11 @@ class SysHBspline(ExplicitSystem):
         """
 
         self.num_pts = self.kwargs['num_elem']+1
-        self.num_pt = self.kwargs['num_pt']
+        self.num_cp = self.kwargs['num_cp']
         self.x_init = self.kwargs['x_init']
 
         self._declare_variable('h', size=self.num_pts)
-        self._declare_argument('h_pt', indices=range(self.num_pt))
+        self._declare_argument('h_pt', indices=range(self.num_cp))
 
     def apply_G(self):
         """ compute h b-splines values using h control point values
@@ -118,13 +118,13 @@ class SysMVBspline(ExplicitSystem):
         """
 
         self.num_pts = self.kwargs['num_elem']+1
-        self.num_pt = self.kwargs['num_pt']
+        self.num_cp = self.kwargs['num_cp']
         self.x_init = self.kwargs['x_init']
 
         self._declare_variable('M', size=self.num_pts)
         self._declare_variable('v_spline', size=self.num_pts)
-        self._declare_argument('M_pt', indices=range(self.num_pt))
-        self._declare_argument('v_pt', indices=range(self.num_pt))
+        self._declare_argument('M_pt', indices=range(self.num_cp))
+        self._declare_argument('v_pt', indices=range(self.num_cp))
 
     def apply_G(self):
         """ compute M b-spline values using M control point values
@@ -175,11 +175,11 @@ class SysGammaBspline(ExplicitSystem):
         """
 
         self.num_pts = self.kwargs['num_elem']+1
-        self.num_pt = self.kwargs['num_pt']
+        self.num_cp = self.kwargs['num_cp']
         self.x_init = self.kwargs['x_init']
 
         self._declare_variable('gamma', size=self.num_pts)
-        self._declare_argument('h_pt', indices=range(self.num_pt))
+        self._declare_argument('h_pt', indices=range(self.num_cp))
 
     def apply_G(self):
         """ compute gamma b-spline values using gamma control point values
