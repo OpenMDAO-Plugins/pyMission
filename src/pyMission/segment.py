@@ -191,6 +191,13 @@ class MissionSegment(Assembly):
         self.coupled_solver.add_constraint('SysAeroSurrogate.eta = SysCM.eta')
         self.coupled_solver.add_constraint('SysCTTar.fuel_w = SysFuelWeight.fuel_w')
 
+        # Experimented with direct connections.
+        #self.connect('SysCTTar.CT_tar', 'SysCLTar.CT_tar')
+        #self.connect('SysFuelWeight.fuel_w', 'SysCLTar.fuel_w')
+        #self.connect('SysAeroSurrogate.alpha', 'SysCLTar.alpha')
+        #self.connect('SysCM.eta', 'SysAeroSurrogate.eta')
+        #self.connect('SysFuelWeight.fuel_w', 'SysCTTar.fuel_w')
+
         # (Only non-GS pair)
         self.coupled_solver.add_parameter('SysCM.eta')
         self.coupled_solver.add_constraint('SysCM.eta_res = 0')
@@ -258,9 +265,9 @@ class MissionSegment(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 100
+    num_elem = 30000
     num_cp = 30
-    x_range = 150.0
+    x_range = 15000.0
 
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
     v_init = np.ones(num_cp)*2.3
@@ -282,7 +289,7 @@ if __name__ == "__main__":
     model.AR = 8.68
     model.oswald = 0.8
 
-    profile = False
+    profile = True
 
     if profile is False:
         from time import time

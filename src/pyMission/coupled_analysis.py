@@ -247,38 +247,37 @@ class SysCTTar(Component):
         ac_w = self.ac_w * 1e6
 
         dthrust_c = result['CT_tar']
+        cos_alpha = np.cos(alpha)
+        sin_gamma = np.sin(Gamma)
+        fact = 0.5*rho*speed**2*wing_area*cos_alpha
 
         if 'ac_w' in arg:
-            dthrust_c += (np.sin(Gamma) / (0.5*rho*speed**2*wing_area
-                           *np.cos(alpha)) * arg['ac_w'] * 1e6/1e-1)
+            dthrust_c += (sin_gamma / (fact) * \
+                          arg['ac_w'] * 1e6/1e-1)
         if 'S' in arg:
-            dthrust_c += -((ac_w + fuel_w)*np.sin(Gamma)/
-                              (0.5*rho*speed**2*wing_area**2*
-                               np.cos(alpha)) * arg['S'] * 1e2/1e-1)
+            dthrust_c += -((ac_w + fuel_w)*sin_gamma / \
+                              (fact*wing_area) * \
+                              arg['S'] * 1e2/1e-1)
         if 'v' in arg:
-            dthrust_c += -2*(ac_w + fuel_w) * np.sin(Gamma) /\
-                            (0.5*rho*speed**3*wing_area* \
-                             np.cos(alpha)) * arg['v'] * 1e2/1e-1
+            dthrust_c += -2*(ac_w + fuel_w) * sin_gamma /\
+                            (fact*speed) * \
+                            arg['v'] * 1e2/1e-1
         if 'rho' in arg:
-            dthrust_c += -(ac_w + fuel_w) * np.sin(Gamma) /\
-                            (0.5*rho**2*speed**2*wing_area* \
-                             np.cos(alpha)) * arg['rho'] / 1e-1
+            dthrust_c += -(ac_w + fuel_w) * sin_gamma /\
+                            (fact*rho) * arg['rho'] / 1e-1
         if 'fuel_w' in arg:
-            dthrust_c += np.sin(Gamma) /\
-                            (0.5*rho*speed**2*wing_area* \
-                             np.cos(alpha)) * arg['fuel_w'] * 1e6/1e-1
+            dthrust_c += sin_gamma /\
+                            (fact) * arg['fuel_w'] * 1e6/1e-1
         if 'Gamma' in arg:
             dthrust_c += (ac_w + fuel_w)*np.cos(Gamma) /\
-                            (0.5*rho*speed**2*wing_area* \
-                             np.cos(alpha)) * arg['Gamma'] * 1e-1/1e-1
+                            (fact) * arg['Gamma'] * 1e-1/1e-1
         if 'CD' in arg:
-            dthrust_c += 1/np.cos(alpha) * arg['CD'] * 1e-1/1e-1
+            dthrust_c += 1.0/cos_alpha * arg['CD'] * 1e-1/1e-1
         if 'alpha' in arg:
             dthrust_c += (drag_c*np.sin(alpha)/\
-                             (np.cos(alpha))**2 \
-                             + (ac_w + fuel_w)*np.sin(Gamma)* \
-                             np.sin(alpha)/(0.5*rho*speed**2* \
-                             wing_area* (np.cos(alpha))**2)) \
+                             (cos_alpha)**2 \
+                             + (ac_w + fuel_w)*sin_gamma* \
+                             np.sin(alpha)/(fact*cos_alpha)) \
                              * arg['alpha'] * 1e-1/1e-1
 
     def apply_derivT(self, arg, result):
@@ -298,39 +297,36 @@ class SysCTTar(Component):
         ac_w = self.ac_w * 1e6
 
         dthrust_c = arg['CT_tar']
+        cos_alpha = np.cos(alpha)
+        sin_gamma = np.sin(Gamma)
+        fact = 0.5*rho*speed**2*wing_area
 
         if 'ac_w' in result:
-            result['ac_w'] += np.sum(np.sin(Gamma)/
-                                  (0.5*rho*speed**2*wing_area*
-                                   np.cos(alpha))*
+            result['ac_w'] += np.sum(sin_gamma/(fact*cos_alpha) * \
                                   dthrust_c) * 1e6/1e-1
         if 'S' in result:
-            result['S'] -= np.sum((ac_w + fuel_w)*np.sin(Gamma)/
-                           (0.5*rho*speed**2*wing_area**2*
-                           np.cos(alpha))*dthrust_c) * 1e2/1e-1
+            result['S'] -= np.sum((ac_w + fuel_w)*sin_gamma/
+                           (fact*wing_area*cos_alpha) * \
+                           dthrust_c) * 1e2/1e-1
         if 'v' in result:
-            result['v'] += -2*(ac_w + fuel_w) * np.sin(Gamma) /\
-                            (0.5*rho*speed**3*wing_area* \
-                            np.cos(alpha)) * dthrust_c * 1e2/1e-1
+            result['v'] += -2*(ac_w + fuel_w) * sin_gamma /\
+                            (fact*speed*cos_alpha) * \
+                            dthrust_c * 1e2/1e-1
         if 'rho' in result:
-            result['rho'] += -(ac_w + fuel_w) * np.sin(Gamma) /\
-                              (0.5*rho**2*speed**2*wing_area* \
-                              np.cos(alpha)) * dthrust_c  /1e-1
+            result['rho'] += -(ac_w + fuel_w) * sin_gamma /\
+                              (fact*rho*cos_alpha) * dthrust_c  /1e-1
         if 'fuel_w' in result:
-            result['fuel_w'] += np.sin(Gamma) /\
-                                (0.5*rho*speed**2*wing_area* \
-                                np.cos(alpha)) * dthrust_c * 1e6/1e-1
+            result['fuel_w'] += sin_gamma /\
+                                (fact*cos_alpha) * dthrust_c * 1e6/1e-1
         if 'Gamma' in result:
             result['Gamma'] += (ac_w + fuel_w)*np.cos(Gamma) /\
-                               (0.5*rho*speed**2*wing_area* \
-                               np.cos(alpha)) * dthrust_c * 1e-1/1e-1
+                               (fact*cos_alpha) * dthrust_c * 1e-1/1e-1
         if 'CD' in result:
-            result['CD'] += 1.0/np.cos(alpha) * dthrust_c * 1e-1/1e-1
+            result['CD'] += 1.0/cos_alpha * dthrust_c * 1e-1/1e-1
         if 'alpha' in result:
-            result['alpha'] += ((drag_c*np.sin(alpha)/(np.cos(alpha))**2
-                               + (ac_w + fuel_w)*np.sin(Gamma)*
-                                 np.sin(alpha)/(0.5*rho*speed**2* \
-                                 wing_area * (np.cos(alpha))**2)) \
+            result['alpha'] += ((drag_c*np.sin(alpha)/(cos_alpha)**2
+                               + (ac_w + fuel_w)*sin_gamma*
+                                 np.sin(alpha)/(fact*(cos_alpha)**2)) \
                                  * dthrust_c) * 1e-1/1e-1
 
 
