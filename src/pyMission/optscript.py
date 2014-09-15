@@ -89,7 +89,7 @@ while num_cp <= num_cp_max:
 
     # Save final optimization results. This records the final value of every
     # variable in the model, and saves them in mission_final_cp_#.bson
-    from openmdao.main.test.test_derivatives import SimpleDriver
+    from openmdao.main.test.simpledriver import SimpleDriver
     model.replace('driver', SimpleDriver())
     filename = 'mission_final_cp_%d.bson' % num_cp
     model.recorders = [BSONCaseRecorder(filename)]
