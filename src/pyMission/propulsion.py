@@ -80,7 +80,7 @@ class SysSFC(Component):
         Adjoint mode
         """
 
-        dsfc_dalt = 6.39e-13
+        dsfc_dalt = 6.39e-13*9.81
         dsfc = arg['SFC']
 
         if 'h' in result:
