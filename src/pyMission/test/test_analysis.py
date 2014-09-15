@@ -1,4 +1,5 @@
 
+import os
 import pickle
 import unittest
 import warnings
@@ -45,7 +46,9 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         model.run()
 
         # Load in original data from pickle
-        old_data = pickle.load(open('analysis.p', 'rb'))
+        dirname = os.path.abspath(os.path.dirname(__file__))
+        filename = os.path.join(dirname, 'analysis.p')
+        old_data = pickle.load(open(filename, 'rb'))
 
         # Some names changed
         old_data['Gamma'] = old_data['gamma']

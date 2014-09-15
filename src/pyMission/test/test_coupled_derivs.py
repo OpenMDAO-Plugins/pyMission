@@ -1,4 +1,5 @@
 
+import os
 import pickle
 import unittest
 import warnings
@@ -62,7 +63,9 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         new_derivs = model.driver.workflow.calc_gradient()
 
         # Load in original data from pickle
-        old_derivs_dict = pickle.load(open('derivs.p', 'rb'))
+        dirname = os.path.abspath(os.path.dirname(__file__))
+        filename = os.path.join(dirname, 'derivs.p')
+        old_derivs_dict = pickle.load(open(filename, 'rb'))
 
         for i in range(0, 4):
 
