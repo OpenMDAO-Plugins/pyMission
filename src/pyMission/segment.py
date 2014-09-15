@@ -265,7 +265,7 @@ class MissionSegment(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 30000
+    num_elem = 3000
     num_cp = 30
     x_range = 15000.0
 
@@ -289,7 +289,7 @@ if __name__ == "__main__":
     model.AR = 8.68
     model.oswald = 0.8
 
-    profile = True
+    profile = False
 
     if profile is False:
         from time import time
