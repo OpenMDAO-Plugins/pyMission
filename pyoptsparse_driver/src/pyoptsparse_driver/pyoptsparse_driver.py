@@ -31,7 +31,7 @@ def _check_imports():
 
     for optimizer in optlist[:]:
         try:
-            exec('from pyOpt import %s' % optimizer)
+            exec('from pyoptsparse import %s' % optimizer)
         except ImportError:
             optlist.remove(optimizer)
 
