@@ -282,6 +282,7 @@ class pyOptSparseDriver(Driver):
             traceback.print_exc()
             print 70*"="
 
+        #self.workflow._system.vec['u'].dump()
         return func_dict, fail
 
     def gradfunc(self, dv_dict, func_dict):
@@ -326,5 +327,6 @@ class pyOptSparseDriver(Driver):
             traceback.print_exc()
             print 70*"="
 
+        print sens_dict
         return sens_dict, fail
 

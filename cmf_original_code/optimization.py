@@ -35,7 +35,7 @@ class Optimization(object):
                                           'get_jacs': get_jacs,
                                           'linear': linear}
 
-    def add_design_variable(self, var, value=0.0, 
+    def add_design_variable(self, var, value=0.0,
                             lower=None, upper=None):
         """ Self-explanatory; part of API """
         self._add_var('dv', var, value=value,
@@ -74,6 +74,7 @@ class Optimization(object):
         print 'DVs:'
         print dv_dict
         print 'Failure:', fail
+        #print system.vec['u']
         print
         print '-------------------------'
         print 'Done evaluating functions'
@@ -103,7 +104,7 @@ class Optimization(object):
         print '**********************'
         print 'Evaluating derivatives'
         print '**********************'
-        print 
+        print
 
         fail = False
         sens_dict = {}
@@ -123,7 +124,7 @@ class Optimization(object):
                         = numpy.zeros((nfunc, ndv))
 
                 for ind in xrange(nfunc):
-                    temp, success = system.compute_derivatives('rev', func_id, ind, False)
+                    temp, success = system.compute_derivatives('rev', func_id, ind, True)
                     fail = fail or not success
 
                     for dv_name in variables['dv'].keys():

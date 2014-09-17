@@ -121,7 +121,7 @@ class SysMVBspline(ExplicitSystem):
         self.num_cp = self.kwargs['num_cp']
         self.x_init = self.kwargs['x_init']
 
-        self._declare_variable('M', size=self.num_pts)
+        self._declare_variable('M_spline', size=self.num_pts)
         self._declare_variable('v_spline', size=self.num_pts)
         self._declare_argument('M_pt', indices=range(self.num_cp))
         self._declare_argument('v_pt', indices=range(self.num_cp))
@@ -132,7 +132,7 @@ class SysMVBspline(ExplicitSystem):
         """
 
         jac_h = self.kwargs['jac_h']
-        mach = self.vec['u']('M')
+        mach = self.vec['u']('M_spline')
         mach_pt = self.vec['p']('M_pt')
         speed = self.vec['u']('v_spline')
         speed_pt = self.vec['p']('v_pt')
@@ -145,7 +145,7 @@ class SysMVBspline(ExplicitSystem):
         """
 
         jac_h = self.kwargs['jac_h']
-        dmach = self.vec['dg']('M')
+        dmach = self.vec['dg']('M_spline')
         dmach_pt = self.vec['dp']('M_pt')
         dspeed = self.vec['dg']('v_spline')
         dspeed_pt = self.vec['dp']('v_pt')

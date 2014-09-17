@@ -28,19 +28,27 @@ num_elem = 3000
 num_cp_init = 10
 num_cp_max = 10        # set to 200 for the sweep
 num_cp_step = 10
-x_range = 15000.0
+x_range = 8100.0  # nautical miles
+
+#num_elem = 6
+#num_cp_init = 3
+#num_cp_max = 3
+#num_cp_step = 33
 
 # define bounds for the flight path angle
-gamma_lb = np.tan(-10.0 * (np.pi/180.0))/1e-1
-gamma_ub = np.tan(10.0 * (np.pi/180.0))/1e-1
+gamma_lb = np.tan(-35.0 * (np.pi/180.0))/1e-1
+gamma_ub = np.tan(35.0 * (np.pi/180.0))/1e-1
+takeoff_speed = 83.3
+landing_speed = 72.2
 
 start = time.time()
 num_cp = num_cp_init
 while num_cp <= num_cp_max:
 
+    x_range *= 1.852
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
-    v_init = np.ones(num_cp)*2.3
-    h_init = 1 * np.sin(np.pi * x_init / (x_range/1e3))
+    v_init = np.ones(num_cp)*2.5
+    h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
     model.replace('driver', pyOptSparseDriver())
@@ -83,17 +91,38 @@ while num_cp <= num_cp_max:
     model.includes.extend(model.driver.list_constraint_targets())
     model.includes.append('SysFuelObj.wf_obj')
 
+    # Flag for making sure we run serial if we do an mpirun
+    model.driver.system_type = 'serial'
+    model.coupled_solver.system_type = 'serial'
+    model.drag_solver.system_type = 'serial'
+    PROFILE = False
+
     # Optimize
-    model.run()
-    print 'h_pt', model.h_pt
+    if PROFILE==True:
+        import cProfile
+        import pstats
+        import sys
+        cProfile.run('model.run()', 'profout')
+        p = pstats.Stats('profout')
+        p.strip_dirs()
+        p.sort_stats('time')
+        p.print_stats()
+        print '\n\n---------------------\n\n'
+        p.print_callers()
+        print '\n\n---------------------\n\n'
+        p.print_callees()
+    else:
+        start = time.time()
+        model.run()
+        print 'OPTIMIZATION TIME:', time.time() - start
 
     # Save final optimization results. This records the final value of every
     # variable in the model, and saves them in mission_final_cp_#.bson
-    from openmdao.main.test.simpledriver import SimpleDriver
-    model.replace('driver', SimpleDriver())
-    filename = 'mission_final_cp_%d.bson' % num_cp
-    model.recorders = [BSONCaseRecorder(filename)]
-    model.includes = ['*']
-    model.run()
+    #from openmdao.main.test.simpledriver import SimpleDriver
+    #model.replace('driver', SimpleDriver())
+    #filename = 'mission_final_cp_%d.bson' % num_cp
+    #model.recorders = [BSONCaseRecorder(filename)]
+    #model.includes = ['*']
+    #model.run()
 
     num_cp += num_cp_step

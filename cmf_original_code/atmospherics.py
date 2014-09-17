@@ -400,7 +400,7 @@ class SysSpeed(ExplicitSystem):
 
         self._declare_variable('v', size=num_pts)
         self._declare_argument('v_spline', indices=ind_pts)
-        self._declare_argument('M', indices=ind_pts)
+        self._declare_argument('M_spline', indices=ind_pts)
         self._declare_argument('Temp', indices=ind_pts)
 
     def apply_G(self):
@@ -411,7 +411,7 @@ class SysSpeed(ExplicitSystem):
         pvec = self.vec['p']
         uvec = self.vec['u']
         temp = pvec('Temp') * 1e2
-        mach = pvec('M')
+        mach = pvec('M_spline')
         speed_spline = pvec('v_spline')
         speed = uvec('v')
 
@@ -431,10 +431,10 @@ class SysSpeed(ExplicitSystem):
         dgvec = self.vec['dg']
         
         temp = pvec('Temp') * 1e2
-        mach = pvec('M')
+        mach = pvec('M_spline')
 
         dtemp = dpvec('Temp')
-        dmach = dpvec('M')
+        dmach = dpvec('M_spline')
         dspeed_spline = dpvec('v_spline')
         dspeed = dgvec('v')
 
@@ -467,3 +467,86 @@ class SysSpeed(ExplicitSystem):
                     dtemp[:] += ds_dT * dspeed
                 if self.get_id('M') in args:
                     dmach[:] += ds_dM * dspeed / 1e2
+
+class SysMach(ExplicitSystem):
+    """ compute Mach number using specified airspeed and temperature """
+
+    def _declare(self):
+        """ owned variable: M (Mach number)
+            dependencies: v (airspeed)
+                          temp (temperature)
+        """
+
+        self.num_elem = self.kwargs['num_elem']
+        self.v_specified = self.kwargs['v_specified']
+        ind_pts = range(self.num_elem+1)
+
+        self._declare_variable('M', size=self.num_elem+1)
+        self._declare_argument('v_spline', indices=ind_pts)
+        self._declare_argument('M_spline', indices=ind_pts)
+        self._declare_argument('Temp', indices=ind_pts)
+
+    def apply_G(self):
+        """ Mach number is computed by first calculating the speed of sound
+            given the temperature, and then use the airspeed to divide by
+            the calculated speed of sound
+        """
+
+        pvec = self.vec['p']
+        uvec = self.vec['u']
+        temp = pvec('Temp') * 1e2
+        mach = uvec('M')
+        mach_spline = pvec('M_spline')
+        speed = pvec('v_spline') * 1e2
+
+        gamma = 1.4
+        gas_c = 287
+
+        if self.v_specified:
+            mach[:] = speed / numpy.sqrt(gamma*gas_c*temp)
+        else:
+            mach[:] = mach_spline[:]
+
+    def apply_dGdp(self, args):
+        """ compute Mach number derivatives wrt temperature and airspeed """
+
+        pvec = self.vec['p']
+        dpvec = self.vec['dp']
+        dgvec = self.vec['dg']
+
+        temp = pvec('Temp') * 1e2
+        speed = pvec('v_spline') * 1e2
+
+        dtemp = dpvec('Temp')
+        dmach = dgvec('M')
+        dmach_spline = dpvec('M_spline')
+        dspeed = dpvec('v_spline')
+
+        gamma = 1.4
+        gas_c = 287
+
+        ds_dv = 1/numpy.sqrt(gamma*gas_c*temp)
+        ds_dT = -0.5*speed/(numpy.sqrt(gamma*gas_c)*(temp)**(3/2))
+
+        if self.mode == 'fwd':
+            dmach[:] = 0.0
+            if not self.v_specified:
+                if self.get_id('M_spline') in args:
+                    dmach[:] += dmach_spline
+            else:
+                if self.get_id('Temp') in args:
+                    dmach[:] += ds_dT * dtemp * 1e2
+                if self.get_id('v_spline') in args:
+                    dmach[:] += ds_dv * dspeed * 1e2
+        elif self.mode == 'rev':
+            dtemp[:] = 0.0
+            dspeed[:] = 0.0
+            dmach_spline[:] = 0.0
+            if not self.v_specified:
+                if self.get_id('M_spline') in args:
+                    dmach_spline[:] += dmach
+            else:
+                if self.get_id('Temp') in args:
+                    dtemp[:] += ds_dT * dmach * 1e2
+                if self.get_id('v_spline') in args:
+                    dspeed[:] += ds_dv * dmach * 1e2

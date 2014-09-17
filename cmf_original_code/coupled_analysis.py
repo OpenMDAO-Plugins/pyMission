@@ -610,7 +610,7 @@ class SysAlpha(ImplicitSystem):
         num_pts = self.num_elem+1
         ind_pts = range(num_pts)
 
-        self._declare_variable('alpha', size=num_pts)
+        self._declare_variable('alpha', size=num_pts)#, lower=-10*numpy.pi/180/1e-1, upper=20*numpy.pi/180/1e-1)
         self._declare_argument('CL', indices=ind_pts)
         self._declare_argument('CL_tar', indices=ind_pts)
 

@@ -1046,7 +1046,7 @@ class NonlinearSolver(Solver):
 
     def _initialize(self):
         """ Commands run before iteration """
-        if self._system.kwargs['NL_ilimit'] > 1 and False:
+        if self._system.kwargs['NL_ilimit'] > 1:
             norm = self._norm()
         else:
             norm = 1.0
@@ -1074,7 +1074,6 @@ class Newton(NonlinearSolver):
         system.solve_dFdu()
         system.solve_line_search()
 
-
 class Backtracking(NonlinearSolver):
     """ Backtracking line search """
 
@@ -1089,12 +1088,16 @@ class Backtracking(NonlinearSolver):
         lower = system.vec['lb'].array
         upper = system.vec['ub'].array
         self.alpha = 1.0
-        if not numpy.isnan(lower).all():
+        if not numpy.isnan(lower).all() \
+           and not numpy.isnan(u).any() \
+           and not numpy.isnan(du).any():
             lower_const = u + self.alpha*du - lower
             ind = numpy.nanargmin(lower_const)
             if lower_const[ind] < 0:
                 self.alpha = (lower[ind] - u[ind]) / du[ind]
-        if not numpy.isnan(upper).all():
+        if not numpy.isnan(upper).all() \
+           and not numpy.isnan(u).any() \
+           and not numpy.isnan(du).any():
             upper_const = upper - u - self.alpha*du
             ind = numpy.nanargmin(upper_const)
             if upper_const[ind] < 0:
@@ -1225,7 +1228,6 @@ class KSP(LinearSolver):
         system = self._system
         self.space = space
         self.ksp.setTolerances(max_it=ilimit, atol=atol, rtol=rtol)
-
         if 0:
             self._initialize()
             self.ksp.solve(system.rhs_buf, system.sol_buf)

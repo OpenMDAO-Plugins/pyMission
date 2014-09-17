@@ -10,6 +10,7 @@ from coupled_analysis import *
 from functionals import *
 from aerodynamics import *
 from propulsion import *
+#from aeroTripan import *
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab
@@ -24,9 +25,9 @@ class GlobalizedSystem(SerialSystem):
         """ Solve f for u, p |-> u """
 
         kwargs = self.kwargs
-        #self.solvers['NL']['NLN_GS'](ilimit=kwargs['GL_GS_ilimit'],
-        #                             atol=kwargs['GL_GS_atol'],
-        #                             rtol=kwargs['GL_GS_rtol'])
+        self.solvers['NL']['NLN_GS'](ilimit=kwargs['GL_GS_ilimit'],
+                                     atol=kwargs['GL_GS_atol'],
+                                     rtol=kwargs['GL_GS_rtol'])
         return self.solvers['NL']['NEWTON'](ilimit=kwargs['GL_NT_ilimit'],
                                             atol=kwargs['GL_NT_atol'],
                                             rtol=kwargs['GL_NT_rtol'])
@@ -106,6 +107,8 @@ class OptTrajectory(object):
         self.sfc_sl = kw['SFCSL']
         self.aspect_ratio = kw['AR']
         self.oswald = kw['e']
+        self.t_c = kw['t_c']
+        self.sweep = kw['sweep']
 
     def set_folder(self, folder_path):
         self.folder_path = folder_path
@@ -121,7 +124,7 @@ class OptTrajectory(object):
                                  LN_ilimit=1,
                                  NL_ilimit=1,
                                  NL_rtol=1e-6,
-                                 NL_atol=1e-10,
+                                 NL_atol=1e-9,
                                  LN_rtol=1e-6,
                                  LN_atol=1e-10,
                                  output=True,
@@ -139,12 +142,16 @@ class OptTrajectory(object):
                         IndVar('SFCSL', val=self.sfc_sl, size=1),
                         IndVar('AR', val=self.aspect_ratio, size=1),
                         IndVar('e', val=self.oswald, size=1),
+                        IndVar('t_c', val=self.t_c, size=1),
+                        IndVar('sweep', val=self.sweep, size=1),
                         ]),
                 SerialSystem('segment',
                              NL='NLN_GS',
                              LN='LIN_GS',
                              LN_ilimit=1,
                              NL_ilimit=1,
+                             NL_atol=1e-9,
+                             NL_rtol=1e-9,
                              output=True,
                              subsystems=[
                         SerialSystem('bsplines',
@@ -167,7 +174,7 @@ class OptTrajectory(object):
                                             num_cp=self.num_cp,
                                             x_init=self.x_pts,
                                             jac_h=self.jac_h),
-                                SysMVBspline('M', num_elem=self.num_elem,
+                                SysMVBspline('MV', num_elem=self.num_elem,
                                              num_cp=self.num_cp,
                                              x_init=self.x_pts,
                                              jac_h=self.jac_h),
@@ -189,22 +196,26 @@ class OptTrajectory(object):
                                 SysRho('rho', num_elem=self.num_elem),
                                 SysSpeed('v', num_elem=self.num_elem,
                                          v_specified=self.v_specified),
+                                SysMach('M', num_elem=self.num_elem,
+                                        v_specified=self.v_specified),
                                 ]),
-                        GlobalizedSystem('coupled_analysis',
+                        SerialSystem('coupled_analysis',
                                          LN='KSP_PC',
                                          #PC='LIN_GS',
-                                         LN_ilimit=8,
+                                         LN_ilimit=18,
                                          GL_GS_ilimit=5,
                                          GL_NT_ilimit=8,
-                                         #PC_ilimit=3,
+                                         PC_ilimit=5,
                                          GL_GS_rtol=1e-6,
-                                         GL_GS_atol=1e-10,
-                                         GL_NT_rtol=1e-14,
-                                         GL_NT_atol=1e-14,
-                                         LN_rtol=1e-14,
-                                         LN_atol=1e-14,
-                                         #PC_rtol=1e-6,
-                                         #PC_atol=1e-10,
+                                         GL_GS_atol=1e-9,#10,
+                                         GL_NT_rtol=1e-9,#14,
+                                         GL_NT_atol=1e-9,#14,
+                                         NL_rtol=1e-9,
+                                         NL_atol=1e-9,
+                                         LN_rtol=1e-14,#14,
+                                         LN_atol=1e-14,#14,
+                                         PC_rtol=1e-6,
+                                         PC_atol=1e-10,
                                          output=True,
                                          subsystems=[
                                 SerialSystem('vert_eqlm',
@@ -220,18 +231,20 @@ class OptTrajectory(object):
                                         SysCLTar('CL_tar',
                                                  num_elem=self.num_elem),
                                         ]),
-                                SerialSystem('drag',
+                                SerialSystem('tripan',
                                              NL='NEWTON',
                                              LN='KSP_PC',
                                              LN_ilimit=15,
                                              NL_ilimit=15,
-                                             #PC_ilimit=2,
-                                             NL_rtol=1e-10,
-                                             NL_atol=1e-10,
+                                             PC_ilimit=2,
+                                             NL_rtol=1e-9,
+                                             NL_atol=1e-9,
                                              LN_rtol=1e-10,
                                              LN_atol=1e-10,
                                              subsystems=[
-                                        SysAeroSurrogate('CL', num_elem=self.num_elem),
+                                        SysAeroSurrogate('tripan', num_elem=self.num_elem),
+                                        #SysCLSurrogate('CL', num_elem=self.num_elem),
+                                        #SysCDSurrogate('CD', num_elem=self.num_elem),
                                         SysAlpha('alpha',
                                                  num_elem=self.num_elem),
                                         ]),
@@ -296,6 +309,9 @@ class OptTrajectory(object):
                                             num_elem=self.num_elem),
                                 SysSlopeMax('gamma_max',
                                             num_elem=self.num_elem),
+                                SysVi('v_i'),
+                                SysVf('v_f', num_elem=self.num_elem),
+                                SysBlockTime('time', num_elem=self.num_elem),
                                 ]),
                         ]),
                  ]).setup()
@@ -309,12 +325,19 @@ class OptTrajectory(object):
         self.gamma_lb = gamma_lb
         self.gamma_ub = gamma_ub
 
+    def set_takeoff_speed(self, v_to):
+        self.v_to = v_to
+
+    def set_landing_speed(self, v_ld):
+        self.v_ld = v_ld
+
     def initialize_opt(self, main):
         gamma_lb = self.gamma_lb
         gamma_ub = self.gamma_ub
 
         opt = Optimization(main)
         opt.add_design_variable('h_pt', value=self.h_pts, lower=0.0, upper=20.0)
+        #opt.add_design_variable('v_pt', value=self.v_pts, lower=0.0, upper=10.0)
         opt.add_objective('wf_obj')
         opt.add_constraint('h_i', lower=0.0, upper=0.0)
         opt.add_constraint('h_f', lower=0.0, upper=0.0)
@@ -322,6 +345,9 @@ class OptTrajectory(object):
         opt.add_constraint('Tmax', upper=0.0)
         opt.add_constraint('gamma', lower=gamma_lb, upper=gamma_ub,
                            get_jacs=main('gamma').get_jacs, linear=True)
+        #opt.add_constraint('v_i', lower=self.v_to, upper=self.v_to)
+        #opt.add_constraint('v_f', lower=self.v_ld, upper=self.v_ld)
+        #opt.add_constraint('time', lower=0.0, upper=11*3600.0)
         opt.add_sens_callback(self.callback)
         return opt
 

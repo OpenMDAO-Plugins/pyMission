@@ -167,10 +167,11 @@ class MissionSegment(Assembly):
         self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
 
         self.drag_solver.iprint = 1
-        self.drag_solver.atol = 1e-10
-        self.drag_solver.rtol = 1e-10
+        self.drag_solver.atol = 1e-9
+        self.drag_solver.rtol = 1e-9
         self.drag_solver.max_iteration = 15
         self.drag_solver.gradient_options.gmres_tolerance = 1e-10
+        self.drag_solver.gradient_options.gmres_maxiter = 15
 
 
         # ------------------------------------------------
@@ -202,9 +203,10 @@ class MissionSegment(Assembly):
         self.coupled_solver.add_parameter('SysCM.eta')
         self.coupled_solver.add_constraint('SysCM.eta_res = 0')
 
-        self.coupled_solver.atol = 1e-14
-        self.coupled_solver.rtol = 1e-14
+        self.coupled_solver.atol = 1e-9
+        self.coupled_solver.rtol = 1e-9
         self.coupled_solver.gradient_options.gmres_tolerance = 1e-14
+        self.drag_solver.gradient_options.gmres_maxiter = 19
 
         self.coupled_solver.iprint = 1
 
