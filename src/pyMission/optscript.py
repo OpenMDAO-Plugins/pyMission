@@ -57,6 +57,8 @@ while num_cp <= num_cp_max:
     #            'Major iterations limit': 1000000,
     #            'Minor iterations limit': 1000000 }
     #model.driver.options = opt_dict
+    model.driver.gradient_options.lin_solver = 'linear_gs'
+    model.driver.gradient_options.maxiter = 1
 
     # Add parameters, objectives, constraints
     model.driver.add_parameter('h_pt', low=0.0, high=20.0)
