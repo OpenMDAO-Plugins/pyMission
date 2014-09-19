@@ -1364,16 +1364,18 @@ class LinearGS(LinearSolver):
                 system.sol_buf.array[:] = system.rhs_buf.array[:]
                 for subsystem2 in system.subsystems['local']:
                     if subsystem is not subsystem2:
-                        print subsystem.name
+                        print 'Linear 2xloop', subsystem2.name, subsystem.name
                         print "T1", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                         args = [v for v in system.variables
                                 if v not in subsystem2.variables]
                         system.rhs_vec.array[:] = 0.0
+                        print "T1.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                         subsystem2.apply_dFdpu(args)
                         print "T2", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                         system.scatter('lin', subsystem2)
                         system.sol_buf.array[:] -= system.rhs_vec.array[:]
                 system.rhs_vec.array[:] = system.sol_buf.array[:]
+                print "T2.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                 subsystem.solve_dFdu()
                 print "T3", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
 

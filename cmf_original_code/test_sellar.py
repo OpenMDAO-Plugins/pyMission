@@ -100,6 +100,66 @@ class Discipline2(ExplicitSystem):
             if self.get_id('y1') in args:
                 dy1[0] = dy2_dy1*dy2[0]
 
+class Pcomp1(ExplicitSystem):
+    """Evaluates something"""
+
+    def _declare(self):
+        self._declare_variable('p1')
+        self._declare_argument('y2')
+
+    def apply_G(self):
+        vec = self.vec
+        p, u = vec['p'], vec['u']
+        y2 =  p('y2')[0]
+        p1 = u('p1')
+        p1[0] = y2
+
+    def apply_dGdp(self, args):
+        vec = self.vec
+        p, u, dp, du, dg = vec['p'], vec['u'], vec['dp'], vec['du'], vec['dg']
+        y2 =  p('y2')[0]
+        p1 = u('p1')
+        dy2 = dp('y2')
+        dp1 = dg('p1')
+
+        if self.mode == 'fwd':
+            dp1[0] = 0
+            if self.get_id('y2') in args:
+                dp1[0] += dy2[0]
+        else:
+            if self.get_id('y2') in args:
+                dy2[0] += dp1[0]
+
+class Pcomp2(ExplicitSystem):
+    """Evaluates something"""
+
+    def _declare(self):
+        self._declare_variable('p2')
+        self._declare_argument('y1')
+
+    def apply_G(self):
+        vec = self.vec
+        p, u = vec['p'], vec['u']
+        y1 =  p('y1')[0]
+        p2 = u('p2')
+        p2[0] = y1
+
+    def apply_dGdp(self, args):
+        vec = self.vec
+        p, u, dp, du, dg = vec['p'], vec['u'], vec['dp'], vec['du'], vec['dg']
+        y1 =  p('y1')[0]
+        p2 = u('p2')
+        dy1 = dp('y1')
+        dp2 = dg('p2')
+
+        if self.mode == 'fwd':
+            dp2[0] = 0
+            if self.get_id('y1') in args:
+                dp2[0] += dy1[0]
+        else:
+            if self.get_id('y1') in args:
+                dy1[0] += dp2[0]
+
 main = SerialSystem('main',
                     #LN='KSP_PC',
                     LN='LIN_GS',
@@ -113,19 +173,22 @@ main = SerialSystem('main',
                                                  IndVar('z2', val=2.0),
                                                  IndVar('z1', val=5.0),
                                                  Discipline1('Disy1'),
-                                                 Discipline2('Disy2'),
-    ])]).setup()
+                                                 Discipline2('Disy2')
+                                                 ]),
+                                Pcomp1('p1'),
+                                Pcomp2('p2')
+    ]).setup()
 
 
 print main.compute()
 print 'done'
 #print main.vec['u']
 #print 'fwd'
-print main.compute_derivatives('fwd', 'x1', output=False)
+#print main.compute_derivatives('fwd', 'x1', output=False)
 #print main.compute_derivatives('fwd', 'z2', output=False)
 #print main.compute_derivatives('fwd', 'x1', output=False)
 #print 'rev'
-#print main.compute_derivatives('rev', 'z1', output=False)
+print main.compute_derivatives('rev', 'y1', output=False)
 #print main.compute_derivatives('rev', 'z2', output=False)
 #print main.compute_derivatives('rev', 'x1', output=False)
 
