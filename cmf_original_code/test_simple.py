@@ -94,13 +94,23 @@ class Dummy3(ExplicitSystem):
         else:
             dx[0] = dy_dx[0]
 
-main = SerialSystem('main', subsystems=[
-    IndVar('x', val=3.0),
-    IndVar('y', val=5.0),
-    Discipline1('f_xy'),
-    Dummy2('dum2'),
-    Dummy3('dum3'),
-    ]).setup()
+main = SerialSystem('main',
+                    NL='NLN_GS',
+                    LN='LIN_GS',
+                    LN_ilimit=1,
+                    NL_ilimit=1,
+                    NL_rtol=1e-6,
+                    NL_atol=1e-9,
+                    LN_rtol=1e-6,
+                    LN_atol=1e-10,
+                    output=True,
+                    subsystems=[
+                        IndVar('x', val=3.0),
+                        IndVar('y', val=5.0),
+                        Discipline1('f_xy'),
+                        #Dummy2('dum2'),
+                        #Dummy3('dum3'),
+                        ]).setup()
 
 
 print main.compute()
@@ -110,4 +120,4 @@ print main.compute_derivatives('fwd', 'y', output=False)
 print 'rev'
 print main.compute_derivatives('rev', 'dum3', output=False)
 
-main.check_derivatives_all(fwd=True)
+main.check_derivatives_all()

@@ -101,23 +101,27 @@ class Discipline2(ExplicitSystem):
                 dy1[0] = dy2_dy1*dy2[0]
 
 main = SerialSystem('main',
-                    NL='NEWTON',
-                    LN='KSP_PC',
+                    #LN='KSP_PC',
+                    LN='LIN_GS',
+                    NL='NLN_GS',
                     output=True,
-                    subsystems=[
-    IndVar('z1', val=5.0),
-    IndVar('z2', val=2.0),
-    IndVar('x1', val=1.0),
-    Discipline1('y1'),
-    Discipline2('y2'),
-    ]).setup()
+                    subsystems=[IndVar('x1', val=1.0),
+                                SerialSystem('nest',
+                                             NL='NEWTON',
+                                             output=True,
+                                             subsystems=[
+                                                 IndVar('z2', val=2.0),
+                                                 IndVar('z1', val=5.0),
+                                                 Discipline1('Disy1'),
+                                                 Discipline2('Disy2'),
+    ])]).setup()
 
 
 print main.compute()
 print 'done'
-print main.vec['u']
+#print main.vec['u']
 #print 'fwd'
-#print main.compute_derivatives('fwd', 'z1', output=False)
+print main.compute_derivatives('fwd', 'x1', output=False)
 #print main.compute_derivatives('fwd', 'z2', output=False)
 #print main.compute_derivatives('fwd', 'x1', output=False)
 #print 'rev'
@@ -125,4 +129,4 @@ print main.vec['u']
 #print main.compute_derivatives('rev', 'z2', output=False)
 #print main.compute_derivatives('rev', 'x1', output=False)
 
-#main.check_derivatives_all(fwd=True)
+#main.check_derivatives_all()

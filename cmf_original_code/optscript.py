@@ -43,10 +43,10 @@ num_cp_step = 100
 x_range = 8100.0      # range in nautical miles!
 folder_path = '/home/kenmoore/Work/John/pyMission'
 
-#num_elem = 6
-#num_cp_init = 3
-#num_cp_max = 3
-#num_cp_step = 33
+num_elem = 6
+num_cp_init = 3
+num_cp_max = 3
+num_cp_step = 33
 
 # END USER SPECIFIED DATA
 ##########################

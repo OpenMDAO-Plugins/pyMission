@@ -327,6 +327,6 @@ class pyOptSparseDriver(Driver):
             traceback.print_exc()
             print 70*"="
 
-        #print sens_dict
+        print sens_dict
         return sens_dict, fail
 

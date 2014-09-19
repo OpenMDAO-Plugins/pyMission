@@ -170,8 +170,9 @@ class MissionSegment(Assembly):
         self.drag_solver.atol = 1e-9
         self.drag_solver.rtol = 1e-9
         self.drag_solver.max_iteration = 15
-        self.drag_solver.gradient_options.gmres_tolerance = 1e-10
-        self.drag_solver.gradient_options.gmres_maxiter = 15
+        self.drag_solver.gradient_options.atol = 1e-10
+        self.drag_solver.gradient_options.rtol = 1e-10
+        self.drag_solver.gradient_options.maxiter = 15
 
 
         # ------------------------------------------------
@@ -205,8 +206,10 @@ class MissionSegment(Assembly):
 
         self.coupled_solver.atol = 1e-9
         self.coupled_solver.rtol = 1e-9
-        self.coupled_solver.gradient_options.gmres_tolerance = 1e-14
-        self.drag_solver.gradient_options.gmres_maxiter = 19
+        self.coupled_solver.max_iteration = 15
+        self.coupled_solver.gradient_options.atol = 1e-14
+        self.coupled_solver.gradient_options.rtol = 1e-14
+        self.coupled_solver.gradient_options.maxiter = 18
 
         self.coupled_solver.iprint = 1
 
