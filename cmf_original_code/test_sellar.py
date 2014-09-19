@@ -164,9 +164,10 @@ main = SerialSystem('main',
                     #LN='KSP_PC',
                     LN='LIN_GS',
                     NL='NLN_GS',
+                    LN_ilimit=1,
                     output=True,
                     subsystems=[IndVar('x1', val=1.0),
-                                SerialSystem('nest',
+                                SerialSystem('subdriver',
                                              NL='NEWTON',
                                              output=True,
                                              subsystems=[
@@ -188,7 +189,7 @@ print 'done'
 #print main.compute_derivatives('fwd', 'z2', output=False)
 #print main.compute_derivatives('fwd', 'x1', output=False)
 #print 'rev'
-print main.compute_derivatives('rev', 'y1', output=False)
+print main.compute_derivatives('rev', 'p1', output=False)
 #print main.compute_derivatives('rev', 'z2', output=False)
 #print main.compute_derivatives('rev', 'x1', output=False)
 

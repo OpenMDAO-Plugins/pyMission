@@ -1263,8 +1263,8 @@ class KSP(LinearSolver):
 
         system.apply_dFdpu(system.variables.keys())
         rhs_vec.array[:] = system.rhs_vec.array[:]
-        print 'arg, result', sol_vec.array, rhs_vec.array
-        print system.vec['df']
+        #print 'arg, result', sol_vec.array, rhs_vec.array
+        #print system.vec['df']
 
     def apply(self, mat, sol_vec, rhs_vec):
         """ Applies preconditioner """
@@ -1341,22 +1341,22 @@ class LinearGS(LinearSolver):
 
         if system.mode == 'fwd':
             for subsystem in system.subsystems['local']:
-                print subsystem.name
-                print "T1", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                #print subsystem.name
+                #print "T1", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                 system.scatter('lin', subsystem)
                 args = [v for v in system.variables
                         if v not in subsystem.variables]
                 system.rhs_vec.array[:] = 0.0
 
-                print "T1.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                #print "T1.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                 subsystem.apply_dFdpu(args)
-                print "T2", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                #print "T2", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
 
                 system.rhs_vec.array[:] *= -1.0
                 system.rhs_vec.array[:] += system.rhs_buf.array[:]
-                print "T2.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                #print "T2.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                 subsystem.solve_dFdu()
-                print "T3", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                #print "T3", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
 
         elif system.mode == 'rev':
             system.subsystems['local'].reverse()
@@ -1364,20 +1364,20 @@ class LinearGS(LinearSolver):
                 system.sol_buf.array[:] = system.rhs_buf.array[:]
                 for subsystem2 in system.subsystems['local']:
                     if subsystem is not subsystem2:
-                        print 'Linear 2xloop', subsystem2.name, subsystem.name
-                        print "T1", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                        #print 'Linear 2xloop', subsystem2.name, subsystem.name
+                        #print "T1", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                         args = [v for v in system.variables
                                 if v not in subsystem2.variables]
                         system.rhs_vec.array[:] = 0.0
-                        print "T1.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                        #print "T1.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                         subsystem2.apply_dFdpu(args)
-                        print "T2", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                        #print "T2", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                         system.scatter('lin', subsystem2)
                         system.sol_buf.array[:] -= system.rhs_vec.array[:]
                 system.rhs_vec.array[:] = system.sol_buf.array[:]
-                print "T2.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                #print "T2.5", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
                 subsystem.solve_dFdu()
-                print "T3", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
+                #print "T3", system.vec['du'].array, system.vec['df'].array, system.vec['dp'].array
 
             system.subsystems['local'].reverse()
 
