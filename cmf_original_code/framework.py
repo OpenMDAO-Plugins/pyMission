@@ -1264,6 +1264,7 @@ class KSP(LinearSolver):
         system.apply_dFdpu(system.variables.keys())
         rhs_vec.array[:] = system.rhs_vec.array[:]
         print 'arg, result', sol_vec.array, rhs_vec.array
+        print system.vec['df']
 
     def apply(self, mat, sol_vec, rhs_vec):
         """ Applies preconditioner """
