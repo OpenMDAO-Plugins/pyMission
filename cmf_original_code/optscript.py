@@ -41,7 +41,9 @@ num_cp_init = 10
 num_cp_max = 10
 num_cp_step = 100
 x_range = 8100.0      # range in nautical miles!
-folder_path = '/home/kenmoore/Work/John/pyMission'
+#folder_path = '/home/kenmoore/Work/John/pyMission'
+import os
+folder_path = os.getcwd()
 
 #num_elem = 6
 #num_cp_init = 3

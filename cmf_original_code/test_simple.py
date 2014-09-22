@@ -94,6 +94,37 @@ class Dummy3(ExplicitSystem):
         else:
             dx[0] = dy_dx[0]
 
+class Pcomp1(ExplicitSystem):
+    """Evaluates something"""
+
+    def _declare(self):
+        self._declare_variable('p1')
+        self._declare_argument('f_xy')
+
+    def apply_G(self):
+        vec = self.vec
+        p, u = vec['p'], vec['u']
+        y2 =  p('f_xy')[0]
+        p1 = u('p1')
+        p1[0] = y2
+
+    def apply_dGdp(self, args):
+        vec = self.vec
+        p, u, dp, du, dg = vec['p'], vec['u'], vec['dp'], vec['du'], vec['dg']
+        y2 =  p('f_xy')[0]
+        p1 = u('p1')
+        dy2 = dp('f_xy')
+        dp1 = dg('p1')
+
+        if self.mode == 'fwd':
+            dp1[0] = 0
+            if self.get_id('f_xy') in args:
+                dp1[0] += dy2[0]
+        else:
+            if self.get_id('f_xy') in args:
+                dy2[0] += dp1[0]
+
+
 main = SerialSystem('main',
                     NL='NLN_GS',
                     LN='LIN_GS',
@@ -108,16 +139,16 @@ main = SerialSystem('main',
                         IndVar('x', val=3.0),
                         IndVar('y', val=5.0),
                         Discipline1('f_xy'),
-                        #Dummy2('dum2'),
-                        #Dummy3('dum3'),
+                        Pcomp1('p1'),
                         ]).setup()
 
 
 print main.compute()
 print 'fwd'
-print main.compute_derivatives('fwd', 'x', output=False)
-print main.compute_derivatives('fwd', 'y', output=False)
+#print main.compute_derivatives('fwd', 'x', output=False)
+#print main.compute_derivatives('fwd', 'y', output=False)
 print 'rev'
-print main.compute_derivatives('rev', 'dum3', output=False)
+print main.compute_derivatives('fwd', 'p1', output=False)
+print main.compute_derivatives('rev', 'p1', output=False)
 
 main.check_derivatives_all()
