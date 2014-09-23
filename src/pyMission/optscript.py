@@ -59,7 +59,7 @@ while num_cp <= num_cp_max:
     #            'Major iterations limit': 1000000,
     #            'Minor iterations limit': 1000000 }
     #model.driver.options = opt_dict
-    #model.driver.gradient_options.derivative_direction = 'adjoint'
+    model.driver.gradient_options.derivative_direction = 'adjoint'
     model.driver.gradient_options.lin_solver = 'linear_gs'
     model.driver.gradient_options.maxiter = 1
 
@@ -103,9 +103,14 @@ while num_cp <= num_cp_max:
 
     # Debugging some stuff
     #model.run()
-    #model.driver.workflow.check_gradient()
-    #model.driver.workflow.calc_gradient()
+    #print model.driver.workflow.calc_gradient()
     #model.run()
+    #model.driver.workflow.check_gradient()
+    #model.h_pt = np.array((7.0, 5.1, 13.3))
+    #model.run()
+    #print model.driver.workflow.calc_gradient()
+    #model.run()
+    #model.driver.workflow.check_gradient()
     #exit()
 
     PROFILE = False
