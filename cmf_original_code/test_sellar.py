@@ -176,8 +176,8 @@ main = SerialSystem('main',
                                                  Discipline1('Disy1'),
                                                  Discipline2('Disy2')
                                                  ]),
-                                Pcomp1('p1'),
-                                Pcomp2('p2')
+                                #Pcomp1('p1'),
+                                #Pcomp2('p2')
     ]).setup()
 
 
@@ -189,7 +189,7 @@ print 'done'
 #print main.compute_derivatives('fwd', 'z2', output=False)
 #print main.compute_derivatives('fwd', 'x1', output=False)
 #print 'rev'
-print main.compute_derivatives('rev', 'p1', output=False)
+#print main.compute_derivatives('rev', 'p1', output=False)
 #print main.compute_derivatives('rev', 'z2', output=False)
 #print main.compute_derivatives('rev', 'x1', output=False)
 
