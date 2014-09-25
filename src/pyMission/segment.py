@@ -182,6 +182,7 @@ class MissionSegment(Assembly):
 
         self.add('coupled_solver', NewtonSolver())
 
+        # Old way, using params and eq-constraints
         #self.coupled_solver.add_parameter('SysCLTar.CT_tar')
         #self.coupled_solver.add_parameter('SysCLTar.fuel_w')
         #self.coupled_solver.add_parameter('SysCLTar.alpha')
@@ -193,7 +194,7 @@ class MissionSegment(Assembly):
         #self.coupled_solver.add_constraint('SysAeroSurrogate.eta = SysCM.eta')
         #self.coupled_solver.add_constraint('SysCTTar.fuel_w = SysFuelWeight.fuel_w')
 
-        # Experimented with direct connections.
+        # Direct connections (cycles) are faster.
         self.connect('SysCTTar.CT_tar', 'SysCLTar.CT_tar')
         self.connect('SysFuelWeight.fuel_w', 'SysCLTar.fuel_w')
         self.connect('SysAeroSurrogate.alpha', 'SysCLTar.alpha')
