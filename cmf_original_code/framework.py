@@ -1020,8 +1020,8 @@ class Solver(object):
         counter = 0
         self.print_info(counter, norm/norm0, norm0=norm0)
         while counter < ilimit and norm > atol and norm/norm0 > rtol:
-            print "Iter", counter, "resid", self._system.vec['f'].array
-            print 'u', self._system.vec['u'].array
+            print self._system.name, "Iter", counter, "resid", self._system.vec['f'].array
+            #print 'u', self._system.vec['u'].array
             self._operation()
             norm = self._norm()
             counter += 1
@@ -1079,10 +1079,10 @@ class Newton(NonlinearSolver):
         """ Find a search direction and apply a line search """
         system = self._system
         system.vec['df'].array[:] = -system.vec['f'].array[:]
-        print 'Newton Direction', -system.vec['f'].array[:]
+        print 'Newton Direction', system.name, -system.vec['f'].array[:]
         system.linearize()
         system.solve_dFdu()
-        print 'Newton Solution', system.vec['du'].array[:]
+        print 'Newton Solution', system.name, system.vec['du'].array[:]
         system.solve_line_search()
 
 class Backtracking(NonlinearSolver):

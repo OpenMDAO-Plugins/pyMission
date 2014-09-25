@@ -274,6 +274,10 @@ if __name__ == "__main__":
     num_cp = 30
     x_range = 15000.0
 
+    # for debugging only
+    #num_elem = 6
+    #num_cp = 3
+
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
     v_init = np.ones(num_cp)*2.3
     h_init = 1 * np.sin(np.pi * x_init / (x_range/1e3))

@@ -200,6 +200,7 @@ class OptTrajectory(object):
                                         v_specified=self.v_specified),
                                 ]),
                         SerialSystem('coupled_analysis',
+                                         NL='NEWTON',
                                          LN='KSP_PC',
                                          #PC='LIN_GS',
                                          LN_ilimit=18,
