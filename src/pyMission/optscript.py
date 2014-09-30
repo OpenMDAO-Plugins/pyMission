@@ -59,7 +59,6 @@ while num_cp <= num_cp_max:
     #            'Major iterations limit': 1000000,
     #            'Minor iterations limit': 1000000 }
     #model.driver.options = opt_dict
-    #model.driver.gradient_options.derivative_direction = 'adjoint'
     model.driver.gradient_options.lin_solver = 'linear_gs'
     model.driver.gradient_options.maxiter = 1
 
