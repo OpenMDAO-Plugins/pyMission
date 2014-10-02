@@ -927,7 +927,9 @@ class CompoundSystem(System):
         for subsystem in self.subsystems['local']:
             subsystem.apply_dFdpu(arguments)
         if self.mode == 'rev':
+            print 'pre scatter df, du, dp', self.vec['df'].array, self.vec['du'].array, self.vec['dp'].array
             self.scatter('lin')
+            print 'post scatter df, du, dp', self.vec['df'].array, self.vec['du'].array, self.vec['dp'].array
 
 
 class ParallelSystem(CompoundSystem):
@@ -1239,7 +1241,8 @@ class KSP(LinearSolver):
         """ Run KSP solver """
         system = self._system
         self.space = space
-        self.ksp.setTolerances(max_it=ilimit, atol=atol, rtol=rtol)
+        # KEN - commented this out
+        #self.ksp.setTolerances(max_it=ilimit, atol=atol, rtol=rtol)
         if 0:
             self._initialize()
             self.ksp.solve(system.rhs_buf, system.sol_buf)

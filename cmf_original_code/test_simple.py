@@ -127,17 +127,27 @@ class Pcomp1(ExplicitSystem):
 
 main = SerialSystem('main',
                     NL='NLN_GS',
-                    LN='LIN_GS',
+                    LN='KSP_PC',
                     LN_ilimit=1,
                     NL_ilimit=1,
                     NL_rtol=1e-6,
                     NL_atol=1e-9,
-                    LN_rtol=1e-6,
-                    LN_atol=1e-10,
+                    LN_rtol=1e-10,
+                    LN_atol=1e-12,
                     output=True,
                     subsystems=[
-                        IndVar('x', val=3.0),
-                        IndVar('y', val=5.0),
+                        ParallelSystem('par',
+                                       NL='NLN_GS',
+                                       LN='KSP_PC',
+                                       LN_ilimit=1,
+                                       NL_ilimit=1,
+                                       NL_rtol=1e-6,
+                                       NL_atol=1e-9,
+                                       LN_rtol=1e-10,
+                                       LN_atol=1e-12,
+                                       subsystems = [
+                                           IndVar('x', val=3.0),
+                                           IndVar('y', val=5.0),]),
                         Discipline1('f_xy'),
                         Pcomp1('p1'),
                         ]).setup()
@@ -145,10 +155,10 @@ main = SerialSystem('main',
 
 print main.compute()
 print 'fwd'
-#print main.compute_derivatives('fwd', 'x', output=False)
+print main.compute_derivatives('fwd', 'x', output=False)
 #print main.compute_derivatives('fwd', 'y', output=False)
 print 'rev'
-print main.compute_derivatives('fwd', 'p1', output=False)
-print main.compute_derivatives('rev', 'p1', output=False)
+#print main.compute_derivatives('fwd', 'p1', output=False)
+#print main.compute_derivatives('rev', 'p1', output=False)
 
 main.check_derivatives_all()
