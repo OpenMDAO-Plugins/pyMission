@@ -3,10 +3,7 @@ import unittest
 # pylint: disable=E0611,F0401
 from nose import SkipTest
 
-try:
-    from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
-except ImportError:
-    pass
+from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 
 from openmdao.util.testutil import assert_rel_error
 from openmdao.main.api import Assembly, set_as_top, Component, Driver
@@ -68,6 +65,38 @@ class OptimizationConstrained(Assembly):
         # SNOPT Design Variables
         self.driver.add_parameter('paraboloid.x', low=-50., high=50.)
         self.driver.add_parameter('paraboloid.y', low=-50., high=50.)
+
+        # SNOPT Constraints
+        self.driver.add_constraint('paraboloid.x-paraboloid.y >= 15.0')
+
+        self.driver.print_results = False
+
+class OptimizationConstrainedLbUb(Assembly):
+    """Constrained optimization of the Paraboloid with SNOPT."""
+
+    def configure(self):
+        """ Creates a new Assembly containing a Paraboloid and an optimizer"""
+
+        # pylint: disable=E1101
+
+        # Create Paraboloid component instances
+        self.add('paraboloid', Paraboloid())
+
+        # Create SNOPT Optimizer instance
+        self.add('driver', pyOptSparseDriver(n_x=2))
+
+        # Driver process definition
+        self.driver.workflow.add('paraboloid')
+
+        # SNOPT Objective
+        self.driver.add_objective('paraboloid.f_xy')
+
+        # SNOPT Design Variables
+        self.driver.add_parameter('paraboloid.x', low=-50., high=50.)
+        self.driver.add_parameter('paraboloid.y', low=-50., high=50.)
+
+        self.driver.lb = [0.,0.]
+        self.driver.ub = [5,100.0]
 
         # SNOPT Constraints
         self.driver.add_constraint('paraboloid.x-paraboloid.y >= 15.0')
@@ -308,6 +337,33 @@ class pyOptSparseDriverTestCase(unittest.TestCase):
 
         assert_rel_error(self, self.top.paraboloid.x, 7.175775, 0.01)
         assert_rel_error(self, self.top.paraboloid.y, -7.824225, 0.01)
+
+
+    def test_basic_SNOPT_lb_ub_inputs(self):
+
+            try:
+                from pyoptsparse import Optimization
+            except ImportError:
+                raise SkipTest("this test requires pyoptsparse to be installed")
+
+            self.top = OptimizationConstrainedLbUb()
+            set_as_top(self.top)
+
+            try:
+                self.top.driver.optimizer = 'SNOPT'
+            except ValueError:
+                raise SkipTest("SNOPT not present on this system")
+
+            self.top.driver.title = 'Little Test'
+            optdict = {}
+            self.top.driver.options = optdict
+            self.top.driver.pyopt_diff = True
+
+            self.top.run()
+
+            assert_rel_error(self, self.top.paraboloid.x, 5, 0.01)
+            assert_rel_error(self, self.top.paraboloid.y, 0, 0.01)
+
 
     def test_array_SNOPT(self):
 
