@@ -1,6 +1,7 @@
 """ This is used to generate the pickle for testing the OpenMDAO version vs
 the CMF version.
 """
+import numpy as np
 
 from mission import *
 from history import *
@@ -10,15 +11,21 @@ from subprocess import call
 params = {
     'S': 427.8/1e2,
     'ac_w': 210000*9.81/1e6,
-    'thrust_sl': 1020000.0/1e6/3,
-    'SFCSL': 8.951,
+    'thrust_sl': 1020000.0/1e6,
+    'SFCSL': 8.951*9.81,
     'AR': 8.68,
     'e': 0.8,
+    't_c': 0.09,
+    'sweep': 31.6 * np.pi/180,
     }
 
 num_elem = 100
 num_cp = 30
 x_range = 150.0
+
+# for debugging only
+#num_elem = 6
+#num_cp = 3
 
 v_init = numpy.ones(num_cp)*2.3
 x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
@@ -43,6 +50,7 @@ main.compute(True)
 print "Elapsed time:", time()-t1
 
 print 'done'
+exit()
 
 # Derivative checking stuff.
 # ------------------------------

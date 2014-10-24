@@ -94,20 +94,71 @@ class Dummy3(ExplicitSystem):
         else:
             dx[0] = dy_dx[0]
 
-main = SerialSystem('main', subsystems=[
-    IndVar('x', val=3.0),
-    IndVar('y', val=5.0),
-    Discipline1('f_xy'),
-    Dummy2('dum2'),
-    Dummy3('dum3'),
-    ]).setup()
+class Pcomp1(ExplicitSystem):
+    """Evaluates something"""
+
+    def _declare(self):
+        self._declare_variable('p1')
+        self._declare_argument('f_xy')
+
+    def apply_G(self):
+        vec = self.vec
+        p, u = vec['p'], vec['u']
+        y2 =  p('f_xy')[0]
+        p1 = u('p1')
+        p1[0] = y2
+
+    def apply_dGdp(self, args):
+        vec = self.vec
+        p, u, dp, du, dg = vec['p'], vec['u'], vec['dp'], vec['du'], vec['dg']
+        y2 =  p('f_xy')[0]
+        p1 = u('p1')
+        dy2 = dp('f_xy')
+        dp1 = dg('p1')
+
+        if self.mode == 'fwd':
+            dp1[0] = 0
+            if self.get_id('f_xy') in args:
+                dp1[0] += dy2[0]
+        else:
+            if self.get_id('f_xy') in args:
+                dy2[0] += dp1[0]
+
+
+main = SerialSystem('main',
+                    NL='NLN_GS',
+                    LN='KSP_PC',
+                    LN_ilimit=1,
+                    NL_ilimit=1,
+                    NL_rtol=1e-6,
+                    NL_atol=1e-9,
+                    LN_rtol=1e-10,
+                    LN_atol=1e-12,
+                    output=True,
+                    subsystems=[
+                        ParallelSystem('par',
+                                       NL='NLN_GS',
+                                       LN='KSP_PC',
+                                       LN_ilimit=1,
+                                       NL_ilimit=1,
+                                       NL_rtol=1e-6,
+                                       NL_atol=1e-9,
+                                       LN_rtol=1e-10,
+                                       LN_atol=1e-12,
+                                       subsystems = [
+                                           IndVar('x', val=3.0),
+                                           IndVar('y', val=5.0),]),
+                        Discipline1('f_xy'),
+                        Pcomp1('p1'),
+                        ]).setup()
 
 
 print main.compute()
 print 'fwd'
 print main.compute_derivatives('fwd', 'x', output=False)
-print main.compute_derivatives('fwd', 'y', output=False)
+#print main.compute_derivatives('fwd', 'y', output=False)
 print 'rev'
-print main.compute_derivatives('rev', 'dum3', output=False)
+#print main.compute_derivatives('fwd', 'p1', output=False)
+#print main.compute_derivatives('rev', 'p1', output=False)
 
-main.check_derivatives_all(fwd=True)
+main.check_derivatives_all()

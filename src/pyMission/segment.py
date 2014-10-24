@@ -170,8 +170,9 @@ class MissionSegment(Assembly):
         self.drag_solver.atol = 1e-9
         self.drag_solver.rtol = 1e-9
         self.drag_solver.max_iteration = 15
-        self.drag_solver.gradient_options.gmres_tolerance = 1e-10
-        self.drag_solver.gradient_options.gmres_maxiter = 15
+        self.drag_solver.gradient_options.atol = 1e-10
+        self.drag_solver.gradient_options.rtol = 1e-10
+        self.drag_solver.gradient_options.maxiter = 15
 
 
         # ------------------------------------------------
@@ -181,18 +182,20 @@ class MissionSegment(Assembly):
 
         self.add('coupled_solver', NewtonSolver())
 
-        # self.coupled_solver.add_parameter('SysCLTar.CT_tar')
-        # self.coupled_solver.add_parameter('SysCLTar.fuel_w')
-        # self.coupled_solver.add_parameter('SysCLTar.alpha')
-        # self.coupled_solver.add_parameter('SysAeroSurrogate.eta')
-        # self.coupled_solver.add_parameter('SysCTTar.fuel_w')
-        # self.coupled_solver.add_constraint('SysCLTar.CT_tar = SysCTTar.CT_tar')
-        # self.coupled_solver.add_constraint('SysCLTar.fuel_w = SysFuelWeight.fuel_w')
-        # self.coupled_solver.add_constraint('SysCLTar.alpha = SysAeroSurrogate.alpha')
-        # self.coupled_solver.add_constraint('SysAeroSurrogate.eta = SysCM.eta')
-        # self.coupled_solver.add_constraint('SysCTTar.fuel_w = SysFuelWeight.fuel_w')
 
-        # Experimented with direct connections.
+        # Old way, using params and eq-constraints
+        #self.coupled_solver.add_parameter('SysCLTar.CT_tar')
+        #self.coupled_solver.add_parameter('SysCLTar.fuel_w')
+        #self.coupled_solver.add_parameter('SysCLTar.alpha')
+        #self.coupled_solver.add_parameter('SysAeroSurrogate.eta')
+        #self.coupled_solver.add_parameter('SysCTTar.fuel_w')
+        #self.coupled_solver.add_constraint('SysCLTar.CT_tar = SysCTTar.CT_tar')
+        #self.coupled_solver.add_constraint('SysCLTar.fuel_w = SysFuelWeight.fuel_w')
+        #self.coupled_solver.add_constraint('SysCLTar.alpha = SysAeroSurrogate.alpha')
+        #self.coupled_solver.add_constraint('SysAeroSurrogate.eta = SysCM.eta')
+        #self.coupled_solver.add_constraint('SysCTTar.fuel_w = SysFuelWeight.fuel_w')
+
+        # Direct connections (cycles) are faster.
         self.connect('SysCTTar.CT_tar', 'SysCLTar.CT_tar')
         self.connect('SysFuelWeight.fuel_w', 'SysCLTar.fuel_w')
         self.connect('SysAeroSurrogate.alpha', 'SysCLTar.alpha')
@@ -205,8 +208,10 @@ class MissionSegment(Assembly):
 
         self.coupled_solver.atol = 1e-9
         self.coupled_solver.rtol = 1e-9
-        self.coupled_solver.gradient_options.gmres_tolerance = 1e-14
-        self.drag_solver.gradient_options.gmres_maxiter = 19
+        self.coupled_solver.max_iteration = 15
+        self.coupled_solver.gradient_options.atol = 1e-14
+        self.coupled_solver.gradient_options.rtol = 1e-14
+        self.coupled_solver.gradient_options.maxiter = 18
 
         self.coupled_solver.iprint = 1
 
@@ -270,6 +275,10 @@ if __name__ == "__main__":
     num_elem = 3000
     num_cp = 30
     x_range = 15000.0
+
+    # for debugging only
+    #num_elem = 6
+    #num_cp = 3
 
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
     v_init = np.ones(num_cp)*2.3

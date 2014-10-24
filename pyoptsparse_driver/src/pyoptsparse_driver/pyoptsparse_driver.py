@@ -153,6 +153,8 @@ class pyOptSparseDriver(Driver):
             lcon_names = ['%s.out0' % obj.pcomp_name for obj in lcons]
             self.lin_jacs = self.workflow.calc_gradient(param_list, lcon_names,
                                                    return_format='dict')
+            #print "Linear Gradient"
+            #print self.lin_jacs
 
         # Add all equality constraints
         nlcons = []
@@ -285,6 +287,8 @@ class pyOptSparseDriver(Driver):
                 self.set_parameter_by_name(name, val)
 
             # Execute the model
+            #print "Setting DV"
+            #print dv_dict
             self.run_iteration()
 
             # Get the objective function evaluations
@@ -314,7 +318,8 @@ class pyOptSparseDriver(Driver):
             traceback.print_exc()
             print 70*"="
 
-        #self.workflow._system.vec['u'].dump()
+        #print "Functions calculated"
+        #print func_dict
         return func_dict, fail
 
     def gradfunc(self, dv_dict, func_dict):
@@ -359,6 +364,8 @@ class pyOptSparseDriver(Driver):
             traceback.print_exc()
             print 70*"="
 
-        print sens_dict
+        #print "Derivatives calculated"
+        #print dv_dict
+        #print sens_dict
         return sens_dict, fail
 
