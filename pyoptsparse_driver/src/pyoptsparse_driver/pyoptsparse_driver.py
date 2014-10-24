@@ -97,7 +97,13 @@ class pyOptSparseDriver(Driver):
         self.param_type = {}
         self.nparam = self.total_parameters()
         param_list = []
-        for i, (name, param) in enumerate(self.get_parameters().iteritems()):
+
+        #need a counter for lb and ub arrays 
+        i_param = 0
+
+        print "opt with bounds", self.lb, self.ub
+
+        for name, param in self.get_parameters().iteritems():
 
             # We need to identify Enums, Lists, Dicts
             metadata = param.get_metadata()[1]
@@ -105,6 +111,7 @@ class pyOptSparseDriver(Driver):
 
             # Assuming uniform enumerated, discrete, or continuous for now.
             val = values[0]
+            n_vals = len(values)
             choices = []
             if 'values' in metadata and \
                isinstance(metadata['values'], (list, tuple, array, set)):
@@ -122,19 +129,19 @@ class pyOptSparseDriver(Driver):
                       ' are supported. %s is %s.' % (name, type(val))
                 self.raise_exception(msg, ValueError)
             self.param_type[name] = vartype
-
+            
             if self.n_x is None: 
                 lower_bounds = param.get_low()
                 upper_bounds = param.get_high()
             else: 
-                lower_bounds = self.lb[i]
-                upper_bounds = self.ub[i]
+                lower_bounds = self.lb[i_param:i_param+n_vals]
+                upper_bounds = self.ub[i_param:i_param+n_vals]
 
-            opt_prob.addVarGroup(name, len(values), type=vartype,
+            i_param += n_vals
+            opt_prob.addVarGroup(name, n_vals, type=vartype,
                                  lower=lower_bounds, upper=upper_bounds,
                                  value=values, choices=choices)
             param_list.append(name)
-
         # Add all objectives
         for name, obj in self.get_objectives().iteritems():
             name = '%s.out0' % obj.pcomp_name
@@ -237,13 +244,13 @@ class pyOptSparseDriver(Driver):
 
         # Save the most recent solution.
         self.pyOpt_solution = sol
-
-        #set the exit flag
-        exit_status = sol.optInform['value']
-        self.exit_flag = 1
-        if exit_status > 2: # bad
+        try: 
+            exit_status = sol.optInform['value']
+            self.exit_flag = 1
+            if exit_status > 2: # bad
+                self.exit_flag = 0
+        except KeyError: #nothing is here, so something bad happened!
             self.exit_flag = 0
-
 
     def objfunc(self, dv_dict):
         """ Function that evaluates and returns the objective function and
