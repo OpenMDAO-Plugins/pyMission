@@ -101,7 +101,6 @@ class pyOptSparseDriver(Driver):
         #need a counter for lb and ub arrays 
         i_param = 0
 
-        print "opt with bounds", self.lb, self.ub
 
         for name, param in self.get_parameters().iteritems():
 
