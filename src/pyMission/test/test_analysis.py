@@ -93,7 +93,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
             #print key
             #print old
             #print new
-            assert_rel_error(self, diff.max(), 0.0, 1e-12)
+            assert_rel_error(self, diff.max(), 0.0, 1e-11)
 
 if __name__ == "__main__":
 
