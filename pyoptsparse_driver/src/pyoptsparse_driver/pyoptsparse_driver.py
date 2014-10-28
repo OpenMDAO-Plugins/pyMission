@@ -7,11 +7,12 @@ constrained optimization problems.
 
 # pylint: disable=E0611,F0401
 from numpy import array, zeros, ones, float32, float64, int32, int64
+import numpy as np
 
 from pyoptsparse import Optimization
 
 from openmdao.main.api import Driver
-from openmdao.main.datatypes.api import Bool, Dict, Enum, Str
+from openmdao.main.datatypes.api import Bool, Dict, Enum, Str, Int, Array
 from openmdao.main.interfaces import IHasParameters, IHasConstraints, \
                                      IHasObjective, implements, IOptimizer, \
                                      IHas2SidedConstraints
@@ -58,10 +59,21 @@ class pyOptSparseDriver(Driver):
     pyopt_diff = Bool(False, iotype='in',
                       desc='Set to True to let pyOpt calculate the gradient')
 
-    def __init__(self):
-        """Initialize pyopt - not much needed."""
+    exit_flag = Int(0, iotype="out", desc="0 for fail, 1 for ok")
+
+    def __init__(self, n_x=None):
+        """Initialize pyopt
+        n_x: number of design variables"""
 
         super(pyOptSparseDriver, self).__init__()
+
+        #create lb and ub inputs so external components can set the bounds
+        self.n_x = None
+        if n_x is not None: 
+            shape = (n_x,)
+            self.n_x = n_x
+            self.add('lb', Array(np.zeros(shape), iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter", shape=shape))
+            self.add('ub', Array(np.zeros(shape), iotype="in", desc="upper bounds for the design variables, which will override values given in the add_parameter", shape=shape))
 
         self.pyOpt_solution = None
         self.param_type = {}
@@ -85,6 +97,11 @@ class pyOptSparseDriver(Driver):
         self.param_type = {}
         self.nparam = self.total_parameters()
         param_list = []
+
+        #need a counter for lb and ub arrays 
+        i_param = 0
+
+
         for name, param in self.get_parameters().iteritems():
 
             # We need to identify Enums, Lists, Dicts
@@ -93,6 +110,7 @@ class pyOptSparseDriver(Driver):
 
             # Assuming uniform enumerated, discrete, or continuous for now.
             val = values[0]
+            n_vals = len(values)
             choices = []
             if 'values' in metadata and \
                isinstance(metadata['values'], (list, tuple, array, set)):
@@ -110,14 +128,19 @@ class pyOptSparseDriver(Driver):
                       ' are supported. %s is %s.' % (name, type(val))
                 self.raise_exception(msg, ValueError)
             self.param_type[name] = vartype
+            
+            if self.n_x is None: 
+                lower_bounds = param.get_low()
+                upper_bounds = param.get_high()
+            else: 
+                lower_bounds = self.lb[i_param:i_param+n_vals]
+                upper_bounds = self.ub[i_param:i_param+n_vals]
 
-            lower_bounds = param.get_low()
-            upper_bounds = param.get_high()
-            opt_prob.addVarGroup(name, len(values), type=vartype,
+            i_param += n_vals
+            opt_prob.addVarGroup(name, n_vals, type=vartype,
                                  lower=lower_bounds, upper=upper_bounds,
                                  value=values, choices=choices)
             param_list.append(name)
-
         # Add all objectives
         for name, obj in self.get_objectives().iteritems():
             name = '%s.out0' % obj.pcomp_name
@@ -205,6 +228,8 @@ class pyOptSparseDriver(Driver):
         if self.print_results:
             print sol
 
+
+
         # Pull optimal parameters back into framework and re-run, so that
         # framework is left in the right final state
         dv_dict = sol.getDVs()
@@ -220,6 +245,13 @@ class pyOptSparseDriver(Driver):
 
         # Save the most recent solution.
         self.pyOpt_solution = sol
+        try: 
+            exit_status = sol.optInform['value']
+            self.exit_flag = 1
+            if exit_status > 2: # bad
+                self.exit_flag = 0
+        except KeyError: #nothing is here, so something bad happened!
+            self.exit_flag = 0
 
     def objfunc(self, dv_dict):
         """ Function that evaluates and returns the objective function and

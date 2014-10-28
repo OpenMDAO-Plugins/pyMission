@@ -182,6 +182,7 @@ class MissionSegment(Assembly):
 
         self.add('coupled_solver', NewtonSolver())
 
+
         # Old way, using params and eq-constraints
         #self.coupled_solver.add_parameter('SysCLTar.CT_tar')
         #self.coupled_solver.add_parameter('SysCLTar.fuel_w')
