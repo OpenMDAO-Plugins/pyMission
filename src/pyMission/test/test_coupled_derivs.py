@@ -60,7 +60,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
 
         model.run()
 
-        new_derivs = model.driver.workflow.calc_gradient()
+        new_derivs = model.driver.calc_gradient()
 
         # Load in original data from pickle
         dirname = os.path.abspath(os.path.dirname(__file__))

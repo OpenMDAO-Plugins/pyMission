@@ -62,7 +62,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
 
     def compare_derivatives(self, rel_error=False):
 
-        wflow = self.model.driver.workflow
+        wflow = self.model.driver
         inputs = ['comp.%s' % v for v in self.inputs]
         outputs = ['comp.%s' % v for v in self.outputs]
 
