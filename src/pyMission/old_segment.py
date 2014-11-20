@@ -20,14 +20,16 @@ from openmdao.lib.drivers.api import NewtonSolver, FixedPointIterator, BroydenSo
 from openmdao.main.api import Assembly, set_as_top
 from openmdao.main.datatypes.api import Array, Float
 
-from pyMission.aerodynamics import SysAeroSurrogate
+from pyMission.aerodynamics import SysAeroSurrogate#, SysCM
 from pyMission.aerodynamics import SysCM_deprecated as SysCM
+from pyMission.aeroTripan import SysTripanCDSurrogate, SysTripanCLSurrogate, \
+                                 SysTripanCMSurrogate
 from pyMission.atmospherics import SysTemp, SysRho, SysSpeed
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
-                               SysGammaBspline
+                               SysGammaBspline, setup_MBI
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
-                                  SysFuelObj, SysHi, SysHf
+                                  SysFuelObj, SysHi, SysHf, SysMf, SysMi
 from pyMission.propulsion import SysSFC, SysTau
 
 
@@ -52,6 +54,9 @@ class MissionSegment(Assembly):
         self.num_pt = num_cp
         self.x_pts = x_pts
 
+        # Generate jacobians for b-splines using MBI package
+        self.jac_h, self.jac_gamma = setup_MBI(num_elem+1, num_cp, x_pts)
+
         super(MissionSegment, self).__init__()
 
     def configure(self):
@@ -73,21 +78,25 @@ class MissionSegment(Assembly):
 
         # Splines
         self.add('SysXBspline', SysXBspline(num_elem=self.num_elem,
-                                            num_pt=self.num_pt))
-        self.SysXBspline.x_init = self.x_pts
+                                            num_pt=self.num_pt,
+                                            x_init=self.x_pts,
+                                            jac_h=self.jac_h))
         self.SysXBspline.x_pt = self.x_pts
 
         self.add('SysHBspline', SysHBspline(num_elem=self.num_elem,
-                                            num_pt=self.num_pt))
-        self.SysHBspline.x_init = self.x_pts
+                                            num_pt=self.num_pt,
+                                            x_init=self.x_pts,
+                                            jac_h=self.jac_h))
 
         self.add('SysMVBspline', SysMVBspline(num_elem=self.num_elem,
-                                            num_pt=self.num_pt))
-        self.SysMVBspline.x_init = self.x_pts
+                                            num_pt=self.num_pt,
+                                            x_init=self.x_pts,
+                                            jac_h=self.jac_h))
 
         self.add('SysGammaBspline', SysGammaBspline(num_elem=self.num_elem,
-                                            num_pt=self.num_pt))
-        self.SysGammaBspline.x_init = self.x_pts
+                                            num_pt=self.num_pt,
+                                            x_init=self.x_pts,
+                                            jac_gamma=self.jac_gamma))
 
 
 
@@ -268,6 +277,13 @@ class MissionSegment(Assembly):
                                   'SysFuelObj', 'SysHi', 'SysHf'])
         self.coupled_solver.workflow.add(['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
         self.drag_solver.workflow.add(['SysAeroSurrogate'])
+
+        # Change some scaling parameters so that we match what they were when
+        # the pickle was created.
+        self.SysTau.thrust_scale = 0.072
+        self.SysCLTar.fuel_scale = 1e6
+        self.SysCTTar.fuel_scale = 1e6
+        self.SysFuelWeight.fuel_scale = 1e6
 
 
 

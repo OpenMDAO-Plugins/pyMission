@@ -446,7 +446,7 @@ class SysFuelObj(Component):
                                  desc = 'Fuel Weight'))
 
         # Outputs
-        self.add('wf_obj', Float(0.0, iotype='out',
+        self.add('fuelburn', Float(0.0, iotype='out',
                                desc = 'Objective fuel burn (initial fuel carried)'))
 
     def execute(self):
@@ -454,13 +454,13 @@ class SysFuelObj(Component):
         mission.
         """
 
-        self.wf_obj = self.fuel_w[0]
+        self.fuelburn = self.fuel_w[0]
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
         """
         input_keys = ['fuel_w']
-        output_keys = ['wf_obj']
+        output_keys = ['fuelburn']
         return input_keys, output_keys
 
     def provideJ(self):
@@ -473,7 +473,7 @@ class SysFuelObj(Component):
         Forward mode.
         """
 
-        result['wf_obj'] += arg['fuel_w'][0]
+        result['fuelburn'] += arg['fuel_w'][0]
 
     def apply_derivT(self, arg, result):
         """ Compute objective derivatives (equal to initial fuel weight
@@ -481,7 +481,7 @@ class SysFuelObj(Component):
         Adjoint mode.
         """
 
-        result['fuel_w'][0] += arg['wf_obj']
+        result['fuelburn'][0] += arg['fuelburn']
 
 
 class SysMi(Component):

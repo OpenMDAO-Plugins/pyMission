@@ -22,14 +22,14 @@ from openmdao.main.test.simpledriver import SimpleDriver
 from openmdao.lib.casehandlers.api import BSONCaseRecorder
 
 from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
-from pyMission.segment import MissionSegment
+from pyMission.old_segment import MissionSegment
 
 
-num_elem = 1500
-num_cp_init = 300
-num_cp_max = 300
-num_cp_step = 100
-x_range = 9000.0  # nautical miles
+num_elem = 3000
+num_cp_init = 10
+num_cp_max = 10        # set to 200 for the sweep
+num_cp_step = 10
+x_range = 8100.0  # nautical miles
 
 #num_elem = 6
 #num_cp_init = 3
@@ -42,32 +42,29 @@ gamma_ub = np.tan(35.0 * (np.pi/180.0))/1e-1
 takeoff_speed = 83.3
 landing_speed = 72.2
 
-altitude = np.zeros(num_elem+1)
-altitude = 10 * np.sin(np.pi * np.linspace(0,1,num_elem+1))
-
 start = time.time()
 num_cp = num_cp_init
 while num_cp <= num_cp_max:
 
     x_range *= 1.852
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
-    #v_init = np.ones(num_cp)*2.5
-    M_init = np.ones(num_cp)*0.8
-    M_init = np.ones(num_cp)*0.82
+    v_init = np.ones(num_cp)*2.5
     h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
-    model = set_as_top(MissionSegment(num_elem=num_elem, num_cp=num_cp,
-                                      x_pts=x_init, surr_file='crm_surr'))
-
+    model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
     model.replace('driver', pyOptSparseDriver())
     #model.replace('driver', SimpleDriver())
     model.driver.optimizer = 'SNOPT'
+    #opt_dict = {'Iterations limit': 1000000,
+    #            'Major iterations limit': 1000000,
+    #            'Minor iterations limit': 1000000 }
+    #model.driver.options = opt_dict
     model.driver.gradient_options.lin_solver = 'linear_gs'
     model.driver.gradient_options.maxiter = 1
 
     # Add parameters, objectives, constraints
-    model.driver.add_parameter('h_pt', low=0.0, high=14.1)
-    model.driver.add_objective('SysFuelObj.fuelburn')
+    model.driver.add_parameter('h_pt', low=0.0, high=20.0)
+    model.driver.add_objective('SysFuelObj.wf_obj')
     model.driver.add_constraint('SysHi.h_i = 0.0')
     model.driver.add_constraint('SysHf.h_f = 0.0')
     model.driver.add_constraint('SysTmin.Tmin < 0.0')
@@ -77,9 +74,7 @@ while num_cp <= num_cp_max:
 
     # Initial value of the parameter
     model.h_pt = h_init
-    #model.v_pt = v_init
-    model.M_pt = M_init
-    model.set_init_h_pt(altitude)
+    model.v_pt = v_init
 
     # Pull velocity from BSpline instead of calculating it.
     model.SysSpeed.v_specified = True
@@ -99,11 +94,12 @@ while num_cp <= num_cp_max:
     model.recorders.save_problem_formulation = False
     model.recording_options.includes = model.driver.list_param_targets()
     model.recording_options.includes.extend(model.driver.list_constraint_targets())
-    model.recording_options.includes.append('SysFuelObj.fuelburn')
+    model.recording_options.includes.append('SysFuelObj.wf_obj')
 
     # Flag for making sure we run serial if we do an mpirun
     model.driver.system_type = 'serial'
     model.coupled_solver.system_type = 'serial'
+    model.drag_solver.system_type = 'serial'
 
     # Debugging some stuff
     #model.run()

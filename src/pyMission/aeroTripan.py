@@ -152,23 +152,22 @@ class SysTripanCLSurrogate(ImplicitComponent):
         Forward Mode
         """
 
-        dMach = arg['M']
-        dalpha = arg['alpha']
-        dalt = arg['h']
-        deta = arg['eta']
-        dCL = arg['CL_tar']
-
         dres = result['alpha_res']
 
         if 'M' in arg:
+            dMach = arg['M']
             dres[:] += self.J_CL[0] * dMach
         if 'alpha' in arg:
+            dalpha = arg['alpha']
             dres[:] += self.J_CL[1] * dalpha * 180 / np.pi * 1e-1
         if 'h' in arg:
+            dalt = arg['h']
             dres[:] += self.J_CL[2] * dalt * 3.28 * 1e3
         if 'eta' in arg:
+            deta = arg['eta']
             dres[:] += self.J_CL[3] * deta * 180 / np.pi * 1e-1
         if 'CL_tar' in arg:
+            dCL = arg['CL_tar']
             dres[:] -= dCL
 
     def apply_derivT(self, arg, result):
@@ -177,23 +176,22 @@ class SysTripanCLSurrogate(ImplicitComponent):
         Adjoint Mode
         """
 
-        dMach = result['M']
-        dalpha = result['alpha']
-        dalt = result['h']
-        deta = result['eta']
-        dCL = result['CL_tar']
-
         dres = arg['alpha_res']
 
         if 'M' in result:
+            dMach = result['M']
             dMach[:] += self.J_CL[0] * dres
         if 'alpha' in result:
+            dalpha = result['alpha']
             dalpha[:] += self.J_CL[1] * dres * 180 / np.pi * 1e-1
         if 'h' in result:
+            dalt = result['h']
             dalt[:] += self.J_CL[2] * dres * 3.28 * 1e3
         if 'eta' in result:
+            deta = result['eta']
             deta[:] += self.J_CL[3] * dres * 180 / np.pi * 1e-1
         if 'CL_tar' in result:
+            dCL = result['CL_tar']
             dCL[:] -= dres
 
 class SysTripanCDSurrogate(Component):
@@ -277,20 +275,19 @@ class SysTripanCDSurrogate(Component):
         Forward Mode
         """
 
-        dMach = arg['M']
-        dalpha = arg['alpha']
-        dalt = arg['h']
-        deta = arg['eta']
-
         dCD = result['CD']
 
         if 'M' in arg:
+            dMach = arg['M']
             dCD[:] += self.J_CD[0] * dMach / 1e-1
         if 'alpha' in arg:
+            dalpha = arg['alpha']
             dCD[:] += self.J_CD[1] * dalpha * 180 / np.pi
         if 'h' in arg:
+            dalt = arg['h']
             dCD[:] += self.J_CD[2] * dalt * 3.28 * 1e3 / 1e-1
         if 'eta' in arg:
+            deta = arg['eta']
             dCD[:] += self.J_CD[3] * deta * 180 / np.pi
 
     def apply_derivT(self, arg, result):
@@ -299,20 +296,19 @@ class SysTripanCDSurrogate(Component):
         Adjoint Mode
         """
 
-        dMach = result['M']
-        dalpha = result['alpha']
-        dalt = result['h']
-        deta = result['eta']
-
         dCD = arg['CD']
 
         if 'M' in result:
+            dMach = result['M']
             dMach[:] += self.J_CD[0] * dCD / 1e-1
         if 'alpha' in result:
+            dalpha = result['alpha']
             dalpha[:] += self.J_CD[1] * dCD * 180 / np.pi
         if 'h' in result:
+            dalt = result['h']
             dalt[:] += self.J_CD[2] * dCD * 3.28 * 1e3 / 1e-1
         if 'eta' in result:
+            deta = result['eta']
             deta[:] += self.J_CD[3] * dCD * 180 / np.pi
 
 class SysTripanCMSurrogate(ImplicitComponent):
@@ -397,20 +393,19 @@ class SysTripanCMSurrogate(ImplicitComponent):
         Forward Mode
         """
 
-        dMach = arg['M']
-        dalpha = arg['alpha']
-        dalt = arg['h']
-        deta = arg['eta']
-
         dres = result['CM']
 
         if 'M' in arg:
+            dMach = arg['M']
             dres[:] += self.J_CM[0] * dMach
         if 'alpha' in arg:
+            dalpha = arg['alpha']
             dres[:] += self.J_CM[1] * dalpha * 180 / np.pi * 1e-1
         if 'h' in arg:
+            dalt = arg['h']
             dres[:] += self.J_CM[2] * dalt * 3.28 * 1e3
         if 'eta' in arg:
+            deta = arg['eta']
             dres[:] += self.J_CM[3] * deta * 180 / np.pi * 1e-1
 
     def apply_derivT(self, arg, result):
@@ -419,19 +414,18 @@ class SysTripanCMSurrogate(ImplicitComponent):
         Adjoint Mode
         """
 
-        dMach = result['M']
-        dalpha = result['alpha']
-        dalt = result['h']
-        deta = result['eta']
-
         dres = arg['CM']
 
         if 'M' in result:
+            dMach = result['M']
             dMach[:] += self.J_CM[0] * dres
         if 'alpha' in result:
+            dalpha = result['alpha']
             dalpha[:] += self.J_CM[1] * dres * 180 / np.pi * 1e-1
         if 'h' in result:
+            dalt = result['h']
             dalt[:] += self.J_CM[2] * dres * 3.28 * 1e3
         if 'eta' in result:
+            deta = result['eta']
             deta[:] += self.J_CM[3] * dres * 180 / np.pi * 1e-1
 

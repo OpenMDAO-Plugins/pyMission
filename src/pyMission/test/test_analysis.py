@@ -9,7 +9,7 @@ import numpy as np
 from openmdao.main.api import set_as_top, Driver
 from openmdao.util.testutil import assert_rel_error
 
-from pyMission.segment import MissionSegment
+from pyMission.old_segment import MissionSegment
 
 # Ignore the numerical warnings from performing the rel error calc.
 warnings.simplefilter("ignore")

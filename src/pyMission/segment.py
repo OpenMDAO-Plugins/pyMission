@@ -15,15 +15,14 @@ copyright July 2014
 
 # pylint: disable=E1101
 import numpy as np
+import scipy.sparse.linalg
 
 from openmdao.lib.drivers.api import NewtonSolver, FixedPointIterator, BroydenSolver
 from openmdao.main.api import Assembly, set_as_top
 from openmdao.main.datatypes.api import Array, Float
 
-from pyMission.aerodynamics import SysAeroSurrogate#, SysCM
-from pyMission.aerodynamics import SysCM_deprecated as SysCM
 from pyMission.aeroTripan import SysTripanCDSurrogate, SysTripanCLSurrogate, \
-                                 SysTripanCMSurrogate
+                                 SysTripanCMSurrogate, setup_surrogate
 from pyMission.atmospherics import SysTemp, SysRho, SysSpeed
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline, setup_MBI
@@ -37,7 +36,7 @@ class MissionSegment(Assembly):
     """ Defines a single segment for the Mission Analysis. """
 
 
-    def __init__(self, num_elem=10, num_cp=5, x_pts=None):
+    def __init__(self, num_elem=10, num_cp=5, x_pts=None, surr_file=None):
         """Initialize this segment trajectory problem.
 
         num_elem: int
@@ -48,6 +47,8 @@ class MissionSegment(Assembly):
 
         x_pts: 1d array
             array containing the x locations of the spline control points.
+
+        surr_file: Name of file for generating the Tripan surrogate models.
         """
 
         self.num_elem = num_elem
@@ -56,6 +57,10 @@ class MissionSegment(Assembly):
 
         # Generate jacobians for b-splines using MBI package
         self.jac_h, self.jac_gamma = setup_MBI(num_elem+1, num_cp, x_pts)
+
+        # Setup the surrogate models
+        self.CL_arr, self.CD_arr, self.CM_arr, self.num = \
+            setup_surrogate(surr_file)
 
         super(MissionSegment, self).__init__()
 
@@ -129,61 +134,53 @@ class MissionSegment(Assembly):
         self.connect('SysGammaBspline.Gamma', 'SysCLTar.Gamma')
         self.connect('SysSpeed.v', 'SysCLTar.v')
 
+        # Tripan Alpha
+        self.add('SysTripanCLSurrogate', SysTripanCLSurrogate(num_elem=self.num_elem,
+                                                              num=self.num,
+                                                              CL=self.CL_arr))
+        self.connect('SysMVBspline.M', 'SysTripanCLSurrogate.M')
+        self.connect('SysHBspline.h', 'SysTripanCLSurrogate.h')
+        self.connect('SysCLTar.CL', 'SysTripanCLSurrogate.CL_tar')
 
-        # Drag
-        self.add('SysAeroSurrogate', SysAeroSurrogate(num_elem=self.num_elem))
+        # Tripan Eta
+        self.add('SysTripanCMSurrogate', SysTripanCMSurrogate(num_elem=self.num_elem,
+                                                              num=self.num,
+                                                              CM=self.CM_arr))
+        self.connect('SysMVBspline.M', 'SysTripanCMSurrogate.M')
+        self.connect('SysHBspline.h', 'SysTripanCMSurrogate.h')
+        self.connect('SysTripanCLSurrogate.alpha', 'SysTripanCMSurrogate.alpha')
 
-        self.connect('AR', 'SysAeroSurrogate.AR')
-        self.connect('oswald', 'SysAeroSurrogate.oswald')
-
+        # Tripan Drag
+        self.add('SysTripanCDSurrogate', SysTripanCDSurrogate(num_elem=self.num_elem,
+                                                              num=self.num,
+                                                              CD=self.CD_arr))
+        self.connect('SysMVBspline.M', 'SysTripanCDSurrogate.M')
+        self.connect('SysHBspline.h', 'SysTripanCDSurrogate.h')
+        self.connect('SysTripanCMSurrogate.eta', 'SysTripanCDSurrogate.eta')
+        self.connect('SysTripanCLSurrogate.alpha', 'SysTripanCDSurrogate.alpha')
 
         # Horizontal Equilibrium
         self.add('SysCTTar', SysCTTar(num_elem=self.num_elem))
 
+        self.connect('SysGammaBspline.Gamma', 'SysCTTar.Gamma')
+        self.connect('SysTripanCDSurrogate.CD', 'SysCTTar.CD')
+        self.connect('SysTripanCLSurrogate.alpha', 'SysCTTar.alpha')
+        self.connect('SysRho.rho', 'SysCTTar.rho')
+        self.connect('SysSpeed.v', 'SysCTTar.v')
         self.connect('S', 'SysCTTar.S')
         self.connect('ac_w', 'SysCTTar.ac_w')
-        self.connect('SysRho.rho', 'SysCTTar.rho')
-        self.connect('SysGammaBspline.Gamma', 'SysCTTar.Gamma')
-        self.connect('SysSpeed.v', 'SysCTTar.v')
-        self.connect('SysAeroSurrogate.CD', 'SysCTTar.CD')
-        self.connect('SysAeroSurrogate.alpha', 'SysCTTar.alpha')
-
-
-        # Moment Equilibrium
-        self.add('SysCM', SysCM(num_elem=self.num_elem))
-        self.connect('SysAeroSurrogate.alpha', 'SysCM.alpha')
-        self.SysCM.eval_only = True
-
 
         # Weight
         self.add('SysFuelWeight', SysFuelWeight(num_elem=self.num_elem))
         self.SysFuelWeight.fuel_w = np.linspace(1.0, 0.0, self.num_elem+1)
 
-        self.connect('S', 'SysFuelWeight.S')
-        self.connect('SysRho.rho', 'SysFuelWeight.rho')
-        self.connect('SysXBspline.x', 'SysFuelWeight.x')
-        self.connect('SysGammaBspline.Gamma', 'SysFuelWeight.Gamma')
         self.connect('SysSpeed.v', 'SysFuelWeight.v')
-        self.connect('SysSFC.SFC', 'SysFuelWeight.SFC')
+        self.connect('SysGammaBspline.Gamma', 'SysFuelWeight.Gamma')
         self.connect('SysCTTar.CT_tar', 'SysFuelWeight.CT_tar')
-
-
-        # ----------------------------------------
-        # Drag subsystem - Newton for inner loop
-        # ----------------------------------------
-
-        self.add('drag_solver', NewtonSolver())
-        self.drag_solver.add_parameter(('SysAeroSurrogate.alpha'))
-        self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
-
-        self.drag_solver.iprint = 1
-        self.drag_solver.atol = 1e-9
-        self.drag_solver.rtol = 1e-9
-        self.drag_solver.max_iteration = 15
-        self.drag_solver.gradient_options.atol = 1e-10
-        self.drag_solver.gradient_options.rtol = 1e-10
-        self.drag_solver.gradient_options.maxiter = 15
-
+        self.connect('SysXBspline.x', 'SysFuelWeight.x')
+        self.connect('SysSFC.SFC', 'SysFuelWeight.SFC')
+        self.connect('SysRho.rho', 'SysFuelWeight.rho')
+        self.connect('S', 'SysFuelWeight.S')
 
         # ------------------------------------------------
         # Coupled Analysis - Newton for outer loop
@@ -192,36 +189,25 @@ class MissionSegment(Assembly):
 
         self.add('coupled_solver', NewtonSolver())
 
-
-        # Old way, using params and eq-constraints
-        #self.coupled_solver.add_parameter('SysCLTar.CT_tar')
-        #self.coupled_solver.add_parameter('SysCLTar.fuel_w')
-        #self.coupled_solver.add_parameter('SysCLTar.alpha')
-        #self.coupled_solver.add_parameter('SysAeroSurrogate.eta')
-        #self.coupled_solver.add_parameter('SysCTTar.fuel_w')
-        #self.coupled_solver.add_constraint('SysCLTar.CT_tar = SysCTTar.CT_tar')
-        #self.coupled_solver.add_constraint('SysCLTar.fuel_w = SysFuelWeight.fuel_w')
-        #self.coupled_solver.add_constraint('SysCLTar.alpha = SysAeroSurrogate.alpha')
-        #self.coupled_solver.add_constraint('SysAeroSurrogate.eta = SysCM.eta')
-        #self.coupled_solver.add_constraint('SysCTTar.fuel_w = SysFuelWeight.fuel_w')
-
         # Direct connections (cycles) are faster.
-        self.connect('SysCTTar.CT_tar', 'SysCLTar.CT_tar')
         self.connect('SysFuelWeight.fuel_w', 'SysCLTar.fuel_w')
-        self.connect('SysAeroSurrogate.alpha', 'SysCLTar.alpha')
-        self.connect('SysCM.eta', 'SysAeroSurrogate.eta')
+        self.connect('SysCTTar.CT_tar', 'SysCLTar.CT_tar')
+        self.connect('SysTripanCLSurrogate.alpha', 'SysCLTar.alpha')
+        self.connect('SysTripanCMSurrogate.eta', 'SysTripanCLSurrogate.eta')
         self.connect('SysFuelWeight.fuel_w', 'SysCTTar.fuel_w')
 
-        # (Only non-GS pair)
-        self.coupled_solver.add_parameter('SysCM.eta')
-        self.coupled_solver.add_constraint('SysCM.eta_res = 0')
+        # (Implicit comps)
+        self.coupled_solver.add_parameter('SysTripanCLSurrogate.alpha')
+        self.coupled_solver.add_constraint('SysTripanCLSurrogate.alpha_res = 0')
+        self.coupled_solver.add_parameter('SysTripanCMSurrogate.eta')
+        self.coupled_solver.add_constraint('SysTripanCMSurrogate.CM = 0')
 
         self.coupled_solver.atol = 1e-9
         self.coupled_solver.rtol = 1e-9
         self.coupled_solver.max_iteration = 15
         self.coupled_solver.gradient_options.atol = 1e-14
-        self.coupled_solver.gradient_options.rtol = 1e-14
-        self.coupled_solver.gradient_options.maxiter = 18
+        self.coupled_solver.gradient_options.rtol = 1e-20
+        self.coupled_solver.gradient_options.maxiter = 50
 
         self.coupled_solver.iprint = 1
 
@@ -234,8 +220,8 @@ class MissionSegment(Assembly):
         self.add('SysTau', SysTau(num_elem=self.num_elem))
         self.add('SysTmin', SysTmin(num_elem=self.num_elem))
         self.add('SysTmax', SysTmax(num_elem=self.num_elem))
-        self.add('SysSlopeMin', SysSlopeMin(num_elem=self.num_elem))
-        self.add('SysSlopeMax', SysSlopeMax(num_elem=self.num_elem))
+        #self.add('SysSlopeMin', SysSlopeMin(num_elem=self.num_elem))
+        #self.add('SysSlopeMax', SysSlopeMax(num_elem=self.num_elem))
         self.add('SysFuelObj', SysFuelObj(num_elem=self.num_elem))
         self.add('SysHi', SysHi(num_elem=self.num_elem))
         self.add('SysHf', SysHf(num_elem=self.num_elem))
@@ -248,8 +234,8 @@ class MissionSegment(Assembly):
         self.connect('SysSpeed.v', 'SysTau.v')
         self.connect('SysTau.tau', 'SysTmin.tau')
         self.connect('SysTau.tau', 'SysTmax.tau')
-        self.connect('SysGammaBspline.Gamma', 'SysSlopeMin.Gamma')
-        self.connect('SysGammaBspline.Gamma', 'SysSlopeMax.Gamma')
+        #self.connect('SysGammaBspline.Gamma', 'SysSlopeMin.Gamma')
+        #self.connect('SysGammaBspline.Gamma', 'SysSlopeMax.Gamma')
         self.connect('SysFuelWeight.fuel_w', 'SysFuelObj.fuel_w')
         self.connect('SysHBspline.h', 'SysHi.h')
         self.connect('SysHBspline.h', 'SysHf.h')
@@ -259,9 +245,10 @@ class MissionSegment(Assembly):
         self.create_passthrough('SysHBspline.h_pt')
         self.connect('h_pt', 'SysGammaBspline.h_pt')
         self.create_passthrough('SysMVBspline.v_pt')
+        self.create_passthrough('SysMVBspline.M_pt')
         self.create_passthrough('SysTmin.Tmin')
         self.create_passthrough('SysTmax.Tmax')
-        self.create_passthrough('SysFuelObj.wf_obj')
+        self.create_passthrough('SysFuelObj.fuelburn')
         self.create_passthrough('SysHi.h_i')
         self.create_passthrough('SysHf.h_f')
 
@@ -273,12 +260,20 @@ class MissionSegment(Assembly):
                                   'SysMVBspline', 'SysGammaBspline',
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
                                   'coupled_solver',
-                                  'SysTau', 'SysTmin', 'SysTmax', 'SysSlopeMin', 'SysSlopeMax',
+                                  'SysTau', 'SysTmin', 'SysTmax',
                                   'SysFuelObj', 'SysHi', 'SysHf'])
-        self.coupled_solver.workflow.add(['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
-        self.drag_solver.workflow.add(['SysAeroSurrogate'])
+        self.coupled_solver.workflow.add(['SysCLTar', 'SysTripanCLSurrogate',
+                                          'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
+                                          'SysCTTar', 'SysFuelWeight'])
 
 
+    def set_init_h_pt(self, h_init_pt):
+        ''' Solve for a good initial altitude profile.'''
+        A = self.jac_h
+        b = h_init_pt
+        ATA = A.T.dot(A)
+        ATb = A.T.dot(b)
+        self.h_pt = scipy.sparse.linalg.gmres(ATA, ATb)[0]
 
 if __name__ == "__main__":
 
@@ -294,7 +289,8 @@ if __name__ == "__main__":
     v_init = np.ones(num_cp)*2.3
     h_init = 1 * np.sin(np.pi * x_init / (x_range/1e3))
 
-    model = set_as_top(MissionSegment(num_elem, num_cp, x_init))
+    model = set_as_top(MissionSegment(num_elem=num_elem, num_cp=num_cp,
+                                      x_pts=x_init, surr_file='crm_surr'))
 
     model.h_pt = h_init
     model.v_pt = v_init
