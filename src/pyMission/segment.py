@@ -26,7 +26,7 @@ from pyMission.aeroTripan import SysTripanCDSurrogate, SysTripanCLSurrogate, \
                                  SysTripanCMSurrogate
 from pyMission.atmospherics import SysTemp, SysRho, SysSpeed
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
-                               SysGammaBspline
+                               SysGammaBspline, setup_MBI
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
                                   SysFuelObj, SysHi, SysHf, SysMf, SysMi
@@ -54,6 +54,9 @@ class MissionSegment(Assembly):
         self.num_pt = num_cp
         self.x_pts = x_pts
 
+        # Generate jacobians for b-splines using MBI package
+        self.jac_h, self.jac_gamma = setup_MBI(num_elem+1, num_cp, x_pts)
+
         super(MissionSegment, self).__init__()
 
     def configure(self):
@@ -75,21 +78,25 @@ class MissionSegment(Assembly):
 
         # Splines
         self.add('SysXBspline', SysXBspline(num_elem=self.num_elem,
-                                            num_pt=self.num_pt))
-        self.SysXBspline.x_init = self.x_pts
+                                            num_pt=self.num_pt,
+                                            x_init=self.x_pts,
+                                            jac_h=self.jac_h))
         self.SysXBspline.x_pt = self.x_pts
 
         self.add('SysHBspline', SysHBspline(num_elem=self.num_elem,
-                                            num_pt=self.num_pt))
-        self.SysHBspline.x_init = self.x_pts
+                                            num_pt=self.num_pt,
+                                            x_init=self.x_pts,
+                                            jac_h=self.jac_h))
 
         self.add('SysMVBspline', SysMVBspline(num_elem=self.num_elem,
-                                            num_pt=self.num_pt))
-        self.SysMVBspline.x_init = self.x_pts
+                                            num_pt=self.num_pt,
+                                            x_init=self.x_pts,
+                                            jac_h=self.jac_h))
 
         self.add('SysGammaBspline', SysGammaBspline(num_elem=self.num_elem,
-                                            num_pt=self.num_pt))
-        self.SysGammaBspline.x_init = self.x_pts
+                                            num_pt=self.num_pt,
+                                            x_init=self.x_pts,
+                                            jac_gamma=self.jac_gamma))
 
 
 

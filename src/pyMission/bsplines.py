@@ -29,57 +29,47 @@ from openmdao.main.datatypes.api import Array, Float, Bool
 # Allow non-standard variable names for scientific calc
 # pylint: disable=C0103
 
+def setup_MBI(num_pts, num_cp, x_init):
+    """ generate jacobians for b-splines using MBI package """
+
+    alt = np.linspace(0, 16, num_pts)
+    x_dist = np.linspace(0, x_init[-1], num_pts)/1e6
+
+    arr = MBI.MBI(alt, [x_dist], [num_cp], [4])
+    jac = arr.getJacobian(0, 0)
+    jacd = arr.getJacobian(1, 0)
+
+    c_arryx = x_init
+    d_arryx = jacd.dot(c_arryx)*1e6
+
+    lins = np.linspace(0, num_pts-1, num_pts).astype(int)
+    diag = scipy.sparse.csc_matrix((1.0/d_arryx,
+                                    (lins,lins)))
+    jace = diag.dot(jacd)
+
+    return jac, jace
+
+
 class BSplineSystem(Component):
     """ Class used to allow the setup of b-splines """
 
-    def __init__(self, num_elem=10, num_pt=5):
+    def __init__(self, num_elem=10, num_pt=5, x_init=None):
         super(BSplineSystem, self).__init__()
 
         # Inputs
-        self.add('x_init', Array(np.zeros((num_pt, )), iotype='in',
-                                 desc = 'Initial control point positions.',
-                                 deriv_ignore=True))
+        self.add('x_init', Array(x_init, iotype='in',
+                 desc = 'Initial control point positions.',
+                 deriv_ignore=True))
 
         self.num_elem = num_elem+1
         self.num_pt = num_pt
-        #self.MBI_setup()
-
-    def _x_init_changed(self, old, new):
-        """Called whenever initial control point positions are set.
-        """
-
-        self.MBI_setup()
-
-    def MBI_setup(self):
-        """ generate jacobians for b-splines using MBI package """
-
-        num_pts = self.num_elem
-        num_cp = self.num_pt
-
-        alt = np.linspace(0, 16, num_pts)
-        x_dist = np.linspace(0, self.x_init[-1], num_pts)/1e6
-
-        arr = MBI.MBI(alt, [x_dist], [num_cp], [4])
-        jac = arr.getJacobian(0, 0)
-        jacd = arr.getJacobian(1, 0)
-
-        c_arryx = self.x_init
-        d_arryx = jacd.dot(c_arryx)*1e6
-
-        lins = np.linspace(0, num_pts-1, num_pts).astype(int)
-        diag = scipy.sparse.csc_matrix((1.0/d_arryx,
-                                        (lins,lins)))
-        jace = diag.dot(jacd)
-
-        self.jac_h = jac
-        self.jac_gamma = jace
 
 
 class SysXBspline(BSplineSystem):
     """ A b-spline parameterization of distance """
 
-    def __init__(self, num_elem=10, num_pt=5):
-        super(SysXBspline, self).__init__(num_elem, num_pt)
+    def __init__(self, num_elem=10, num_pt=5, x_init=None, jac_h=None):
+        super(SysXBspline, self).__init__(num_elem, num_pt, x_init)
 
         # Inputs
         self.add('x_pt', Array(np.zeros((num_pt, )), iotype='in',
@@ -88,6 +78,8 @@ class SysXBspline(BSplineSystem):
         # Outputs
         self.add('x', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'b-spline parameterization for distance'))
+
+        self.jac_h = jac_h
 
     def execute(self):
         """ Compute x b-spline values with x control point values using
@@ -127,8 +119,8 @@ class SysXBspline(BSplineSystem):
 class SysHBspline(BSplineSystem):
     """ A b-spline parameterization of altitude """
 
-    def __init__(self, num_elem=10, num_pt=5):
-        super(SysHBspline, self).__init__(num_elem, num_pt)
+    def __init__(self, num_elem=10, num_pt=5, x_init=None, jac_h=None):
+        super(SysHBspline, self).__init__(num_elem, num_pt, x_init)
 
         # Inputs
         self.add('h_pt', Array(np.zeros((num_pt, )), iotype='in',
@@ -137,6 +129,8 @@ class SysHBspline(BSplineSystem):
         # Outputs
         self.add('h', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'b-spline parameterization for altitude'))
+
+        self.jac_h = jac_h
 
     def execute(self):
         """ Compute h b-splines values using h control point values using
@@ -176,8 +170,8 @@ class SysHBspline(BSplineSystem):
 class SysMVBspline(BSplineSystem):
     """ A b-spline parameterization of Mach number """
 
-    def __init__(self, num_elem=10, num_pt=5):
-        super(SysMVBspline, self).__init__(num_elem, num_pt)
+    def __init__(self, num_elem=10, num_pt=5, x_init=None, jac_h=None):
+        super(SysMVBspline, self).__init__(num_elem, num_pt, x_init)
 
         # Inputs
         self.add('M_pt', Array(np.zeros((num_pt, )), iotype='in',
@@ -190,6 +184,8 @@ class SysMVBspline(BSplineSystem):
                             desc = 'b-spline parameterization for Mach number'))
         self.add('v_spline', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'b-spline parameterization for velocity'))
+
+        self.jac_h = jac_h
 
     def execute(self):
         """ Compute M b-spline values using M control point values using
@@ -236,8 +232,8 @@ class SysMVBspline(BSplineSystem):
 class SysGammaBspline(BSplineSystem):
     """ dh/dx obtained from b-spline parameterization of altitude """
 
-    def __init__(self, num_elem=10, num_pt=5):
-        super(SysGammaBspline, self).__init__(num_elem, num_pt)
+    def __init__(self, num_elem=10, num_pt=5, x_init=None, jac_gamma=None):
+        super(SysGammaBspline, self).__init__(num_elem, num_pt, x_init)
 
         # Inputs
         self.add('h_pt', Array(np.zeros((num_pt, )), iotype='in',
@@ -247,6 +243,8 @@ class SysGammaBspline(BSplineSystem):
         self.add('Gamma', Array(np.zeros((num_elem+1, )), iotype='out',
                             desc = 'Flight path angle w/ b-spline '
                             'parameterization'))
+
+        self.jac_gamma = jac_gamma
 
     def execute(self):
         """ Compute gamma b-spline values using gamma control point values
