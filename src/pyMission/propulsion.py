@@ -125,7 +125,7 @@ class SysTau(Component):
         thrust_sl = self.thrust_sl * 1e6
         wing_area = self.S * 1e2
 
-        cThrust = thrust_sl - 0.072 * alt
+        cThrust = thrust_sl - 72 * alt
         Thrust = 0.5*rho*speed**2*wing_area*thrust_c
         self.tau = Thrust / cThrust
 
@@ -148,14 +148,14 @@ class SysTau(Component):
         thrust_sl = self.thrust_sl * 1e6
         wing_area = self.S * 1e2
 
-        fact = 1.0/(thrust_sl-0.072*alt)
+        fact = 1.0/(thrust_sl - 72*alt)
 
         self.dt_drho = (0.5*speed**2*wing_area*thrust_c) * fact
         self.dt_dspeed = (rho*speed*wing_area*thrust_c) * fact
         self.dt_dS = (0.5*rho*speed**2*thrust_c) * fact
         self.dt_dthrust_c = (0.5*rho*speed**2*wing_area) * fact
         self.dt_dthrust_sl = -(0.5*rho*speed**2*wing_area*thrust_c) * fact**2
-        self.dt_dalt = 0.072 * (0.5*rho*speed**2*wing_area*thrust_c) * fact**2
+        self.dt_dalt = 72 * (0.5*rho*speed**2*wing_area*thrust_c) * fact**2
 
     def apply_deriv(self, arg, result):
         """ Assign throttle directional derivatives.

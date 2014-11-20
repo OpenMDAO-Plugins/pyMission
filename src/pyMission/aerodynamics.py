@@ -156,6 +156,7 @@ class SysAeroSurrogate(Component):
                                              aspect_ratio) *
                                             arg['CD'])) / 1e-1
 
+
 class SysCM(ImplicitComponent):
     """ Compute the tail rotation angle necessary to maintain pitch moment
     equilibrium.
@@ -163,6 +164,64 @@ class SysCM(ImplicitComponent):
 
     def __init__(self, num_elem=10):
         super(SysCM, self).__init__()
+
+        # Inputs
+        self.add('Cm', Array(np.zeros((num_elem+1, )), iotype='in',
+                                desc = 'Moment Coefficient'))
+
+        # States
+        self.add('eta', Array(np.zeros((num_elem+1, )), iotype='state',
+                              desc = 'Tail rotation angle'))
+
+        # Residuals
+        self.add('eta_res', Array(np.zeros((num_elem+1, )), iotype='residual',
+                  desc = 'Residual for Tail rotation angle equation'))
+
+    def evaluate(self):
+        """ Compute CM value using alpha and eta, and use the CM value as
+        residual for eta.
+        """
+
+        Cm = self.Cm
+        self.eta_res = Cm
+
+    def list_deriv_vars(self):
+        """ Return lists of inputs and outputs where we defined derivatives.
+        """
+        input_keys = ['Cm', 'eta']
+        output_keys = ['eta_res']
+        return input_keys, output_keys
+
+    def provideJ(self):
+        """ Calculate and save derivatives. (i.e., Jacobian) """
+        pass
+
+    def apply_deriv(self, arg, result):
+        """ Compute the derivatives of tail rotation angle wrt angle of
+        attack.
+        Forward Mode
+        """
+
+        if 'Cm' in arg:
+            result['eta_res'] += arg['Cm']
+
+    def apply_derivT(self, arg, result):
+        """ Compute the derivatives of tail rotation angle wrt angle of
+        attack.
+        Adjoint Mode
+        """
+
+        if 'Cm' in result:
+            result['Cm'] += arg['eta_res']
+
+
+class SysCM_deprecated(ImplicitComponent):
+    """ Compute the tail rotation angle necessary to maintain pitch moment
+    equilibrium.
+    """
+
+    def __init__(self, num_elem=10):
+        super(SysCM_deprecated, self).__init__()
 
         # Inputs
         self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',

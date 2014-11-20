@@ -482,3 +482,90 @@ class SysFuelObj(Component):
         """
 
         result['fuel_w'][0] += arg['wf_obj']
+
+
+class SysMi(Component):
+    """ Initial Mach number point used for constraints """
+
+    def __init__(self, num_elem=10):
+        super(SysMi, self).__init__()
+
+        # Inputs
+        self.add('M', Array(np.zeros((num_elem+1, )), iotype='in',
+                              desc = 'Mach number points'))
+
+        # Outputs
+        self.add('M_i', Float(0.0, iotype='out',
+                               desc = 'Initial Mach number point'))
+
+    def execute(self):
+        """ Assign system to the initial airspeed point """
+
+        self.M_i = self.M[0]
+
+    def list_deriv_vars(self):
+        """ Return lists of inputs and outputs where we defined derivatives.
+        """
+        input_keys = ['M']
+        output_keys = ['M_i']
+        return input_keys, output_keys
+
+    def provideJ(self):
+        """ Calculate and save derivatives. (i.e., Jacobian) """
+        pass
+
+    def apply_deriv(self, arg, result):
+        """ derivative of this is same as initial airspeed point.
+        Forward mode.
+        """
+        result['M_i'] += arg['M'][0]
+
+    def apply_derivT(self, arg, result):
+        """ derivative of this is same as initial airspeed point.
+        Adjoint mode.
+        """
+        result['M'][0] += arg['M_i']
+
+
+class SysMf(Component):
+    """ Final Mach number point used for constraints """
+
+    def __init__(self, num_elem=10):
+        super(SysMf, self).__init__()
+
+        # Inputs
+        self.add('M', Array(np.zeros((num_elem+1, )), iotype='in',
+                              desc = 'Mach number points'))
+
+        # Outputs
+        self.add('M_f', Float(0.0, iotype='out',
+                               desc = 'Initial Mach number point'))
+
+    def execute(self):
+        """ Assign system to the final airspeed point """
+
+        self.M_f = self.M[-1]
+
+    def list_deriv_vars(self):
+        """ Return lists of inputs and outputs where we defined derivatives.
+        """
+        input_keys = ['M']
+        output_keys = ['M_f']
+        return input_keys, output_keys
+
+    def provideJ(self):
+        """ Calculate and save derivatives. (i.e., Jacobian) """
+        pass
+
+    def apply_deriv(self, arg, result):
+        """ derivative of this is same as final airspeed point.
+        Forward mode.
+        """
+        result['M_f'] += arg['M'][-1]
+
+    def apply_derivT(self, arg, result):
+        """ derivative of this is same as final airspeed point.
+        Adjoint mode.
+        """
+        result['M'][-1] += arg['M_f']
+

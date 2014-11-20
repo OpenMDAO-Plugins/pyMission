@@ -62,7 +62,7 @@ class SysCLTar(Component):
         equilibrium equation.
         """
 
-        fuel_w = self.fuel_w * 1e6
+        fuel_w = self.fuel_w * 1e5
         Gamma = self.Gamma * 1e-1
         thrust_c = self.CT_tar * 1e-1
         alpha = self.alpha * 1e-1
@@ -94,7 +94,7 @@ class SysCLTar(Component):
         Forward Mode
         """
 
-        fuel_w = self.fuel_w * 1e6
+        fuel_w = self.fuel_w * 1e5
         Gamma = self.Gamma * 1e-1
         thrust_c = self.CT_tar * 1e-1
         alpha = self.alpha * 1e-1
@@ -119,7 +119,7 @@ class SysCLTar(Component):
         if 'fuel_w' in arg:
             result['CL'] += np.cos(Gamma) /\
                           (0.5*rho*speed**2*wing_area) *\
-                          arg['fuel_w'] * 1e6
+                          arg['fuel_w'] * 1e5
         if 'Gamma' in arg:
             result['CL'] += -(ac_w + fuel_w)*np.sin(Gamma) /\
                           (0.5*rho*speed**2*wing_area) * arg['Gamma'] * 1e-1
@@ -135,7 +135,7 @@ class SysCLTar(Component):
         Adjoint Mode
         """
 
-        fuel_w = self.fuel_w * 1e6
+        fuel_w = self.fuel_w * 1e5
         Gamma = self.Gamma * 1e-1
         thrust_c = self.CT_tar * 1e-1
         alpha = self.alpha * 1e-1
@@ -160,7 +160,7 @@ class SysCLTar(Component):
                               (0.5*rho**2*speed**2*wing_area) * d_CL
         if 'fuel_w' in result:
             result['fuel_w'] += np.cos(Gamma) /\
-                                (0.5*rho*speed**2*wing_area) * d_CL * 1e6
+                                (0.5*rho*speed**2*wing_area) * d_CL * 1e5
         if 'Gamma' in result:
             result['Gamma'] += -(ac_w + fuel_w)*np.sin(Gamma) /\
                                 (0.5*rho*speed**2*wing_area) * d_CL * 1e-1
@@ -391,8 +391,8 @@ class SysFuelWeight(Component):
                       * x_int/2)
 
         fuel_cumul = np.cumsum(fuel_delta[::-1])[::-1]
-        self.fuel_w[0:-1] = (fuel_cumul + fuel_w_end) / 1e6
-        self.fuel_w[-1] = fuel_w_end / 1e6
+        self.fuel_w[0:-1] = (fuel_cumul + fuel_w_end) / 1e5
+        self.fuel_w[-1] = fuel_w_end / 1e5
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
@@ -489,49 +489,49 @@ class SysFuelWeight(Component):
             dfuel_temp[0:-1] = dfuel_dS * arg['S']
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e2 / 1e6
+            result['fuel_w'] += dfuel_temp * 1e2 / 1e5
         if 'x' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dx1 * arg['x'][0:-1]
             dfuel_temp[0:-1] += dfuel_dx2 * arg['x'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp
+            result['fuel_w'] += dfuel_temp * 1e6/1e5
         if 'v' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dv1 * arg['v'][0:-1]
             dfuel_temp[0:-1] += dfuel_dv2 * arg['v'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e2/1e6
+            result['fuel_w'] += dfuel_temp * 1e2/1e5
         if 'gamma' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dgamma1 * arg['gamma'][0:-1]
             dfuel_temp[0:-1] += dfuel_dgamma2 * arg['gamma'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e-1/1e6
+            result['fuel_w'] += dfuel_temp * 1e-1/1e5
         if 'CT_tar' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dthrust1 * arg['CT_tar'][0:-1]
             dfuel_temp[0:-1] += dfuel_dthrust2 * arg['CT_tar'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e-1/1e6
+            result['fuel_w'] += dfuel_temp * 1e-1/1e5
         if 'SFC' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dSFC1 * arg['SFC'][0:-1]
             dfuel_temp[0:-1] += dfuel_dSFC2 * arg['SFC'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e-6/1e6
+            result['fuel_w'] += dfuel_temp * 1e-6/1e5
         if 'rho' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_drho1 * arg['rho'][0:-1]
             dfuel_temp[0:-1] += dfuel_drho2 * arg['rho'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp / 1e6
+            result['fuel_w'] += dfuel_temp / 1e5
 
     def apply_derivT(self, arg, result):
         """ Apply the pre-computed derivatives to the directional derivatives
@@ -561,43 +561,43 @@ class SysFuelWeight(Component):
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dS * fuel_cumul
-            result['S'] += np.sum(dfuel_temp) * 1e2/1e6
+            result['S'] += np.sum(dfuel_temp) * 1e2/1e5
         if 'x' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dx1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dx2 * fuel_cumul
-            result['x'] += dfuel_temp
+            result['x'] += dfuel_temp * 1e6/1e5
         if 'v' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dv1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dv2 * fuel_cumul
-            result['v'] += dfuel_temp * 1e2/1e6
+            result['v'] += dfuel_temp * 1e2/1e5
         if 'gamma' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dgamma1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dgamma2 * fuel_cumul
-            result['gamma'] += dfuel_temp * 1e-1/1e6
+            result['gamma'] += dfuel_temp * 1e-1/1e5
         if 'CT_tar' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dthrust1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dthrust2 * fuel_cumul
-            result['CT_tar'] += dfuel_temp * 1e-1/1e6
+            result['CT_tar'] += dfuel_temp * 1e-1/1e5
         if 'SFC' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dSFC1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dSFC2 * fuel_cumul
-            result['SFC'] += dfuel_temp * 1e-6/1e6
+            result['SFC'] += dfuel_temp * 1e-6/1e5
         if 'rho' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_drho1 * fuel_cumul
             dfuel_temp[1:] += dfuel_drho2 * fuel_cumul
-            result['rho'] += dfuel_temp / 1e6
+            result['rho'] += dfuel_temp / 1e5
 
 
 # This system can be replaced by a solver's Pseudocomp.

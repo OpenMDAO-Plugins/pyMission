@@ -62,7 +62,6 @@ class SysTemp(Component):
 
         alt = self.h * 1e3
         alt_boundary = 11000
-        n_elem = len(self.h)
         temp = self.temp
 
         a = self.coefs[0]
@@ -70,14 +69,13 @@ class SysTemp(Component):
         c = self.coefs[2]
         d = self.coefs[3]
 
-        for index in xrange(n_elem):
-            if alt[index] <= (alt_boundary - self.epsilon):
-                temp[index] = (288.16 - (6.5e-3) * alt[index]) / 1e2
-            elif alt[index] >= (alt_boundary + self.epsilon):
-                temp[index] = 216.65 / 1e2
-            else:
-                h_star = alt[index]
-                temp[index] = (a*h_star**3 + b*h_star**2 + c*h_star + d) / 1e2
+        tropos = alt <= (alt_boundary - self.epsilon)
+        strato = alt >  (alt_boundary + self.epsilon)
+        smooth = np.logical_and(~tropos, ~strato)
+        temp[:] = 0.0
+        temp[:] += tropos * (288.16 - 6.5e-3 * alt) / 1e2
+        temp[:] += strato * 216.65 / 1e2
+        temp[:] += smooth * (a*alt**3 + b*alt**2 + c*alt + d) / 1e2
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
@@ -97,21 +95,21 @@ class SysTemp(Component):
 
         alt = self.h * 1e3
         alt_boundary = 11000
-        n_elem = len(self.h)
 
         a = self.coefs[0]
         b = self.coefs[1]
         c = self.coefs[2]
 
-        for index in xrange(n_elem):
-            if alt[index] <= (alt_boundary - self.epsilon):
-                result['temp'][index] += -6.5e-3 *  arg['h'][index] * 1e3/1e2
-            elif alt[index] >= (alt_boundary + self.epsilon):
-                result['temp'][index] += 0.0
-            else:
-                h_star = alt[index]
-                result['temp'][index] += (3*a*h_star**2 + 2*b*h_star
-                                 + c) *  arg['h'][index] * 1e3/1e2
+        dtemp = result['temp']
+        dalt = arg['h']
+
+        tropos = alt <= (alt_boundary - self.epsilon)
+        strato = alt >  (alt_boundary + self.epsilon)
+        smooth = np.logical_and(~tropos, ~strato)
+        dtemp[:] += tropos * (-6.5e-3) * dalt * 1e3 / 1e2
+        dtemp[:] += strato * 0.0
+        dtemp[:] += smooth * (3*a*alt**2 + 2*b*alt + c) *\
+            dalt * 1e3 / 1e2
 
     def apply_derivT(self, arg, result):
         """ Compute temperature derivative wrt altitude
@@ -120,21 +118,21 @@ class SysTemp(Component):
 
         alt = self.h * 1e3
         alt_boundary = 11000
-        n_elem = len(self.h)
 
         a = self.coefs[0]
         b = self.coefs[1]
         c = self.coefs[2]
 
-        for index in xrange(n_elem):
-            if alt[index] <= (alt_boundary - self.epsilon):
-                result['h'][index] += -6.5e-3 * arg['temp'][index] * 1e3/1e2
-            elif alt[index] >= (alt_boundary + self.epsilon):
-                result['h'][index] += 0.0
-            else:
-                h_star = alt[index]
-                result['h'][index] += (3*a*h_star**2 + 2*b*h_star
-                                + c) * arg['temp'][index] * 1e3/1e2
+        dtemp = arg['temp']
+        dalt = result['h']
+
+        tropos = alt <= (alt_boundary - self.epsilon)
+        strato = alt >  (alt_boundary + self.epsilon)
+        smooth = np.logical_and(~tropos, ~strato)
+        dalt[:] += tropos * (-6.5e-3) * dtemp * 1e3 / 1e2
+        dalt[:] += strato * 0.0
+        dalt[:] += smooth * (3*a*alt**2 + 2*b*alt + c) *\
+            dtemp * 1e3 / 1e2
 
 
 class SysTempOld(Component):
@@ -233,27 +231,25 @@ class SysRho(Component):
 
         temp = self.temp * 1e2
         alt = self.h * 1e3
-        n_elem = len(self.h)
         rho = self.rho
 
+        pressure = np.zeros(len(alt))
         alt_boundary = 11000
         a = self.coefs[0]
         b = self.coefs[1]
         c = self.coefs[2]
         d = self.coefs[3]
 
-        for index in xrange(n_elem):
-            if alt[index] <= (alt_boundary - self.epsilon):
-                pressure = 101325*(1-0.0065*alt[index]/288.16)**5.2561
-                rho[index] = pressure / (288 * temp[index])
-            elif alt[index] >= (alt_boundary + self.epsilon):
-                pressure = 22632*np.exp(-9.81*(alt[index]-alt_boundary)/
-                                             (288*216.65))
-                rho[index] = pressure / (288 * temp[index])
-            else:
-                h_star = alt[index]
-                pressure = a*h_star**3 + b*h_star**2 + c*h_star + d
-                rho[index] = pressure / (288 * temp[index])
+        tropos = alt <= (alt_boundary - self.epsilon)
+        strato = alt >  (alt_boundary + self.epsilon)
+        smooth = np.logical_and(~tropos, ~strato)
+        pressure[:] = 0.0
+        rho[:] = 0.0
+        pressure[:] += tropos * (101325*(1-0.0065*alt/288.16)**5.2561)
+        pressure[:] += strato * (22632*np.exp(-9.81*(alt-alt_boundary)/
+                                                  (288*216.65)))
+        pressure[:] += smooth * (a*alt**3 + b*alt**2 + c*alt + d)
+        rho[:] += pressure / (288 * temp)
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
@@ -272,9 +268,10 @@ class SysRho(Component):
         """
 
         alt = self.h * 1e3
-        n_elem = len(alt)
         temp = self.temp * 1e2
         alt_boundary = 11000
+        dpressure = np.zeros(len(alt))
+        pressure = np.zeros(len(alt))
 
         a = self.coefs[0]
         b = self.coefs[1]
@@ -285,44 +282,34 @@ class SysRho(Component):
 
         if 'h' in arg:
             dalt = arg['h']
-            for index in xrange(n_elem):
-                if alt[index] <= (alt_boundary - self.epsilon):
-                    dpressure = 101325*5.2561*(-0.0065/288.16)*\
-                        (1-0.0065*alt[index]/288.16)**4.2561
-                    drho[index] += dpressure * dalt[index] /\
-                        (288*temp[index])*1e3
-                elif alt[index] >= (alt_boundary + self.epsilon):
-                    dpressure = (22632*(-9.81/(288*216.65))*
-                                 np.exp(9.81*11000/(288*216.65))*
-                                 np.exp(-9.81*alt[index]/
-                                            (288*216.65)))
-                    drho[index] += dpressure * dalt[index] /\
-                        (288*temp[index])*1e3
-                else:
-                    h_star = alt[index]
-                    dpressure = 3*a*h_star**2 + 2*b*h_star + c
-                    drho[index] += dpressure * dalt[index] /\
-                        (288*temp[index])*1e3
+
+            tropos = alt <= (alt_boundary - self.epsilon)
+            strato = alt >  (alt_boundary + self.epsilon)
+            smooth = np.logical_and(~tropos, ~strato)
+            dpressure[:] = 0.0
+            drho[:] = 0.0
+            dpressure[:] += tropos * (101325*5.2561*(-0.0065/288.16)*
+                                      (1-0.0065*alt/288.16)**4.2561)
+            dpressure[:] += strato * (22632*(-9.81/(288*216.65))*
+                                      np.exp(9.81*11000/(288*216.65))*
+                                      np.exp(-9.81*alt/(288*216.65)))
+            dpressure[:] += smooth * (3*a*alt**2 + 2*b*alt + c)
+            drho[:] += dpressure * dalt / (288 * temp) * 1e3
+
         if 'temp' in arg:
             dtemp = arg['temp']
-            for index in xrange(n_elem):
-                if alt[index] <= (alt_boundary - self.epsilon):
-                    pressure = 101325*(1-0.0065*alt[index]/
-                                       288.16)**5.2561
-                    drho[index] += -pressure / (288*temp[index]**2) *\
-                        dtemp[index] * 1e2
-                elif alt[index] >= (alt_boundary + self.epsilon):
-                    pressure = 22632*np.exp(-9.81*(alt[index]-
-                                                      alt_boundary)/
-                                                (288*216.65))
-                    drho[index] += -pressure / (288*temp[index]**2) *\
-                        dtemp[index] * 1e2
-                else:
-                    h_star = alt[index]
-                    pressure = (a*h_star**3 + b*h_star**2 + c*h_star +
-                                d)
-                    drho[index] += -pressure / (288*temp[index]**2) *\
-                        dtemp[index] * 1e2
+
+            tropos = alt <= (alt_boundary - self.epsilon)
+            strato = alt >  (alt_boundary + self.epsilon)
+            smooth = np.logical_and(~tropos, ~strato)
+            pressure[:] = 0.0
+            drho[:] = 0.0
+            pressure[:] += tropos * (101325*(1-0.0065*alt/
+                                             288.16)**5.2561)
+            pressure[:] += strato * (22632*np.exp(-9.81*(alt-alt_boundary)/
+                                                      (288*216.65)))
+            pressure[:] += smooth * (a*alt**3 + b*alt**2 + c*alt + d)
+            drho[:] += -pressure * dtemp / (288 * temp**2) * 1e2
 
     def apply_derivT(self, arg, result):
         """ Compute density derivative wrt altitude and temperature.

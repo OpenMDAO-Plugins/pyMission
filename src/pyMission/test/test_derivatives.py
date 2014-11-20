@@ -9,13 +9,15 @@ from openmdao.main.test.test_derivatives import SimpleDriver
 from openmdao.util.testutil import assert_rel_error
 
 from pyMission.aerodynamics import SysAeroSurrogate, SysCM
+from pyMission.aeroTripan import setup_surrogate, SysTripanCLSurrogate, \
+                                 SysTripanCDSurrogate, SysTripanCMSurrogate
 from pyMission.atmospherics import SysTemp, SysRho, SysSpeed, \
                                    SysRhoOld, SysTempOld
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
-                                  SysFuelObj, SysHi, SysHf
+                                  SysFuelObj, SysHi, SysHf, SysMi, SysMf
 from pyMission.propulsion import SysSFC, SysTau
 
 
@@ -285,6 +287,81 @@ class Testcase_pyMission_derivs(unittest.TestCase):
 
         compname = 'SysHf'
         self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysMi(self):
+
+        compname = 'SysMi'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysMf(self):
+
+        compname = 'SysMf'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysTripanCLSurrogate(self):
+
+        surr = '../crm_surr'
+        CL_arr, CD_arr, CM_arr, num = setup_surrogate(surr)
+        compname = 'SysTripanCLSurrogate'
+
+        self.arg_dict['num'] = num
+        self.arg_dict['CL'] = CL_arr
+
+        self.setup(compname, self.arg_dict)
+
+        # Scale some inputs
+        val = self.model.comp.get('M')
+        shape1 = val.shape
+        self.model.comp.set('M', 0.8 + .1*np.random.random(shape1))
+
+        self.model.comp.eval_only = True
+        self.model.comp._run_explicit = True
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysTripanCDSurrogate(self):
+
+        surr = '../crm_surr'
+        CL_arr, CD_arr, CM_arr, num = setup_surrogate(surr)
+        compname = 'SysTripanCDSurrogate'
+
+        self.arg_dict['num'] = num
+        self.arg_dict['CD'] = CD_arr
+
+        self.setup(compname, self.arg_dict)
+
+        # Scale some inputs
+        val = self.model.comp.get('M')
+        shape1 = val.shape
+        self.model.comp.set('M', 0.8 + .1*np.random.random(shape1))
+
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysTripanCMSurrogate(self):
+
+        surr = '../crm_surr'
+        CL_arr, CD_arr, CM_arr, num = setup_surrogate(surr)
+        compname = 'SysTripanCMSurrogate'
+
+        self.arg_dict['num'] = num
+        self.arg_dict['CM'] = CM_arr
+
+        self.setup(compname, self.arg_dict)
+
+        # Scale some inputs
+        val = self.model.comp.get('M')
+        shape1 = val.shape
+        self.model.comp.set('M', 0.8 + .1*np.random.random(shape1))
+
+        self.model.comp.eval_only = True
+        self.model.comp._run_explicit = True
         self.run_model()
         self.compare_derivatives()
 
