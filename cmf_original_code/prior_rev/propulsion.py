@@ -18,32 +18,6 @@ import sys
 from framework import *
 import numpy
 
-def setup_prop_surrogate(prop_file):
-
-    alt_num = 11
-    mach_num = 10
-
-    tmp = numpy.loadtxt('PAX300.outputFLOPS')
-
-    tmp[:, 3] = (tmp[:, 3] - tmp[:, 4]) # total thrust = thrust - ram drag
-
-    for i in xrange(len(tmp)):
-        if tmp[i, 2] == 50:
-            tmax = tmp[i, 3]
-        tmp[i, 2] = tmp[i, 3] / tmax # change from power code to throttle
-
-    output_array = numpy.zeros((len(tmp), 5))
-    output_array[:, 0] = tmp[:, 1] # altitude
-    output_array[:, 1] = tmp[:, 0] # mach number
-    output_array[:, 2] = tmp[:, 2] # throttle
-    output_array[:, 3] = tmp[:, 3] # thrust
-    output_array[:, 4] = tmp[:, 6] # TSFC
-
-    mbi_Thrust = numpy.zeros((alt_num, mach_num, throttle_num))
-    mbi_TSFC = numpy.zeros((alt_num, mach_num, throttle_num))
-
-    #Thrust_arr = MBI.MBI(mbi_Thrust, [
-
 class SysSFC(ExplicitSystem):
     """ linear SFC model wrt altitude """
 
@@ -54,12 +28,12 @@ class SysSFC(ExplicitSystem):
         """
 
         self.num_elem = self.kwargs['num_elem']
-        self.SFCSL = self.kwargs['SFCSL']
         num_pts = self.num_elem+1
         ind_pts = range(num_pts)
 
         self._declare_variable('SFC', size=num_pts)
         self._declare_argument('h', indices=ind_pts)
+        self._declare_argument(['SFCSL', 0], indices=[0])
 
     def apply_G(self):
         """ compute SFC value using sea level SFC and altitude
@@ -69,7 +43,7 @@ class SysSFC(ExplicitSystem):
         pvec = self.vec['p']
         uvec = self.vec['u']
         alt = pvec('h') * 1e3
-        sfcsl = self.SFCSL * 1e-6
+        sfcsl = pvec(['SFCSL', 0]) * 1e-6
         sfc = uvec('SFC')
 
         sfc_temp = sfcsl + (6.39e-13*9.81) * alt
@@ -82,6 +56,7 @@ class SysSFC(ExplicitSystem):
         dgvec = self.vec['dg']
 
         dalt = dpvec('h')
+        dsfcsl = dpvec('SFCSL')
         dsfc = dgvec('SFC')
 
         dsfc_dalt = 6.39e-13 * 9.81
@@ -90,12 +65,17 @@ class SysSFC(ExplicitSystem):
             dsfc[:] = 0.0
             if self.get_id('h') in args:
                 dsfc[:] += (dsfc_dalt * dalt) * 1e3/1e-6
+            if self.get_id('SFCSL') in args:
+                dsfc[:] += dsfcsl
 
         if self.mode == 'rev':
             dalt[:] = 0.0
+            dsfcsl[:] = 0.0
 
             if self.get_id('h') in args:
                 dalt[:] += dsfc_dalt * dsfc * 1e3/1e-6
+            if self.get_id('SFCSL') in args:
+                dsfcsl[:] += numpy.sum(dsfc)
 
 class SysTau(ExplicitSystem):
     """ throttle setting determined primarily by thrust coefficient
@@ -114,8 +94,6 @@ class SysTau(ExplicitSystem):
         """
 
         self.num_elem = self.kwargs['num_elem']
-        self.thrust_sl = self.kwargs['thrust_sl']
-        self.wing_area = self.kwargs['S']
         num_pts = self.num_elem+1
         ind_pts = range(num_pts)
 
@@ -124,6 +102,8 @@ class SysTau(ExplicitSystem):
         self._declare_argument('rho', indices=ind_pts)
         self._declare_argument('v', indices=ind_pts)
         self._declare_argument('h', indices=ind_pts)
+        self._declare_argument(['thrust_sl', 0], indices=[0])
+        self._declare_argument(['S', 0], indices=[0])
 
     def apply_G(self):
         """ compute throttle setting primarily using thrust coefficient """
@@ -135,13 +115,13 @@ class SysTau(ExplicitSystem):
         rho = pvec('rho')
         speed = pvec('v') * 1e2
         alt = pvec('h') * 1e3
-        thrust_sl = self.thrust_sl * 1e6
-        wing_area = self.wing_area * 1e2
+        thrust_sl = pvec(['thrust_sl', 0]) * 1e6
+        wing_area = pvec(['S', 0]) * 1e2
         tau = uvec('tau')
 
-        cThrust = thrust_sl - 72 * alt
+        cThrust = thrust_sl - 0.072 * alt
         Thrust = 0.5*rho*speed**2*wing_area*thrust_c
-        tau[:] = (Thrust / cThrust)
+        tau[:] = Thrust / cThrust
 
     def linearize(self):
         """ pre-compute the throttle derivatives wrt density, velocity
@@ -150,18 +130,21 @@ class SysTau(ExplicitSystem):
 
         pvec = self.vec['p']
 
-        thrust_sl = self.thrust_sl * 1e6
-        wing_area = self.wing_area * 1e2
+        thrust_sl = pvec(['thrust_sl', 0]) * 1e6
+        wing_area = pvec(['S', 0]) * 1e2
         alt = pvec('h') * 1e3
         thrust_c = pvec('CT_tar') * 1e-1
         rho = pvec('rho')
         speed = pvec('v') * 1e2
 
-        self.dt_drho = ((0.5*speed**2*wing_area*thrust_c) / (thrust_sl-72*alt))
-        self.dt_dspeed = ((rho*speed*wing_area*thrust_c) / (thrust_sl-72*alt))
-        self.dt_dthrust_c = ((0.5*rho*speed**2*wing_area) / (thrust_sl-72*alt))
-        self.dt_dalt = 72 * ((0.5*rho*speed**2*wing_area*thrust_c) /\
-                       (thrust_sl-72*alt)**2)
+        self.dt_drho = (0.5*speed**2*wing_area*thrust_c) / (thrust_sl-0.072*alt)
+        self.dt_dspeed = (rho*speed*wing_area*thrust_c) / (thrust_sl-0.072*alt)
+        self.dt_dS = (0.5*rho*speed**2*thrust_c) / (thrust_sl-0.072*alt)
+        self.dt_dthrust_c = (0.5*rho*speed**2*wing_area) / (thrust_sl-0.072*alt)
+        self.dt_dthrust_sl = -(0.5*rho*speed**2*wing_area*thrust_c) /\
+                             (thrust_sl-0.072*alt)**2
+        self.dt_dalt = 0.072 * (0.5*rho*speed**2*wing_area*thrust_c) /\
+                       (thrust_sl-0.072*alt)**2
 
     def apply_dGdp(self, arguments):
         """ assign throttle directional derivatives """
@@ -169,19 +152,28 @@ class SysTau(ExplicitSystem):
         dpvec = self.vec['dp']
         dgvec = self.vec['dg']
 
+        dthrust_sl = dpvec(['thrust_sl', 0])
+        dwing_area = dpvec(['S', 0])
         dalt = dpvec('h')
         dthrust_c = dpvec('CT_tar')
         drho = dpvec('rho')
         dspeed = dpvec('v')
         dtau = dgvec('tau')
 
+        dt_dthrust_sl = self.dt_dthrust_sl
         dt_dalt = self.dt_dalt
         dt_dthrust_c = self.dt_dthrust_c
         dt_drho = self.dt_drho
         dt_dspeed = self.dt_dspeed
+        dt_dS = self.dt_dS
 
         if self.mode == 'fwd':
             dtau[:] = 0.0
+            if self.get_id('S') in arguments:
+                dtau[:] += (dt_dS * dwing_area) * 1e2
+            if self.get_id('thrust_sl') in arguments:
+                dtau[:] += (dt_dthrust_sl *
+                            dthrust_sl) * 1e6
             if self.get_id('h') in arguments:
                 dtau[:] += (dt_dalt * dalt) * 1e3
             if self.get_id('CT_tar') in arguments:
@@ -191,10 +183,16 @@ class SysTau(ExplicitSystem):
             if self.get_id('v') in arguments:
                 dtau[:] += (dt_dspeed * dspeed) * 1e2
         if self.mode == 'rev':
+            dthrust_sl[:] = 0.0
             dalt[:] = 0.0
             dthrust_c[:] = 0.0
             drho[:] = 0.0
             dspeed[:] = 0.0
+            dwing_area[:] = 0.0
+            if self.get_id('S') in arguments:
+                dwing_area[:] += numpy.sum(dt_dS * dtau) * 1e2
+            if self.get_id('thrust_sl') in arguments:
+                dthrust_sl[:] += numpy.sum(dt_dthrust_sl * dtau) * 1e6
             if self.get_id('h') in arguments:
                 dalt[:] += dt_dalt * dtau * 1e3
             if self.get_id('CT_tar') in arguments:

@@ -27,19 +27,17 @@ import matplotlib.pylab
 ###########################
 # USER SPECIFIED INPUTS:
 
-num_elem = 1500
-num_cp_init = 300
-num_cp_max = 300
-num_cp_step = 100
-x_range = 9000.0
+num_elem = 3000
+num_cp_init = 10
+num_cp_max = 110
+num_cp_step = 50
+x_range = 5500.0
 step = 1
 initial_ind = 0
 file_index = 0
 video = True
+folder_path = '/home/jason/Documents/Results/TIME-OptTest_'
 fuel_guess = 200000.0
-fileloc = open('./path.txt', 'r')
-folder_path = fileloc.readlines()[0][:-1]
-fileloc.close()
 
 # END USER SPECIFIED INPUTS
 ###########################
@@ -161,8 +159,5 @@ if video == True:
     call(["mencoder", "mf://"+folder_name+'fig-*.png', "-mf", 
           "fps=10:type=png", "-ovc", "x264", "-x264encopts", 
           "bitrate=15000", "-o", folder_name+file_name+".avi"])
-    call(["ffmpeg",  "-i", folder_name+file_name+".avi", 
-          "-acodec", "copy", "-vcodec", "copy",
-          folder_name+file_name+".mp4"])
 
 

@@ -20,16 +20,14 @@ from openmdao.lib.drivers.api import NewtonSolver, FixedPointIterator, BroydenSo
 from openmdao.main.api import Assembly, set_as_top
 from openmdao.main.datatypes.api import Array, Float
 
-from pyMission.aerodynamics import SysAeroSurrogate#, SysCM
+from pyMission.aerodynamics import SysAeroSurrogate
 from pyMission.aerodynamics import SysCM_deprecated as SysCM
-from pyMission.aeroTripan import SysTripanCDSurrogate, SysTripanCLSurrogate, \
-                                 SysTripanCMSurrogate
 from pyMission.atmospherics import SysTemp, SysRho, SysSpeed
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
-                                  SysFuelObj, SysHi, SysHf, SysMf, SysMi
+                                  SysFuelObj, SysHi, SysHf
 from pyMission.propulsion import SysSFC, SysTau
 
 

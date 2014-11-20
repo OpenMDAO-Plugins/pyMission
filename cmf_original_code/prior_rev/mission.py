@@ -8,9 +8,9 @@ from bsplines import *
 from atmospherics import *
 from coupled_analysis import *
 from functionals import *
-from aerodynamics_old import *
+from aerodynamics import *
 from propulsion import *
-from aeroTripan import *
+#from aeroTripan import *
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab
@@ -20,7 +20,7 @@ from history import *
 
 class GlobalizedSystem(SerialSystem):
     ''' doc string '''
-    
+
     def solve_F(self):
         """ Solve f for u, p |-> u """
 
@@ -99,9 +99,7 @@ class OptTrajectory(object):
         self.jac_h = jac
         self.jac_gamma = jace
 
-        [self.CL_arr, self.CD_arr, self.CM_arr, self.num] = \
-            setup_surrogate(self.surr_file)
-        
+
     def set_params(self, kw):
         self.wing_area = kw['S']
         self.ac_w = kw['ac_w']
@@ -109,7 +107,8 @@ class OptTrajectory(object):
         self.sfc_sl = kw['SFCSL']
         self.aspect_ratio = kw['AR']
         self.oswald = kw['e']
-        self.surr_file = kw['surr']
+        self.t_c = kw['t_c']
+        self.sweep = kw['sweep']
 
     def set_folder(self, folder_path):
         self.folder_path = folder_path
@@ -137,13 +136,14 @@ class OptTrajectory(object):
                              NL_ilimit=1,
                              output=True,
                              subsystems=[
-                        IndVar('jason', val=100000, size=1),
-                        #IndVar('lambda', 
-                        #       val=numpy.ones(2*(self.num_elem+1)), 
-                        #       lower=0),
-                        #IndVar('slack',
-                        #       val=numpy.zeros(2*(self.num_elem+1)),
-                        #       lower=0),
+                        IndVar('S', val=self.wing_area, size=1),
+                        IndVar('ac_w', val=self.ac_w, size=1),
+                        IndVar('thrust_sl', val=self.thrust_sl, size=1),
+                        IndVar('SFCSL', val=self.sfc_sl, size=1),
+                        IndVar('AR', val=self.aspect_ratio, size=1),
+                        IndVar('e', val=self.oswald, size=1),
+                        IndVar('t_c', val=self.t_c, size=1),
+                        IndVar('sweep', val=self.sweep, size=1),
                         ]),
                 SerialSystem('segment',
                              NL='NLN_GS',
@@ -191,8 +191,7 @@ class OptTrajectory(object):
                                      NL_ilimit=1,
                                      output=True,
                                      subsystems=[
-                                SysSFC('SFC', num_elem=self.num_elem,
-                                       SFCSL=self.sfc_sl),
+                                SysSFC('SFC', num_elem=self.num_elem),
                                 SysTemp('Temp', num_elem=self.num_elem),
                                 SysRho('rho', num_elem=self.num_elem),
                                 SysSpeed('v', num_elem=self.num_elem,
@@ -201,24 +200,25 @@ class OptTrajectory(object):
                                         v_specified=self.v_specified),
                                 ]),
                         SerialSystem('coupled_analysis',
-                                     LN='KSP_PC',
-                                     #PC='LIN_GS',
-                                     LN_ilimit=50,
-                                     GL_GS_ilimit=1,
-                                     GL_NT_ilimit=8,
-                                     PC_ilimit=2,
-                                     GL_GS_rtol=1e-6,
-                                     GL_GS_atol=1e-9,#10,
-                                     GL_NT_rtol=1e-9,#14,
-                                     GL_NT_atol=1e-9,#14,
-                                     NL_rtol=1e-9,
-                                     NL_atol=1e-9,
-                                     LN_rtol=1e-20,#14,
-                                     LN_atol=1e-14,#14,
-                                     PC_rtol=1e-6,
-                                     PC_atol=1e-10,
-                                     output=True,
-                                     subsystems=[
+                                         NL='NEWTON',
+                                         LN='KSP_PC',
+                                         #PC='LIN_GS',
+                                         LN_ilimit=18,
+                                         GL_GS_ilimit=5,
+                                         GL_NT_ilimit=8,
+                                         PC_ilimit=5,
+                                         GL_GS_rtol=1e-6,
+                                         GL_GS_atol=1e-9,#10,
+                                         GL_NT_rtol=1e-9,#14,
+                                         GL_NT_atol=1e-9,#14,
+                                         NL_rtol=1e-9,
+                                         NL_atol=1e-9,
+                                         LN_rtol=1e-14,#14,
+                                         LN_atol=1e-14,#14,
+                                         PC_rtol=1e-6,
+                                         PC_atol=1e-10,
+                                         output=True,
+                                         subsystems=[
                                 SerialSystem('vert_eqlm',
                                              NL='NLN_GS',
                                              LN='KSP_PC',
@@ -230,50 +230,24 @@ class OptTrajectory(object):
                                              LN_atol=1e-10,
                                              subsystems=[
                                         SysCLTar('CL_tar',
-                                                 num_elem=self.num_elem,
-                                                 S=self.wing_area,
-                                                 ac_w = self.ac_w),
+                                                 num_elem=self.num_elem),
                                         ]),
-                                SerialSystem('tripan_alpha',
-                                             NL='NLN_GS',
-                                             LN='LIN_GS',
-                                             LN_ilimit=18,
-                                             NL_ilimit=1,
-                                             PC_ilimit=2,
-                                             NL_rtol=1e-10,
-                                             NL_atol=1e-10,
-                                             LN_rtol=1e-6,
-                                             LN_atol=1e-6,
-                                             subsystems=[
-                                        SysTripanCLSurrogate('alpha', num_elem=self.num_elem, num=self.num, CL=self.CL_arr),
-                                        #SysAeroSurrogate('aero', num_elem=self.num_elem),
-                                        #SysAlpha('alpha', num_elem=self.num_elem),
-                                        #SysCM('eta', num_elem=self.num_elem),
-                                        ]),
-                                SerialSystem('tripan_eta',
-                                             NL='NLN_GS',
-                                             LN='LIN_GS',
-                                             LN_ilimit=18,
-                                             NL_ilimit=1,
-                                             PC_ilimit=2,
-                                             NL_rtol=1e-10,
-                                             NL_atol=1e-10,
-                                             LN_rtol=1e-6,
-                                             LN_atol=1e-6,
-                                             subsystems=[
-                                        SysTripanCMSurrogate('eta', num_elem=self.num_elem, num=self.num, CM=self.CM_arr),
-                                        ]),
-                                SerialSystem('tripan_drag',
-                                             NL='NLN_GS',
+                                SerialSystem('tripan',
+                                             NL='NEWTON',
                                              LN='KSP_PC',
-                                             LN_ilimit=1,
-                                             NL_ilimit=1,
-                                             NL_rtol=1e-10,
-                                             NL_atol=1e-10,
+                                             LN_ilimit=15,
+                                             NL_ilimit=15,
+                                             PC_ilimit=2,
+                                             NL_rtol=1e-9,
+                                             NL_atol=1e-9,
                                              LN_rtol=1e-10,
                                              LN_atol=1e-10,
                                              subsystems=[
-                                        SysTripanCDSurrogate('drag', num_elem=self.num_elem, num=self.num, CD=self.CD_arr),
+                                        SysAeroSurrogate('tripan', num_elem=self.num_elem),
+                                        #SysCLSurrogate('CL', num_elem=self.num_elem),
+                                        #SysCDSurrogate('CD', num_elem=self.num_elem),
+                                        SysAlpha('alpha',
+                                                 num_elem=self.num_elem),
                                         ]),
                                 SerialSystem('hor_eqlm',
                                              NL='NLN_GS',
@@ -286,9 +260,19 @@ class OptTrajectory(object):
                                              LN_atol=1e-10,
                                              subsystems=[
                                         SysCTTar('CT_tar',
-                                                 num_elem=self.num_elem,
-                                                 S=self.wing_area,
-                                                 ac_w=self.ac_w),
+                                                 num_elem=self.num_elem),
+                                        ]),
+                                SerialSystem('mmt_eqlm',
+                                             NL='NLN_GS',
+                                             LN='KSP_PC',
+                                             LN_ilimit=1,
+                                             NL_ilimit=1,
+                                             NL_rtol=1e-10,
+                                             NL_atol=1e-10,
+                                             LN_rtol=1e-10,
+                                             LN_atol=1e-10,
+                                             subsystems=[
+                                        SysCM('eta', num_elem=self.num_elem),
                                         ]),
                                 SerialSystem('weight',
                                              NL='NLN_GS',
@@ -302,8 +286,7 @@ class OptTrajectory(object):
                                              subsystems=[
                                         SysFuelWeight('fuel_w',
                                                       num_elem=self.num_elem,
-                                                      fuel_w_0=numpy.linspace(1.0, 0.0, self.num_elem+1),
-                                                      S=self.wing_area),
+                                                      fuel_w_0=numpy.linspace(1.0, 0.0, self.num_elem+1)),
                                         ]),
                                 ]),
                         SerialSystem('functionals',
@@ -317,22 +300,24 @@ class OptTrajectory(object):
                                      LN_ato1=1e-10,
                                      output=True,
                                      subsystems=[
-                                SysTau('tau', num_elem=self.num_elem,
-                                       thrust_sl=self.thrust_sl,
-                                       S=self.wing_area),
-                                SysFuelObj('fuelburn', num_elem=self.num_elem),
+                                SysTau('tau', num_elem=self.num_elem),
+                                SysFuelObj('wf_obj'),
                                 SysHi('h_i'),
                                 SysHf('h_f', num_elem=self.num_elem),
                                 SysTmin('Tmin', num_elem=self.num_elem),
                                 SysTmax('Tmax', num_elem=self.num_elem),
-                                SysMi('M_i'),
-                                SysMf('M_f', num_elem=self.num_elem),
+                                SysSlopeMin('gamma_min',
+                                            num_elem=self.num_elem),
+                                SysSlopeMax('gamma_max',
+                                            num_elem=self.num_elem),
+                                SysVi('v_i'),
+                                SysVf('v_f', num_elem=self.num_elem),
                                 SysBlockTime('time', num_elem=self.num_elem),
                                 ]),
                         ]),
                  ]).setup()
 
-        self.history = History(self.num_elem, self.num_cp, self.x_pts[-1], 
+        self.history = History(self.num_elem, self.num_cp, self.x_pts[-1],
                                self.folder_path, self.name, self.first)
 
         return self.main
@@ -343,40 +328,30 @@ class OptTrajectory(object):
 
     def set_takeoff_speed(self, v_to):
         self.v_to = v_to
-        self.M_to = v_to / numpy.sqrt(1.4*287*288)
 
     def set_landing_speed(self, v_ld):
         self.v_ld = v_ld
-        self.M_ld = v_ld / numpy.sqrt(1.4*287*288)
 
     def initialize_opt(self, main):
         gamma_lb = self.gamma_lb
         gamma_ub = self.gamma_ub
 
         opt = Optimization(main)
-        opt.add_design_variable('h_pt', value=self.h_pts, lower=0.0, upper=14.1)
-        #opt.add_design_variable('M_pt', value=self.M_pts, lower=0.001, upper=0.949)
-        #opt.add_design_variable('lambda',
-        #                        value=numpy.zeros(2*(self.num_elem+1)),
-        #                        lower=0.0)
-        #opt.add_design_variable('slack',
-        #                        value=numpy.zeros(2*(self.num_elem+1)),
-        #                        lower=0.0)
+        opt.add_design_variable('h_pt', value=self.h_pts, lower=0.0, upper=20.0)
         #opt.add_design_variable('v_pt', value=self.v_pts, lower=0.0, upper=10.0)
-        opt.add_objective('fuelburn')
+        opt.add_objective('wf_obj')
         opt.add_constraint('h_i', lower=0.0, upper=0.0)
         opt.add_constraint('h_f', lower=0.0, upper=0.0)
         opt.add_constraint('Tmin', upper=0.0)
         opt.add_constraint('Tmax', upper=0.0)
         opt.add_constraint('gamma', lower=gamma_lb, upper=gamma_ub,
                            get_jacs=main('gamma').get_jacs, linear=True)
-        #opt.add_constraint('M_i', lower=self.M_to, upper=self.M_to)
-        #opt.add_constraint('M_f', lower=self.M_ld, upper=self.M_ld)
+        #opt.add_constraint('v_i', lower=self.v_to, upper=self.v_to)
+        #opt.add_constraint('v_f', lower=self.v_ld, upper=self.v_ld)
         #opt.add_constraint('time', lower=0.0, upper=11*3600.0)
         opt.add_sens_callback(self.callback)
         return opt
 
-    def callback(self):        
-        self.history.save_history(self.main.vec['u'], self.wing_area,
-                                  self.ac_w)
+    def callback(self):
+        self.history.save_history(self.main.vec['u'])
 
