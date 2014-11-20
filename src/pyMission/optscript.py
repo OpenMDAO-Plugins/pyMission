@@ -91,9 +91,10 @@ while num_cp <= num_cp_max:
     # and constraints to mission_history_cp_#.bson
     filename = 'mission_history_cp_%d.bson' % num_cp
     model.recorders = [BSONCaseRecorder(filename)]
-    model.includes = model.driver.list_param_targets()
-    model.includes.extend(model.driver.list_constraint_targets())
-    model.includes.append('SysFuelObj.wf_obj')
+    model.recorders.save_problem_formulation = False
+    model.recording_options.includes = model.driver.list_param_targets()
+    model.recording_options.includes.extend(model.driver.list_constraint_targets())
+    model.recording_options.includes.append('SysFuelObj.wf_obj')
 
     # Flag for making sure we run serial if we do an mpirun
     model.driver.system_type = 'serial'
