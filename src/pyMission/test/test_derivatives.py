@@ -12,7 +12,7 @@ from pyMission.aerodynamics import SysAeroSurrogate, SysCM
 from pyMission.atmospherics import SysTemp, SysRho, SysSpeed, \
                                    SysRhoOld, SysTempOld
 from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
-                               SysGammaBspline
+                               SysGammaBspline, setup_MBI
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
                                   SysFuelObj, SysHi, SysHf
@@ -193,40 +193,60 @@ class Testcase_pyMission_derivs(unittest.TestCase):
     def test_SysXBspline(self):
 
         compname = 'SysXBspline'
+        x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
+        jac_h, jac_gamma = setup_MBI(12+1, NUM_PT, x_init)
+
         self.arg_dict['num_pt'] = NUM_PT
         self.arg_dict['num_elem'] = 12
+        self.arg_dict['jac_h'] = jac_h
+        self.arg_dict['x_init'] = x_init
+
         self.setup(compname, self.arg_dict)
-        self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
         self.run_model()
         self.compare_derivatives()
 
     def test_SysHBspline(self):
 
         compname = 'SysHBspline'
+        x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
+        jac_h, jac_gamma = setup_MBI(12+1, NUM_PT, x_init)
+
         self.arg_dict['num_pt'] = NUM_PT
         self.arg_dict['num_elem'] = 12
+        self.arg_dict['jac_h'] = jac_h
+        self.arg_dict['x_init'] = x_init
+
         self.setup(compname, self.arg_dict)
-        self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
         self.run_model()
         self.compare_derivatives()
 
     def test_SysMVBspline(self):
 
         compname = 'SysMVBspline'
+        x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
+        jac_h, jac_gamma = setup_MBI(12+1, NUM_PT, x_init)
+
         self.arg_dict['num_pt'] = NUM_PT
         self.arg_dict['num_elem'] = 12
+        self.arg_dict['jac_h'] = jac_h
+        self.arg_dict['x_init'] = x_init
+
         self.setup(compname, self.arg_dict)
-        self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
         self.run_model()
         self.compare_derivatives()
 
     def test_SysGammaBspline(self):
 
         compname = 'SysGammaBspline'
+        x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
+        jac_h, jac_gamma = setup_MBI(12+1, NUM_PT, x_init)
+
         self.arg_dict['num_pt'] = NUM_PT
         self.arg_dict['num_elem'] = 12
+        self.arg_dict['jac_gamma'] = jac_gamma
+        self.arg_dict['x_init'] = x_init
+
         self.setup(compname, self.arg_dict)
-        self.model.comp.x_init = 100.0*(1 - np.cos(np.linspace(0, 1, NUM_PT)*np.pi))/2/1e6
         self.run_model()
         self.compare_derivatives()
 
