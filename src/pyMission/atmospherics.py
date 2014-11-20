@@ -286,8 +286,6 @@ class SysRho(Component):
             tropos = alt <= (alt_boundary - self.epsilon)
             strato = alt >  (alt_boundary + self.epsilon)
             smooth = np.logical_and(~tropos, ~strato)
-            dpressure[:] = 0.0
-            drho[:] = 0.0
             dpressure[:] += tropos * (101325*5.2561*(-0.0065/288.16)*
                                       (1-0.0065*alt/288.16)**4.2561)
             dpressure[:] += strato * (22632*(-9.81/(288*216.65))*
@@ -302,8 +300,6 @@ class SysRho(Component):
             tropos = alt <= (alt_boundary - self.epsilon)
             strato = alt >  (alt_boundary + self.epsilon)
             smooth = np.logical_and(~tropos, ~strato)
-            pressure[:] = 0.0
-            drho[:] = 0.0
             pressure[:] += tropos * (101325*(1-0.0065*alt/
                                              288.16)**5.2561)
             pressure[:] += strato * (22632*np.exp(-9.81*(alt-alt_boundary)/

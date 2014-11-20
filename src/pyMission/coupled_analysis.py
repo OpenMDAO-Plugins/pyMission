@@ -56,13 +56,16 @@ class SysCLTar(Component):
         self.add('CL', Array(np.zeros((num_elem+1, )), iotype='out',
                              desc = 'Lift Coefficient'))
 
+        self.fuel_scale = 1e5
+        #self.fuel_scale = 1e6
+
     def execute(self):
         """ Compute lift coefficient based on other variables at the control
         points. This is done by solving for CL with the vertical flight
         equilibrium equation.
         """
 
-        fuel_w = self.fuel_w * 1e5
+        fuel_w = self.fuel_w * self.fuel_scale
         Gamma = self.Gamma * 1e-1
         thrust_c = self.CT_tar * 1e-1
         alpha = self.alpha * 1e-1
@@ -94,7 +97,7 @@ class SysCLTar(Component):
         Forward Mode
         """
 
-        fuel_w = self.fuel_w * 1e5
+        fuel_w = self.fuel_w * self.fuel_scale
         Gamma = self.Gamma * 1e-1
         thrust_c = self.CT_tar * 1e-1
         alpha = self.alpha * 1e-1
@@ -119,7 +122,7 @@ class SysCLTar(Component):
         if 'fuel_w' in arg:
             result['CL'] += np.cos(Gamma) /\
                           (0.5*rho*speed**2*wing_area) *\
-                          arg['fuel_w'] * 1e5
+                          arg['fuel_w'] * self.fuel_scale
         if 'Gamma' in arg:
             result['CL'] += -(ac_w + fuel_w)*np.sin(Gamma) /\
                           (0.5*rho*speed**2*wing_area) * arg['Gamma'] * 1e-1
@@ -135,7 +138,7 @@ class SysCLTar(Component):
         Adjoint Mode
         """
 
-        fuel_w = self.fuel_w * 1e5
+        fuel_w = self.fuel_w * self.fuel_scale
         Gamma = self.Gamma * 1e-1
         thrust_c = self.CT_tar * 1e-1
         alpha = self.alpha * 1e-1
@@ -160,7 +163,7 @@ class SysCLTar(Component):
                               (0.5*rho**2*speed**2*wing_area) * d_CL
         if 'fuel_w' in result:
             result['fuel_w'] += np.cos(Gamma) /\
-                                (0.5*rho*speed**2*wing_area) * d_CL * 1e5
+                                (0.5*rho*speed**2*wing_area) * d_CL * self.fuel_scale
         if 'Gamma' in result:
             result['Gamma'] += -(ac_w + fuel_w)*np.sin(Gamma) /\
                                 (0.5*rho*speed**2*wing_area) * d_CL * 1e-1
@@ -199,13 +202,16 @@ class SysCTTar(Component):
         self.add('CT_tar', Array(np.zeros((num_elem+1, )), iotype='out',
                                  desc = 'Thrust Coefficient'))
 
+        #self.fuel_scale = 1e6
+        self.fuel_scale = 1e5
+
     def execute(self):
         """ Compute thrust coefficient using variables at the control points.
         The thrust coefficients are solved from the horizontal flight
         equilibrium equation.
         """
 
-        fuel_w = self.fuel_w * 1e6
+        fuel_w = self.fuel_w * self.fuel_scale
         Gamma = self.Gamma * 1e-1
         drag_c = self.CD * 1e-1
         alpha = self.alpha * 1e-1
@@ -237,7 +243,7 @@ class SysCTTar(Component):
         Forward Mode
         """
 
-        fuel_w = self.fuel_w * 1e6
+        fuel_w = self.fuel_w * self.fuel_scale
         Gamma = self.Gamma * 1e-1
         drag_c = self.CD * 1e-1
         alpha = self.alpha * 1e-1
@@ -267,7 +273,7 @@ class SysCTTar(Component):
                             (fact*rho) * arg['rho'] / 1e-1
         if 'fuel_w' in arg:
             dthrust_c += sin_gamma /\
-                            (fact) * arg['fuel_w'] * 1e6/1e-1
+                            (fact) * arg['fuel_w'] * self.fuel_scale/1e-1
         if 'Gamma' in arg:
             dthrust_c += (ac_w + fuel_w)*np.cos(Gamma) /\
                             (fact) * arg['Gamma'] * 1e-1/1e-1
@@ -287,7 +293,7 @@ class SysCTTar(Component):
         Adjoint Mode
         """
 
-        fuel_w = self.fuel_w * 1e6
+        fuel_w = self.fuel_w * self.fuel_scale
         Gamma = self.Gamma * 1e-1
         drag_c = self.CD * 1e-1
         alpha = self.alpha * 1e-1
@@ -317,7 +323,7 @@ class SysCTTar(Component):
                               (fact*rho*cos_alpha) * dthrust_c  /1e-1
         if 'fuel_w' in result:
             result['fuel_w'] += sin_gamma /\
-                                (fact*cos_alpha) * dthrust_c * 1e6/1e-1
+                                (fact*cos_alpha) * dthrust_c * self.fuel_scale/1e-1
         if 'Gamma' in result:
             result['Gamma'] += (ac_w + fuel_w)*np.cos(Gamma) /\
                                (fact*cos_alpha) * dthrust_c * 1e-1/1e-1
@@ -362,6 +368,9 @@ class SysFuelWeight(Component):
         self.add('fuel_w', Array(np.zeros((num_elem+1, )), iotype='out',
                                  desc = 'Fuel Weight'))
 
+        #self.fuel_scale = 1e6
+        self.fuel_scale = 1e5
+
     def execute(self):
         """ The fuel burnt over each section is computed using trapezoidal
         rule and the neighboring control points.
@@ -391,8 +400,8 @@ class SysFuelWeight(Component):
                       * x_int/2)
 
         fuel_cumul = np.cumsum(fuel_delta[::-1])[::-1]
-        self.fuel_w[0:-1] = (fuel_cumul + fuel_w_end) / 1e5
-        self.fuel_w[-1] = fuel_w_end / 1e5
+        self.fuel_w[0:-1] = (fuel_cumul + fuel_w_end) / self.fuel_scale
+        self.fuel_w[-1] = fuel_w_end / self.fuel_scale
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
@@ -489,49 +498,49 @@ class SysFuelWeight(Component):
             dfuel_temp[0:-1] = dfuel_dS * arg['S']
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e2 / 1e5
+            result['fuel_w'] += dfuel_temp * 1e2 / self.fuel_scale
         if 'x' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dx1 * arg['x'][0:-1]
             dfuel_temp[0:-1] += dfuel_dx2 * arg['x'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e6/1e5
+            result['fuel_w'] += dfuel_temp * 1e6/self.fuel_scale
         if 'v' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dv1 * arg['v'][0:-1]
             dfuel_temp[0:-1] += dfuel_dv2 * arg['v'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e2/1e5
+            result['fuel_w'] += dfuel_temp * 1e2/self.fuel_scale
         if 'gamma' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dgamma1 * arg['gamma'][0:-1]
             dfuel_temp[0:-1] += dfuel_dgamma2 * arg['gamma'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e-1/1e5
+            result['fuel_w'] += dfuel_temp * 1e-1/self.fuel_scale
         if 'CT_tar' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dthrust1 * arg['CT_tar'][0:-1]
             dfuel_temp[0:-1] += dfuel_dthrust2 * arg['CT_tar'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e-1/1e5
+            result['fuel_w'] += dfuel_temp * 1e-1/self.fuel_scale
         if 'SFC' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_dSFC1 * arg['SFC'][0:-1]
             dfuel_temp[0:-1] += dfuel_dSFC2 * arg['SFC'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp * 1e-6/1e5
+            result['fuel_w'] += dfuel_temp * 1e-6/self.fuel_scale
         if 'rho' in arg:
             dfuel_temp[:] = 0.0
             dfuel_temp[0:-1] += dfuel_drho1 * arg['rho'][0:-1]
             dfuel_temp[0:-1] += dfuel_drho2 * arg['rho'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
-            result['fuel_w'] += dfuel_temp / 1e5
+            result['fuel_w'] += dfuel_temp / self.fuel_scale
 
     def apply_derivT(self, arg, result):
         """ Apply the pre-computed derivatives to the directional derivatives
@@ -561,43 +570,43 @@ class SysFuelWeight(Component):
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dS * fuel_cumul
-            result['S'] += np.sum(dfuel_temp) * 1e2/1e5
+            result['S'] += np.sum(dfuel_temp) * 1e2/self.fuel_scale
         if 'x' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dx1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dx2 * fuel_cumul
-            result['x'] += dfuel_temp * 1e6/1e5
+            result['x'] += dfuel_temp * 1e6/self.fuel_scale
         if 'v' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dv1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dv2 * fuel_cumul
-            result['v'] += dfuel_temp * 1e2/1e5
+            result['v'] += dfuel_temp * 1e2/self.fuel_scale
         if 'gamma' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dgamma1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dgamma2 * fuel_cumul
-            result['gamma'] += dfuel_temp * 1e-1/1e5
+            result['gamma'] += dfuel_temp * 1e-1/self.fuel_scale
         if 'CT_tar' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dthrust1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dthrust2 * fuel_cumul
-            result['CT_tar'] += dfuel_temp * 1e-1/1e5
+            result['CT_tar'] += dfuel_temp * 1e-1/self.fuel_scale
         if 'SFC' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dSFC1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dSFC2 * fuel_cumul
-            result['SFC'] += dfuel_temp * 1e-6/1e5
+            result['SFC'] += dfuel_temp * 1e-6/self.fuel_scale
         if 'rho' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_drho1 * fuel_cumul
             dfuel_temp[1:] += dfuel_drho2 * fuel_cumul
-            result['rho'] += dfuel_temp / 1e5
+            result['rho'] += dfuel_temp / self.fuel_scale
 
 
 # This system can be replaced by a solver's Pseudocomp.

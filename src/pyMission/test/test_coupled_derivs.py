@@ -49,6 +49,13 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         model.AR = 8.68
         model.oswald = 0.8
 
+        # Change some scaling parameters so that we match what they were when
+        # the pickle was created.
+        model.SysTau.thrust_scale = 0.072
+        model.SysCLTar.fuel_scale = 1e6
+        model.SysCTTar.fuel_scale = 1e6
+        model.SysFuelWeight.fuel_scale = 1e6
+
         model.driver.add_parameter('h_pt', low=0.0, high=20.0)
         model.driver.add_objective('SysFuelObj.wf_obj')
         model.driver.add_constraint('SysHi.h_i = 0.0')

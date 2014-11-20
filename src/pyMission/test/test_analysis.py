@@ -43,6 +43,12 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         model.AR = 8.68
         model.oswald = 0.8
 
+        # Change some scaling parameters so that we match what they were when
+        # the pickle was created.
+        model.SysTau.thrust_scale = 0.072
+        model.SysCLTar.fuel_scale = 1e6
+        model.SysCTTar.fuel_scale = 1e6
+        model.SysFuelWeight.fuel_scale = 1e6
         model.run()
 
         # Load in original data from pickle
