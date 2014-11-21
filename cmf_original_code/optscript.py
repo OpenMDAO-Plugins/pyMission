@@ -27,14 +27,18 @@ import matplotlib.pylab
 
 execfile('./crm_params.py')
 
-num_elem = 1500#50
-num_cp_init = 300#5
-num_cp_max = 300#5
+num_elem = 250
+num_cp_init = 50
+num_cp_max = 50
+#num_elem = 1500#50
+#num_cp_init = 300#5
+#num_cp_max = 300#5
 num_cp_step = 100
 x_range = 9000.0      # range in nautical miles!
-fileloc = open('./path.txt', 'r')
-folder_path = fileloc.readlines()[0][:-1]
-fileloc.close()
+#fileloc = open('./path.txt', 'r')
+#folder_path = fileloc.readlines()[0][:-1]
+#fileloc.close()
+folder_path = '.'
 
 # END USER SPECIFIED DATA
 ##########################
@@ -112,7 +116,25 @@ while num_cp <= num_cp_max:
     opt = traj.initialize_opt(main)
 
     # start timing, and perform optimization
-    opt('SNOPT')
+    PROFILE = True
+
+    # Optimize
+    if PROFILE==True:
+        import cProfile
+        import pstats
+        import sys
+        cProfile.run('opt("SNOPT")', 'profout')
+        p = pstats.Stats('profout')
+        p.strip_dirs()
+        p.sort_stats('time')
+        p.print_stats()
+        print '\n\n---------------------\n\n'
+        p.print_callers()
+        print '\n\n---------------------\n\n'
+        p.print_callees()
+        exit()
+    else:
+        opt('SNOPT')
 
     run_case, last_itr = traj.history.get_index()
     folder_name = folder_path + name + '_%03i/' % (run_case)

@@ -25,9 +25,12 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
-num_elem = 1500
-num_cp_init = 300
-num_cp_max = 300
+num_elem = 250
+num_cp_init = 50
+num_cp_max = 50
+#num_elem = 1500
+#num_cp_init = 300
+#num_cp_max = 300
 num_cp_step = 100
 x_range = 9000.0  # nautical miles
 
@@ -53,7 +56,7 @@ while num_cp <= num_cp_max:
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
     #v_init = np.ones(num_cp)*2.5
     M_init = np.ones(num_cp)*0.8
-    M_init = np.ones(num_cp)*0.82
+    #M_init = np.ones(num_cp)*0.82
     h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem=num_elem, num_cp=num_cp,
@@ -117,7 +120,7 @@ while num_cp <= num_cp_max:
     #model.driver.workflow.check_gradient()
     #exit()
 
-    PROFILE = False
+    PROFILE = True
 
     # Optimize
     if PROFILE==True:

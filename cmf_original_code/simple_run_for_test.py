@@ -17,31 +17,39 @@ params = {
     'e': 0.8,
     't_c': 0.09,
     'sweep': 31.6 * np.pi/180,
-    }
+    'surr': './crm_surr',
+}
+folder_path = '.'
+name = 'junk'
 
 num_elem = 100
 num_cp = 30
-x_range = 150.0
+x_range = 9000.0
 
 # for debugging only
 #num_elem = 6
 #num_cp = 3
 
-v_init = numpy.ones(num_cp)*2.3
+x_range *= 1.852
 x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
-h_init = 1 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
+h_init = 10 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
+M_init = numpy.ones(num_cp)*0.8
 
 gamma_lb = numpy.tan(-20.0 * (numpy.pi/180.0))/1e-1
 gamma_ub = numpy.tan(20.0 * (numpy.pi/180.0))/1e-1
 
+altitude = numpy.zeros(num_elem+1)
+altitude = 10 * numpy.sin(numpy.pi * numpy.linspace(0,1,num_elem+1))
+
 traj = OptTrajectory(num_elem, num_cp, first=True)
 traj.set_init_h(h_init)
-traj.set_init_v(v_init)
+traj.set_init_M(M_init)
 traj.set_init_x(x_init)
 traj.set_params(params)
-traj.set_folder('.')
-traj.set_name('zzz')
+traj.set_folder(folder_path)
+traj.set_name(name)
 traj.setup_MBI()
+traj.set_init_h_pt(altitude)
 main = traj.initialize_framework()
 
 from time import time
@@ -49,21 +57,18 @@ t1 = time()
 main.compute(True)
 print "Elapsed time:", time()-t1
 
-print 'done'
-exit()
-
 # Derivative checking stuff.
 # ------------------------------
 #main.check_derivatives_all(fwd=True)
 #main.check_derivatives_all(fwd=False)
-print main.compute_derivatives('fwd', 'h_pt', output=False)
-print main.compute_derivatives('rev', 'h_pt', output=False)
+#print main.compute_derivatives('fwd', 'h_pt', output=False)
+#print main.compute_derivatives('rev', 'h_pt', output=False)
 #print 'fwd', main.compute_derivatives('fwd', 'h_pt', output=False)[0][('CL_tar', 0)][0]
 #print 'rev', main.compute_derivatives('rev', 'h_pt', output=False)[0][('CL_tar', 0)][0]
-grad = main.compute_derivatives('fwd', 'h_pt', output=False)
-print 'wf_obj', grad[0][('wf_obj', 0)]
-print 'Tmin', grad[0][('Tmin', 0)]
-print 'Tmax', grad[0][('Tmax', 0)]
+#grad = main.compute_derivatives('fwd', 'h_pt', output=False)
+#print 'wf_obj', grad[0][('wf_obj', 0)]
+#print 'Tmin', grad[0][('Tmin', 0)]
+#print 'Tmax', grad[0][('Tmax', 0)]
 
 #exit()
 
@@ -73,7 +78,7 @@ for key in keys:
     data[key[0]] = main.vec['u'][key]
 
 import pickle
-pickle.dump( data, open( "analysis.p", "wb" ) )
+pickle.dump( data, open( "analysis2.p", "wb" ) )
 
 if 0:
     v = main.vec['u']

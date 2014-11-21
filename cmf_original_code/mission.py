@@ -8,7 +8,7 @@ from bsplines import *
 from atmospherics import *
 from coupled_analysis import *
 from functionals import *
-from aerodynamics_old import *
+#from aerodynamics_old import *
 from propulsion import *
 from aeroTripan import *
 import matplotlib

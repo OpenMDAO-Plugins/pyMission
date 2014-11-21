@@ -151,7 +151,7 @@ while num_cp <= num_cp_max:
 
     # start timing, and perform optimization
 
-    PROFILE = False
+    PROFILE = True
 
     # Optimize
     if PROFILE==True:
