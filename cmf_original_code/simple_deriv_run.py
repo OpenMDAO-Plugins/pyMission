@@ -1,6 +1,7 @@
 """ This is used to generate the pickle for testing the OpenMDAO version vs
 the CMF version.
 """
+import numpy as np
 
 from mission import *
 from history import *
@@ -10,31 +11,45 @@ from subprocess import call
 params = {
     'S': 427.8/1e2,
     'ac_w': 210000*9.81/1e6,
-    'thrust_sl': 1020000.0/1e6/3,
-    'SFCSL': 8.951,
+    'thrust_sl': 1020000.0/1e6,
+    'SFCSL': 8.951*9.81,
     'AR': 8.68,
     'e': 0.8,
-    }
+    't_c': 0.09,
+    'sweep': 31.6 * np.pi/180,
+    'surr': './crm_surr',
+}
+folder_path = '.'
+name = 'junk'
 
-num_elem = 10
-num_cp = 5
-x_range = 150.0
+num_elem = 100
+num_cp = 30
+x_range = 9000.0
 
-v_init = numpy.ones(num_cp)*2.3
+# for debugging only
+#num_elem = 6
+#num_cp = 3
+
+x_range *= 1.852
 x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
-h_init = 1 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
+h_init = 10 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
+M_init = numpy.ones(num_cp)*0.8
 
 gamma_lb = numpy.tan(-20.0 * (numpy.pi/180.0))/1e-1
 gamma_ub = numpy.tan(20.0 * (numpy.pi/180.0))/1e-1
 
+altitude = numpy.zeros(num_elem+1)
+altitude = 10 * numpy.sin(numpy.pi * numpy.linspace(0,1,num_elem+1))
+
 traj = OptTrajectory(num_elem, num_cp, first=True)
 traj.set_init_h(h_init)
-traj.set_init_v(v_init)
+traj.set_init_M(M_init)
 traj.set_init_x(x_init)
 traj.set_params(params)
-traj.set_folder('.')
-traj.set_name('zzz')
+traj.set_folder(folder_path)
+traj.set_name(name)
 traj.setup_MBI()
+traj.set_init_h_pt(altitude)
 main = traj.initialize_framework()
 
 from time import time
@@ -46,34 +61,24 @@ print 'done'
 
 # Derivative checking stuff.
 # ------------------------------
-#main.check_derivatives_all(fwd=True)
-#main.check_derivatives_all(fwd=False)
-print main.compute_derivatives('fwd', 'h_pt', output=False)
-print main.compute_derivatives('rev', 'h_pt', output=False)
+#main.check_derivatives_all()
+#print main.compute_derivatives('fwd', 'h_pt', output=False)
+#print main.compute_derivatives('rev', 'h_pt', output=False)
 #print 'fwd', main.compute_derivatives('fwd', 'h_pt', output=False)[0][('CL_tar', 0)][0]
 #print 'rev', main.compute_derivatives('rev', 'h_pt', output=False)[0][('CL_tar', 0)][0]
 import pickle
 data = {}
-for ind in range(0, 5):
-    key = 'h_pt' + str(ind)
+for key in ['fuelburn', 'h_i', 'h_f', 'Tmin', 'Tmax', 'gamma']:
     data[key] = {}
-    grad = main.compute_derivatives('fwd', 'h_pt', output=False, ind=ind)
-    print grad[0][('wf_obj', 0)]
-    for item in grad[0].keys():
+    grad, _ = main.compute_derivatives('rev', key, output=False)
+    print grad[('h_pt', 0)]
+    for item in grad.keys():
         key2 = item[0]
-        data[key][key2] = grad[0][item].copy()
+        data[key][key2] = grad[item].copy()
 
-pickle.dump( data, open( "derivs.p", "wb" ) )
+pickle.dump( data, open( "derivs2.p", "wb" ) )
 
 exit()
-
-keys = main.vec['u'].keys()
-data = {}
-for key in keys:
-    data[key[0]] = main.vec['u'][key]
-
-import pickle
-pickle.dump( data, open( "analysis.p", "wb" ) )
 
 if 0:
     v = main.vec['u']

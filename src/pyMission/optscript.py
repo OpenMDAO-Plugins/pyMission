@@ -120,7 +120,7 @@ while num_cp <= num_cp_max:
     #model.driver.workflow.check_gradient()
     #exit()
 
-    PROFILE = True
+    PROFILE = False
 
     # Optimize
     if PROFILE==True:
