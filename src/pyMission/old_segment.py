@@ -261,7 +261,7 @@ class MissionSegment(Assembly):
         self.create_passthrough('SysMVBspline.v_pt')
         self.create_passthrough('SysTmin.Tmin')
         self.create_passthrough('SysTmax.Tmax')
-        self.create_passthrough('SysFuelObj.wf_obj')
+        self.create_passthrough('SysFuelObj.fuelburn')
         self.create_passthrough('SysHi.h_i')
         self.create_passthrough('SysHf.h_f')
 

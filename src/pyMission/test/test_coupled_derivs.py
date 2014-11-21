@@ -57,7 +57,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         model.SysFuelWeight.fuel_scale = 1e6
 
         model.driver.add_parameter('h_pt', low=0.0, high=20.0)
-        model.driver.add_objective('SysFuelObj.wf_obj')
+        model.driver.add_objective('SysFuelObj.fuelburn')
         model.driver.add_constraint('SysHi.h_i = 0.0')
         model.driver.add_constraint('SysHf.h_f = 0.0')
         model.driver.add_constraint('SysTmin.Tmin < 0.0')
@@ -79,7 +79,10 @@ class Testcase_pyMissionSegment(unittest.TestCase):
             old_derivs = old_derivs_dict['h_pt'+str(i)]
             print 'h_pt' + str(i)
 
-            for j, key in enumerate(['wf_obj', 'h_i', 'h_f', 'Tmin', 'Tmax']):
+            # name change
+            old_derivs['fuelburn'] = old_derivs['wf_obj']
+
+            for j, key in enumerate(['fuelburn', 'h_i', 'h_f', 'Tmin', 'Tmax']):
                 old = old_derivs[key]
                 new = new_derivs[j, i]
 

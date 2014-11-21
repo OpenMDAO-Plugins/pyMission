@@ -81,8 +81,8 @@ while num_cp <= num_cp_max:
     model.M_pt = M_init
     model.set_init_h_pt(altitude)
 
-    # Pull velocity from BSpline instead of calculating it.
-    model.SysSpeed.v_specified = True
+    # Calculate velocity from the Mach we have specified.
+    model.SysSpeed.v_specified = False
 
     # Initial design parameters
     model.S = 427.8/1e2

@@ -59,6 +59,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         # Some names changed
         old_data['Gamma'] = old_data['gamma']
         old_data['temp'] = old_data['Temp']
+        old_data['fuelburn'] = old_data['wf_obj']
 
         # Don't compare the extra constraint/objective stuff, because we
         # don't create comps for them.
@@ -76,6 +77,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         old_keys.remove('e')
         old_keys.remove('Temp')
         old_keys.remove('M_pt')
+        old_keys.remove('wf_obj')
 
 
         # Find data in model

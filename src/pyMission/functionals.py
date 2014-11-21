@@ -481,7 +481,7 @@ class SysFuelObj(Component):
         Adjoint mode.
         """
 
-        result['fuelburn'][0] += arg['fuelburn']
+        result['fuel_w'][0] += arg['fuelburn']
 
 
 class SysMi(Component):

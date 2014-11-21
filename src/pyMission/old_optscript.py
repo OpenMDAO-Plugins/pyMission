@@ -64,7 +64,7 @@ while num_cp <= num_cp_max:
 
     # Add parameters, objectives, constraints
     model.driver.add_parameter('h_pt', low=0.0, high=20.0)
-    model.driver.add_objective('SysFuelObj.wf_obj')
+    model.driver.add_objective('SysFuelObj.fuelburn')
     model.driver.add_constraint('SysHi.h_i = 0.0')
     model.driver.add_constraint('SysHf.h_f = 0.0')
     model.driver.add_constraint('SysTmin.Tmin < 0.0')
@@ -94,7 +94,7 @@ while num_cp <= num_cp_max:
     model.recorders.save_problem_formulation = False
     model.recording_options.includes = model.driver.list_param_targets()
     model.recording_options.includes.extend(model.driver.list_constraint_targets())
-    model.recording_options.includes.append('SysFuelObj.wf_obj')
+    model.recording_options.includes.append('SysFuelObj.fuelburn')
 
     # Flag for making sure we run serial if we do an mpirun
     model.driver.system_type = 'serial'
