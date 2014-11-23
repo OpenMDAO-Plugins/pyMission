@@ -256,6 +256,7 @@ class MissionSegment(Assembly):
         #-------------------------
         # Iteration Hieararchy
         #-------------------------
+        self.driver.gradient_options.lin_solver = "linear_gs"
         self.driver.workflow.add(['SysXBspline', 'SysHBspline',
                                   'SysMVBspline', 'SysGammaBspline',
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
