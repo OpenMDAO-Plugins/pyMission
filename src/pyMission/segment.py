@@ -335,8 +335,8 @@ class MissionSegment(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 250
-    num_cp = 50
+    num_elem = 3000
+    num_cp = 30
     x_range = 9000.0
 
     # for debugging only
