@@ -18,7 +18,7 @@ import numpy as np
 import scipy.sparse.linalg
 
 from openmdao.lib.drivers.api import NewtonSolver, FixedPointIterator, BroydenSolver
-from openmdao.main.api import Assembly, set_as_top
+from openmdao.main.api import Assembly, set_as_top, Driver
 from openmdao.main.datatypes.api import Array, Float
 
 from pyMission.aeroTripan import SysTripanCDSurrogate, SysTripanCLSurrogate, \
@@ -31,6 +31,13 @@ from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
                                   SysFuelObj, SysHi, SysHf, SysMf, SysMi
 from pyMission.propulsion import SysSFC, SysTau
 
+
+
+    
+def is_differentiable(self): 
+        return True
+
+Driver.is_differentiable = is_differentiable
 
 class MissionSegment(Assembly):
     """ Defines a single segment for the Mission Analysis. """
@@ -256,13 +263,29 @@ class MissionSegment(Assembly):
         #-------------------------
         # Iteration Hieararchy
         #-------------------------
-        self.driver.gradient_options.lin_solver = "linear_gs"
-        self.driver.workflow.add(['SysXBspline', 'SysHBspline',
-                                  'SysMVBspline', 'SysGammaBspline',
+        # self.driver.gradient_options.lin_solver = "linear_gs"
+        # self.driver.workflow.add(['SysXBspline', 'SysHBspline',
+        #                           'SysMVBspline', 'SysGammaBspline',
+        #                           'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
+        #                           'coupled_solver',
+        #                           'SysTau', 'SysTmin', 'SysTmax',
+        #                           'SysFuelObj', 'SysHi', 'SysHf'])
+
+
+        bsplines = self.add('bsplines', Driver())
+        bsplines.gradient_options.lin_solver = 'linear_gs'
+        bsplines.gradient_options.atol = 1e-10
+        bsplines.gradient_options.atol = 1e-12
+        bsplines.workflow.add(['SysXBspline', 'SysHBspline', 'SysMVBspline', 'SysGammaBspline'])
+
+
+        self.driver.workflow.add(['bsplines',
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
                                   'coupled_solver',
                                   'SysTau', 'SysTmin', 'SysTmax',
                                   'SysFuelObj', 'SysHi', 'SysHf'])
+
+
         self.coupled_solver.workflow.add(['SysCLTar', 'SysTripanCLSurrogate',
                                           'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
                                           'SysCTTar', 'SysFuelWeight'])

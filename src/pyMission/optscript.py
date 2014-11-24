@@ -17,7 +17,7 @@ import time
 
 import numpy as np
 
-from openmdao.main.api import set_as_top
+from openmdao.main.api import set_as_top, Driver
 from openmdao.main.test.simpledriver import SimpleDriver
 from openmdao.lib.casehandlers.api import BSONCaseRecorder
 
@@ -25,7 +25,7 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
-num_elem = 250
+num_elem = 250  
 num_cp_init = 50
 num_cp_max = 50
 #num_elem = 1500
@@ -138,6 +138,13 @@ while num_cp <= num_cp_max:
         p.print_callees()
     else:
         start = time.time()
+        # from openmdao.util.dotgraph import plot_graphs, plot_system_tree
+        # model._setup()
+        #plot_graphs(model)
+        # print model._system
+        # plot_system_tree(model._system, fmt='pdf',
+        #                    outfile='segment_sys_tree.pdf')
+        # exit()
         model.run()
         print 'OPTIMIZATION TIME:', time.time() - start
 
