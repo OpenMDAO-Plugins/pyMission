@@ -1354,7 +1354,10 @@ class LinearGS(LinearSolver):
         elif system.mode == 'rev':
             system.subsystems['local'].reverse()
             for subsystem in system.subsystems['local']:
+                print '1)', system.name, subsystem.name
+                print 'T0', system.vec['df'].array[:], system.vec['du'].array[:], system.vec['dp'].array[:] 
                 system.sol_buf.array[:] = system.rhs_buf.array[:]
+                print 'T1', system.vec['df'].array[:], system.vec['du'].array[:], system.vec['dp'].array[:] 
                 for subsystem2 in system.subsystems['local']:
                     if subsystem is not subsystem2:
                         #args = [v for v in system.variables 
@@ -1362,11 +1365,18 @@ class LinearGS(LinearSolver):
                         # added the following line
                         args = subsystem.variables.keys()
                         system.rhs_vec.array[:] = 0.0
+                        print 'T2', system.vec['df'].array[:], system.vec['du'].array[:], system.vec['dp'].array[:] 
                         subsystem2.apply_dFdpu(args)
+                        print 'T3', system.vec['df'].array[:], system.vec['du'].array[:], system.vec['dp'].array[:] 
                         system.scatter('lin', subsystem2)
+                        print 'T4', system.vec['df'].array[:], system.vec['du'].array[:], system.vec['dp'].array[:] 
                         system.sol_buf.array[:] -= system.rhs_vec.array[:]
+                        print 'T5', system.vec['df'].array[:], system.vec['du'].array[:], system.vec['dp'].array[:] 
                 system.rhs_vec.array[:] = system.sol_buf.array[:]
+                print 'T6', system.vec['df'].array[:], system.vec['du'].array[:], system.vec['dp'].array[:] 
                 subsystem.solve_dFdu()
+                print 'T7', system.vec['df'].array[:], system.vec['du'].array[:], system.vec['dp'].array[:]
+                print
                 
             system.subsystems['local'].reverse()
             
