@@ -89,7 +89,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
             print 'old', old
             print 'new', new
             print old.shape, new.shape
-            #assert_rel_error(self, diff.max(), 0.0, 1e-5)
+            assert_rel_error(self, diff.max(), 0.0, 1e-5)
                  
 if __name__ == "__main__":
 

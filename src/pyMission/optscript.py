@@ -138,13 +138,11 @@ while num_cp <= num_cp_max:
         p.print_callees()
     else:
         start = time.time()
-        # from openmdao.util.dotgraph import plot_graphs, plot_system_tree
-        # model._setup()
-        #plot_graphs(model)
-        # print model._system
-        # plot_system_tree(model._system, fmt='pdf',
-        #                    outfile='segment_sys_tree.pdf')
-        # exit()
+        from openmdao.util.dotgraph import plot_graphs, plot_system_tree
+        model._setup()
+        plot_system_tree(model._system, fmt='pdf',
+                           outfile='segment_sys_tree.pdf')
+        exit()
         model.run()
         print 'OPTIMIZATION TIME:', time.time() - start
 

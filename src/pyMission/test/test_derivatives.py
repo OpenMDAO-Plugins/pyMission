@@ -90,7 +90,16 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         else:
             diff = abs(Jf - Jn)
 
-        assert_rel_error(self, diff.max(), 0.0, 1e-3)
+        try: 
+            assert_rel_error(self, diff.max(), 0.0, 1e-5)
+        except: 
+            # print Jn
+            # print 
+            # print Jf
+            print inputs 
+            print outputs
+            print diff.max(), np.argmax(diff), diff.shape
+            self.fail()
 
         # Analytic adjoint
         Ja = wflow.calc_gradient(inputs=inputs,
@@ -104,7 +113,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         else:
             diff = abs(Ja - Jn)
 
-        assert_rel_error(self, diff.max(), 0.0, 1e-3)
+        assert_rel_error(self, diff.max(), 0.0, 1e-5)
 
     def test_SysAeroSurrogate(self):
 
