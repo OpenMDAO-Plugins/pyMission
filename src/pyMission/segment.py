@@ -287,6 +287,7 @@ class MissionSegment(Assembly):
 
         self.driver.gradient_options.lin_solver = "linear_gs"
         self.driver.gradient_options.maxiter = 1
+        self.driver.gradient_options.derivative_direction = 'adjoint'
         self.driver.workflow.add(['bsplines','atmospherics',  
                                   'coupled_solver', 
                                   'SysTau', 'SysTmin', 'SysTmax',
@@ -335,7 +336,7 @@ class MissionSegment(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 3000
+    num_elem = 100
     num_cp = 30
     x_range = 9000.0
 

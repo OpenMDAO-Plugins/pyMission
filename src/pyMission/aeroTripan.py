@@ -337,8 +337,8 @@ class SysTripanCMSurrogate(ImplicitComponent):
         self.CM_arr = CM
         self.J_CM = [None for i in range(4)]
 
-    def execute(self):
-        """ Calculate residual for surrogate. """
+    def evaluate(self):
+        """ Evaluate residual for surrogate. """
 
         n_elem = len(self.alpha)
 
