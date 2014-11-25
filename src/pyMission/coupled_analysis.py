@@ -46,7 +46,7 @@ class SysCLTar(Component):
                               desc = 'Density'))
         self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Speed'))
-        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',
+        self.add('alpha', Array(np.ones((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
         self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
         self.add('ac_w', Float(0.0, iotype='in',
@@ -188,7 +188,7 @@ class SysCTTar(Component):
                                  desc = 'Flight path angle'))
         self.add('CD', Array(np.zeros((num_elem+1, )), iotype='in',
                              desc = 'Drag Coefficient'))
-        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',
+        self.add('alpha', Array(np.ones((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
         self.add('rho', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Density'))
