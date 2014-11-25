@@ -25,12 +25,18 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
-num_elem = 250  
-num_cp_init = 50
-num_cp_max = 50
-#num_elem = 1500
-#num_cp_init = 300
-#num_cp_max = 300
+# num_elem = 250
+# num_cp_init = 50
+# num_cp_max = 50
+
+num_elem = 500  
+num_cp_init = 100
+num_cp_max = 100
+
+num_elem = 750  
+num_cp_init = 150
+num_cp_max = 150
+
 num_cp_step = 100
 x_range = 9000.0  # nautical miles
 
@@ -65,8 +71,6 @@ while num_cp <= num_cp_max:
     model.replace('driver', pyOptSparseDriver())
     #model.replace('driver', SimpleDriver())
     model.driver.optimizer = 'SNOPT'
-    model.driver.gradient_options.lin_solver = 'linear_gs'
-    model.driver.gradient_options.maxiter = 1
 
     # Add parameters, objectives, constraints
     model.driver.add_parameter('h_pt', low=0.0, high=14.1)
@@ -138,11 +142,11 @@ while num_cp <= num_cp_max:
         p.print_callees()
     else:
         start = time.time()
-        from openmdao.util.dotgraph import plot_graphs, plot_system_tree
-        model._setup()
-        plot_system_tree(model._system, fmt='pdf',
-                           outfile='segment_sys_tree.pdf')
-        exit()
+        # from openmdao.util.dotgraph import plot_graphs, plot_system_tree
+        # model._setup()
+        # plot_system_tree(model._system, fmt='pdf',
+        #                    outfile='segment_sys_tree.pdf')
+        # exit()
         model.run()
         print 'OPTIMIZATION TIME:', time.time() - start
 

@@ -62,7 +62,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
 
         self.model.run()
 
-    def compare_derivatives(self, rel_error=False):
+    def compare_derivatives(self, rel_error=False, cs=False):
 
         wflow = self.model.driver
         inputs = ['comp.%s' % v for v in self.inputs]
@@ -73,6 +73,11 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         #wflow.check_gradient(inputs=inputs, outputs=outputs, mode='adjoint')
 
         # Numeric
+        if cs: 
+            wflow.gradient_options.fd_form = 'complex_step'
+            wflow.gradient_options.fs_step = 1e-10
+        else: 
+            wflow.gradient_options.fd_form = 'forward'
         Jn = wflow.calc_gradient(inputs=inputs,
                                  outputs=outputs,
                                  mode="fd")
@@ -86,19 +91,25 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         #print Jf
 
         if rel_error:
-            diff = np.nan_to_num(abs(Jf - Jn) / Jn)
+            diff = np.nan_to_num(abs(Jf - Jn)/Jn)
         else:
             diff = abs(Jf - Jn)
 
         try: 
-            assert_rel_error(self, diff.max(), 0.0, 1e-5)
+            assert_rel_error(self, diff.max(), 0.0, 1e-6)
         except: 
-            # print Jn
-            # print 
-            # print Jf
-            print inputs 
-            print outputs
-            print diff.max(), np.argmax(diff), diff.shape
+            print Jn
+            print 
+            print Jf
+            print 
+            print Jf - Jn
+
+            loc = np.unravel_index(np.argmax(diff), diff.shape)
+
+            print loc
+            print 'fd', Jn[loc]
+            print 'forward', Jf[loc]
+            #print diff.max(), np.argmax(diff), diff.shape, 
             self.fail()
 
         # Analytic adjoint
@@ -109,11 +120,11 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         #print Ja
 
         if rel_error:
-            diff = np.nan_to_num(abs(Ja - Jn) / Jn)
+            diff = np.nan_to_num(abs(Ja - Jn)/Jn)
         else:
             diff = abs(Ja - Jn)
 
-        assert_rel_error(self, diff.max(), 0.0, 1e-5)
+        assert_rel_error(self, diff.max(), 0.0, 1e-6)
 
     def test_SysAeroSurrogate(self):
 
@@ -146,14 +157,13 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         compname = 'SysCTTar'
         self.setup(compname, self.arg_dict)
         self.run_model()
-        self.compare_derivatives(rel_error=True)
+        self.compare_derivatives(rel_error=True, cs=True)
 
     def test_SysFuelWeight(self):
-
         compname = 'SysFuelWeight'
         self.setup(compname, self.arg_dict)
         self.run_model()
-        self.compare_derivatives()
+        self.compare_derivatives(cs=True)
 
     def test_SysSFC(self):
 
@@ -195,11 +205,11 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         compname = 'SysSpeed'
         self.setup(compname, self.arg_dict)
         self.run_model()
-        self.compare_derivatives()
+        self.compare_derivatives(cs=True)
 
         self.model.comp.v_specified = True
         self.run_model()
-        self.compare_derivatives()
+        self.compare_derivatives(cs=True)
 
     def test_SysXBspline(self):
 

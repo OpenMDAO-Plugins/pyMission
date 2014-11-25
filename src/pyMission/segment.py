@@ -201,6 +201,17 @@ class MissionSegment(Assembly):
         self.connect('SysTripanCMSurrogate.eta', 'SysTripanCLSurrogate.eta')
         self.connect('SysFuelWeight.fuel_w', 'SysCTTar.fuel_w')
 
+        # self.coupled_solver.add_parameter('SysCLTar.fuel_w')
+        # self.coupled_solver.add_constraint('SysFuelWeight.fuel_w = SysCLTar.fuel_w')
+        # self.coupled_solver.add_parameter('SysCLTar.CT_tar')
+        # self.coupled_solver.add_constraint('SysCTTar.CT_tar = SysCLTar.CT_tar')
+        # self.coupled_solver.add_parameter('SysCLTar.alpha')
+        # self.coupled_solver.add_constraint('SysTripanCLSurrogate.alpha = SysCLTar.alpha')
+        # self.coupled_solver.add_parameter('SysTripanCLSurrogate.eta')
+        # self.coupled_solver.add_constraint('SysTripanCMSurrogate.eta = SysTripanCLSurrogate.eta')
+        # self.coupled_solver.add_parameter('SysCTTar.fuel_w')
+        # self.coupled_solver.add_constraint('SysFuelWeight.fuel_w = SysCTTar.fuel_w')
+
         # (Implicit comps)
         self.coupled_solver.add_parameter('SysTripanCLSurrogate.alpha')
         self.coupled_solver.add_constraint('SysTripanCLSurrogate.alpha_res = 0')
@@ -260,57 +271,42 @@ class MissionSegment(Assembly):
         #-------------------------
         # Iteration Hieararchy
         #-------------------------
+        self.driver.gradient_options.lin_solver = "linear_gs"
+        self.driver.gradient_options.maxiter = 1
+        self.driver.workflow.add(['SysXBspline', 'SysHBspline',
+                                  'SysMVBspline', 'SysGammaBspline',
+                                  'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
+                                  'coupled_solver',
+                                  'SysTau', 'SysTmin', 'SysTmax',
+                                  'SysFuelObj', 'SysHi', 'SysHf'])
+
+
         # self.driver.gradient_options.lin_solver = "linear_gs"
-        # self.driver.workflow.add(['SysXBspline', 'SysHBspline',
-        #                           'SysMVBspline', 'SysGammaBspline',
-        #                           'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
-        #                           'coupled_solver',
+        # self.driver.gradient_options.maxiter = 1
+        
+        # self.driver.workflow.add(['bsplines','atmospherics',  
+        #                           'coupled_solver', 
         #                           'SysTau', 'SysTmin', 'SysTmax',
         #                           'SysFuelObj', 'SysHi', 'SysHf'])
+
+        # bsplines = self.add('bsplines', Driver())
+        # bsplines.gradient_options.lin_solver = 'linear_gs'
+        # #bsplines.gradient_options.maxiter = 1
+        # bsplines.gradient_options.rtol = 1e-10
+        # bsplines.gradient_options.atol = 1e-12
+        # bsplines.workflow.add(['SysXBspline', 'SysHBspline', 'SysMVBspline', 'SysGammaBspline'])
+
+        # atmospherics = self.add('atmospherics', Driver())
+        # atmospherics.gradient_options.lin_solver = 'linear_gs'
+        # #atmospherics.gradient_options.maxiter = 1
+        # atmospherics.gradient_options.rtol = 1e-6
+        # atmospherics.gradient_options.atol = 1e-10
+        # atmospherics.workflow.add(['SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',])
 
         self.coupled_solver.workflow.add(['SysCLTar', 'SysTripanCLSurrogate',
                                           'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
                                           'SysCTTar', 'SysFuelWeight'])
-
-        self.driver.gradient_options.lin_solver = "linear_gs"
-        self.driver.gradient_options.maxiter = 1
-        self.driver.workflow.add(['bsplines','atmospherics',  
-                                  'coupled_solver', 
-                                  'SysTau', 'SysTmin', 'SysTmax',
-                                  'SysFuelObj', 'SysHi', 'SysHf'])
-
-        bsplines = self.add('bsplines', Driver())
-        # bsplines.gradient_options.lin_solver = 'linear_gs'
-        # bsplines.gradient_options.maxiter = 1
-        # bsplines.gradient_options.rtol = 1e-10
-        # bsplines.gradient_options.atol = 1e-12
-        bsplines.workflow.add(['SysXBspline', 'SysHBspline', 'SysMVBspline', 'SysGammaBspline'])
-
-        atmospherics = self.add('atmospherics', Driver())
-        # atmospherics.gradient_options.lin_solver = 'linear_gs'
-        # atmospherics.gradient_options.maxiter = 1
-        # atmospherics.gradient_options.rtol = 1e-6
-        # atmospherics.gradient_options.atol = 1e-10
-        atmospherics.workflow.add(['SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',])
-
-        # self.coupled_solver.workflow.add(['vert_eqlm', 'tripan_alpha',
-        #                                   'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
-        #                                   'SysCTTar', 'SysFuelWeight'])
         
-        # vert_eqlm = self.add('vert_eqlm', Driver())
-        # vert_eqlm.gradient_options.lin_solver = 'scipy_gmres'
-        # # vert_eqlm.gradient_options.maxiter = 1
-        # # vert_eqlm.gradient_options.rtol = 1e-20
-        # # vert_eqlm.gradient_options.atol = 1e-14
-        # vert_eqlm.workflow.add('SysCLTar')
-
-        # tripan_alpha = self.add('tripan_alpha', Driver())
-        # tripan_alpha.gradient_options.lin_solver = 'linear_gs'
-        # tripan_alpha.gradient_options.maxiter = 18
-        # # tripan_alpha.gradient_options.rtol = 1e-6
-        # # tripan_alpha.gradient_options.atol = 1e-6
-        # tripan_alpha.workflow.add('SysTripanCLSurrogate')
-
 
     def set_init_h_pt(self, h_init_pt):
         ''' Solve for a good initial altitude profile.'''
