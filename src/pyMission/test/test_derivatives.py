@@ -91,9 +91,9 @@ class Testcase_pyMission_derivs(unittest.TestCase):
             diff = abs(Jf - Jn)
 
         assert_rel_error(self, diff.max(), 0.0, 1e-3)
-        print inputs 
-        print outputs
-        print diff.max(), np.argmax(diff), diff.shape
+        #print inputs 
+        #print outputs
+        #print diff.max(), np.argmax(diff), diff.shape
 
         # Analytic adjoint
         Ja = wflow.calc_gradient(inputs=inputs,

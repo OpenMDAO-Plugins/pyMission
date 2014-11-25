@@ -513,10 +513,10 @@ class SysFuelWeight(Component):
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
             result['fuel_w'] += dfuel_temp * 1e2/self.fuel_scale
-        if 'gamma' in arg:
+        if 'Gamma' in arg:
             dfuel_temp[:] = 0.0
-            dfuel_temp[0:-1] += dfuel_dgamma1 * arg['gamma'][0:-1]
-            dfuel_temp[0:-1] += dfuel_dgamma2 * arg['gamma'][1:]
+            dfuel_temp[0:-1] += dfuel_dgamma1 * arg['Gamma'][0:-1]
+            dfuel_temp[0:-1] += dfuel_dgamma2 * arg['Gamma'][1:]
             dfuel_temp = np.cumsum(dfuel_temp[::-1])
             dfuel_temp = dfuel_temp[::-1]
             result['fuel_w'] += dfuel_temp * 1e-1/self.fuel_scale
@@ -583,12 +583,12 @@ class SysFuelWeight(Component):
             dfuel_temp[0:-1] += dfuel_dv1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dv2 * fuel_cumul
             result['v'] += dfuel_temp * 1e2/self.fuel_scale
-        if 'gamma' in result:
+        if 'Gamma' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])
             dfuel_temp[0:-1] += dfuel_dgamma1 * fuel_cumul
             dfuel_temp[1:] += dfuel_dgamma2 * fuel_cumul
-            result['gamma'] += dfuel_temp * 1e-1/self.fuel_scale
+            result['Gamma'] += dfuel_temp * 1e-1/self.fuel_scale
         if 'CT_tar' in result:
             dfuel_temp[:] = 0.0
             fuel_cumul = np.cumsum(arg['fuel_w'][0:-1])

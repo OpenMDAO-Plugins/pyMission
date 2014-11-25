@@ -88,8 +88,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
             diff = new-old
             print 'old', old
             print 'new', new
-            print old.shape, new.shape
-            #assert_rel_error(self, diff.max(), 0.0, 1e-5)
+            assert_rel_error(self, diff.max(), 0.0, 2e-5)
         
         for i in xrange(0, num_elem):
             old = old_derivs_dict['gamma'][i]['h_pt']
@@ -100,8 +99,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
             diff = new-old
             #print 'old', old
             #print 'new', new
-            #print old.shape, new.shape
-            assert_rel_error(self, diff.max(), 0.0, 1e-5)
+            assert_rel_error(self, diff.max(), 0.0, 2e-5)
                  
 if __name__ == "__main__":
 

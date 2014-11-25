@@ -194,6 +194,7 @@ class SysTripanCLSurrogate(ImplicitComponent):
             dCL = result['CL_tar']
             dCL[:] -= dres
 
+
 class SysTripanCDSurrogate(Component):
     """ Tripan CD Surrogate Model"""
 
