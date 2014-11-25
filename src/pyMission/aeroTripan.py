@@ -77,13 +77,13 @@ class SysTripanCLSurrogate(ImplicitComponent):
                             desc = 'Mach Number'))
         self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude points'))
-        self.add('eta', Array(np.zeros((num_elem+1, )), iotype='in',
+        self.add('eta', Array(np.ones((num_elem+1, )), iotype='in',
                               desc = 'Tail rotation angle'))
         self.add('CL_tar', Array(np.zeros((num_elem+1, )), iotype='in',
                                   desc = 'Target Coefficient of Lift'))
 
         # States
-        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='state',
+        self.add('alpha', Array(np.ones((num_elem+1, )), iotype='state',
                                 desc = 'Angle of attack'))
 
         # Residuals
@@ -206,9 +206,9 @@ class SysTripanCDSurrogate(Component):
                             desc = 'Mach Number'))
         self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude points'))
-        self.add('eta', Array(np.zeros((num_elem+1, )), iotype='in',
+        self.add('eta', Array(np.ones((num_elem+1, )), iotype='in',
                               desc = 'Tail rotation angle'))
-        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',
+        self.add('alpha', Array(np.ones((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
 
         # Outputs
@@ -323,11 +323,11 @@ class SysTripanCMSurrogate(ImplicitComponent):
                             desc = 'Mach Number'))
         self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude points'))
-        self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='in',
+        self.add('alpha', Array(np.ones((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
 
         # States
-        self.add('eta', Array(np.zeros((num_elem+1, )), iotype='state',
+        self.add('eta', Array(np.ones((num_elem+1, )), iotype='state',
                               desc = 'Tail rotation angle'))
 
         # Residuals
