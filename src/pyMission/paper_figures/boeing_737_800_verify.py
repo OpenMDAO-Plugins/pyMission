@@ -28,16 +28,9 @@ from pyMission.segment import MissionSegment
 num_elem = 250  
 num_cp_init = 50
 num_cp_max = 50
-#num_elem = 1500
-#num_cp_init = 300
-#num_cp_max = 300
 num_cp_step = 100
 x_range = 9000.0  # nautical miles
 
-#num_elem = 6
-#num_cp_init = 3
-#num_cp_max = 3
-#num_cp_step = 33
 
 # define bounds for the flight path angle
 gamma_lb = np.tan(-35.0 * (np.pi/180.0))/1e-1
@@ -54,6 +47,7 @@ while num_cp <= num_cp_max:
 
     x_range *= 1.852
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
+    #v_init = np.ones(num_cp)*2.5
     M_init = np.ones(num_cp)*0.82
     h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
@@ -127,10 +121,10 @@ while num_cp <= num_cp_max:
 
     # Save final optimization results. This records the final value of every
     # variable in the model, and saves them in mission_final_cp_#.bson
-    #model.replace('driver', SimpleDriver())
-    #filename = 'mission_final_cp_%d.bson' % num_cp
-    #model.recorders = [BSONCaseRecorder(filename)]
-    #model.includes = ['*']
-    #model.run()
+    model.replace('driver', SimpleDriver())
+    filename = 'mission_final_cp_%d.bson' % num_cp
+    model.recorders = [BSONCaseRecorder(filename)]
+    model.includes = ['*']
+    model.run()
 
     num_cp += num_cp_step
