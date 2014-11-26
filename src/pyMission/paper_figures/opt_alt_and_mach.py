@@ -10,8 +10,8 @@ from openmdao.lib.casehandlers.api import BSONCaseRecorder
 from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
-num_elem = 250  
-num_cp = 30
+num_elem = 150
+num_cp = 15
 x_range = 1000.0  # nautical miles
 
 # define bounds for the flight path angle
@@ -22,22 +22,19 @@ landing_speed = 72.2
 takeoff_M = takeoff_speed / np.sqrt(1.4*287*288)
 landing_M = landing_speed / np.sqrt(1.4*287*288)
 
-altitude = np.zeros(num_elem+1)
-altitude = 10 * np.sin(np.pi * np.linspace(0,1,num_elem+1))
-
-start = time.time()
-
+# Convert from NMi to km
 x_range *= 1.852
+
 x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
-M_init = np.ones(num_cp)*0.82
+M_init = 0.5 * np.sin(np.pi * x_init / (x_range/1e3)) + 0.3
 h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
 model = set_as_top(MissionSegment(num_elem=num_elem, num_cp=num_cp,
                                   x_pts=x_init, surr_file='../crm_surr'))
 
 model.replace('driver', pyOptSparseDriver())
-model.replace('driver', SimpleDriver())
-#model.driver.optimizer = 'SNOPT'
+#model.replace('driver', SimpleDriver())
+model.driver.optimizer = 'SNOPT'
 
 # Initial design parameters
 model.S = 427.8/1e2
@@ -49,22 +46,22 @@ model.oswald = 0.8
 
 # Add parameters, objectives, constraints
 model.driver.add_parameter('h_pt', low=0.0, high=14.1)
-model.driver.add_parameter('M_pt', low=0.0, high=0.9)
+model.driver.add_parameter('M_pt', low=0.001, high=0.949)
 model.driver.add_objective('SysFuelObj.fuelburn')
 model.driver.add_constraint('SysHi.h_i = 0.0')
 model.driver.add_constraint('SysHf.h_f = 0.0')
+#model.driver.add_constraint('SysMVBspline.M[0] = %f' % takeoff_M)
+#model.driver.add_constraint('SysMVBspline.M[-1] = %f' % landing_M)
+model.driver.add_constraint('SysMi.M_i = %f' % takeoff_M)
+model.driver.add_constraint('SysMf.M_f = %f' % landing_M)
 model.driver.add_constraint('SysTmin.Tmin < 0.0')
 model.driver.add_constraint('SysTmax.Tmax < 0.0')
 model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % \
                             (gamma_lb, gamma_ub), linear=True)
-model.driver.add_constraint('SysMVBspline.M[0] = %f' % takeoff_M)
-model.driver.add_constraint('SysMVBspline.M[-1] = %f' % landing_M)
 
 # Initial value of the parameter
 model.h_pt = h_init
-#model.v_pt = v_init
 model.M_pt = M_init
-model.set_init_h_pt(altitude)
 
 # Calculate velocity from the Mach we have specified.
 model.SysSpeed.v_specified = False
@@ -83,9 +80,9 @@ model.driver.system_type = 'serial'
 model.coupled_solver.system_type = 'serial'
 
 # Debug stuff - Check gradients
-model.run()
-model.driver.workflow.check_gradient()
-exit()
+#model.run()
+#model.driver.workflow.check_gradient()
+#exit()
 PROFILE = False
 
 # Optimize

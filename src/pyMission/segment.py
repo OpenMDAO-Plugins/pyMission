@@ -195,7 +195,7 @@ class MissionSegment(Assembly):
         self.connect('SysTripanCLSurrogate.alpha', 'SysCLTar.alpha')
         self.connect('SysTripanCMSurrogate.eta', 'SysTripanCLSurrogate.eta')
         self.connect('SysFuelWeight.fuel_w', 'SysCTTar.fuel_w')
-        
+
         #self.coupled_solver.add_parameter('SysCLTar.fuel_w')
         #self.coupled_solver.add_constraint('SysFuelWeight.fuel_w = SysCLTar.fuel_w')
         #self.coupled_solver.add_parameter('SysCLTar.CT_tar')
@@ -227,6 +227,8 @@ class MissionSegment(Assembly):
         self.add('SysFuelObj', SysFuelObj(num_elem=self.num_elem))
         self.add('SysHi', SysHi(num_elem=self.num_elem))
         self.add('SysHf', SysHf(num_elem=self.num_elem))
+        self.add('SysMi', SysMi(num_elem=self.num_elem))
+        self.add('SysMf', SysMf(num_elem=self.num_elem))
 
         self.connect('S', 'SysTau.S')
         self.connect('thrust_sl', 'SysTau.thrust_sl')
@@ -241,6 +243,8 @@ class MissionSegment(Assembly):
         self.connect('SysFuelWeight.fuel_w', 'SysFuelObj.fuel_w')
         self.connect('SysHBspline.h', 'SysHi.h')
         self.connect('SysHBspline.h', 'SysHf.h')
+        self.connect('SysMVBspline.M', 'SysMi.M')
+        self.connect('SysMVBspline.M', 'SysMf.M')
 
 
         # Promote useful variables to the boundary.
@@ -257,13 +261,13 @@ class MissionSegment(Assembly):
         #-------------------------
         # Iteration Hierarchy
         #-------------------------
-        
+
         self.driver.workflow.add(['SysXBspline', 'SysHBspline',
                                   'SysMVBspline', 'SysGammaBspline',
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
                                   'coupled_solver',
                                   'SysTau', 'SysTmin', 'SysTmax',
-                                  'SysFuelObj', 'SysHi', 'SysHf'])
+                                  'SysFuelObj', 'SysHi', 'SysHf', 'SysMi', 'SysMf'])
 
         self.coupled_solver.workflow.add(['SysCLTar', 'SysTripanCLSurrogate',
                                           'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
@@ -272,7 +276,7 @@ class MissionSegment(Assembly):
         #-------------------------
         # Driver Settings
         #-------------------------
-        
+
         self.driver.gradient_options.lin_solver = "linear_gs"
         self.driver.gradient_options.maxiter = 1
         self.driver.gradient_options.derivative_direction = 'adjoint'
