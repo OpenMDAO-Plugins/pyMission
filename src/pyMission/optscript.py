@@ -25,7 +25,7 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
-num_elem = 250
+num_elem = 250  
 num_cp_init = 50
 num_cp_max = 50
 
@@ -76,9 +76,7 @@ while num_cp <= num_cp_max:
 
     x_range *= 1.852
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
-    #v_init = np.ones(num_cp)*2.5
-    M_init = np.ones(num_cp)*0.8
-    #M_init = np.ones(num_cp)*0.82
+    M_init = np.ones(num_cp)*0.82
     h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem=num_elem, num_cp=num_cp,
@@ -128,18 +126,6 @@ while num_cp <= num_cp_max:
     # Flag for making sure we run serial if we do an mpirun
     model.driver.system_type = 'serial'
     model.coupled_solver.system_type = 'serial'
-
-    # Debugging some stuff
-    #model.run()
-    #print model.driver.workflow.calc_gradient()
-    #model.run()
-    #model.driver.workflow.check_gradient()
-    #model.h_pt = np.array((7.0, 5.1, 13.3))
-    #model.run()
-    #print model.driver.workflow.calc_gradient()
-    #model.run()
-    #model.driver.workflow.check_gradient()
-    #exit()
 
     PROFILE = False
 

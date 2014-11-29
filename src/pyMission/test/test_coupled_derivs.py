@@ -70,12 +70,12 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         filename = os.path.join(dirname, 'derivs2.p')
         old_derivs_dict = pickle.load(open(filename, 'rb'))
     
-        translate_dict = {'fuelburn': '_pseudo_2.out0',
-                          'h_i':      '_pseudo_3.out0',
-                          'h_f':      '_pseudo_4.out0',
-                          'Tmin':     '_pseudo_5.out0',
-                          'Tmax':     '_pseudo_6.out0',
-                          'gamma':    '_pseudo_7.out0'}
+        translate_dict = {'fuelburn': '_pseudo_7.out0',
+                          'h_i':      '_pseudo_8.out0',
+                          'h_f':      '_pseudo_9.out0',
+                          'Tmin':     '_pseudo_10.out0',
+                          'Tmax':     '_pseudo_11.out0'}
+                          #'gamma':    '_pseudo_12.out0'}
                           
         for j, key in enumerate(translate_dict.keys()):
             
@@ -88,8 +88,19 @@ class Testcase_pyMissionSegment(unittest.TestCase):
             diff = new-old
             print 'old', old
             print 'new', new
-            print old.shape, new.shape
-            assert_rel_error(self, diff.max(), 0.0, 1e-5)
+
+            assert_rel_error(self, diff.max(), 0.0, 2e-5)
+        
+        for i in xrange(0, num_elem):
+            old = old_derivs_dict['gamma'][i]['h_pt']
+            #print 'h_pt', 'gamma'+str(i)
+    
+            new = new_derivs['_pseudo_12.out0']['h_pt'][i, :]
+    
+            diff = new-old
+            #print 'old', old
+            #print 'new', new
+            assert_rel_error(self, diff.max(), 0.0, 2e-5)
                  
 if __name__ == "__main__":
 

@@ -194,6 +194,7 @@ class SysTripanCLSurrogate(ImplicitComponent):
             dCL = result['CL_tar']
             dCL[:] -= dres
 
+
 class SysTripanCDSurrogate(Component):
     """ Tripan CD Surrogate Model"""
 
@@ -337,8 +338,8 @@ class SysTripanCMSurrogate(ImplicitComponent):
         self.CM_arr = CM
         self.J_CM = [None for i in range(4)]
 
-    def execute(self):
-        """ Calculate residual for surrogate. """
+    def evaluate(self):
+        """ Evaluate residual for surrogate. """
 
         n_elem = len(self.alpha)
 

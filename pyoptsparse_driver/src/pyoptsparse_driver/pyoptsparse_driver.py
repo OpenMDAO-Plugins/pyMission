@@ -69,7 +69,7 @@ class pyOptSparseDriver(Driver):
 
         #create lb and ub inputs so external components can set the bounds
         self.n_x = None
-        if n_x is not None: 
+        if n_x is not None:
             shape = (n_x,)
             self.n_x = n_x
             self.add('lb', Array(np.zeros(shape), iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter", shape=shape))
@@ -98,7 +98,7 @@ class pyOptSparseDriver(Driver):
         self.nparam = self.total_parameters()
         param_list = []
 
-        #need a counter for lb and ub arrays 
+        #need a counter for lb and ub arrays
         i_param = 0
 
 
@@ -128,11 +128,11 @@ class pyOptSparseDriver(Driver):
                       ' are supported. %s is %s.' % (name, type(val))
                 self.raise_exception(msg, ValueError)
             self.param_type[name] = vartype
-            
-            if self.n_x is None: 
+
+            if self.n_x is None:
                 lower_bounds = param.get_low()
                 upper_bounds = param.get_high()
-            else: 
+            else:
                 lower_bounds = self.lb[i_param:i_param+n_vals]
                 upper_bounds = self.ub[i_param:i_param+n_vals]
 
@@ -245,7 +245,7 @@ class pyOptSparseDriver(Driver):
 
         # Save the most recent solution.
         self.pyOpt_solution = sol
-        try: 
+        try:
             exit_status = sol.optInform['value']
             self.exit_flag = 1
             if exit_status > 2: # bad

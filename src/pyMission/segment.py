@@ -201,32 +201,22 @@ class MissionSegment(Assembly):
         self.connect('SysTripanCMSurrogate.eta', 'SysTripanCLSurrogate.eta')
         self.connect('SysFuelWeight.fuel_w', 'SysCTTar.fuel_w')
 
-        # self.coupled_solver.add_parameter('SysCLTar.fuel_w')
-        # self.coupled_solver.add_constraint('SysFuelWeight.fuel_w = SysCLTar.fuel_w')
-        # self.coupled_solver.add_parameter('SysCLTar.CT_tar')
-        # self.coupled_solver.add_constraint('SysCTTar.CT_tar = SysCLTar.CT_tar')
-        # self.coupled_solver.add_parameter('SysCLTar.alpha')
-        # self.coupled_solver.add_constraint('SysTripanCLSurrogate.alpha = SysCLTar.alpha')
-        # self.coupled_solver.add_parameter('SysTripanCLSurrogate.eta')
-        # self.coupled_solver.add_constraint('SysTripanCMSurrogate.eta = SysTripanCLSurrogate.eta')
-        # self.coupled_solver.add_parameter('SysCTTar.fuel_w')
-        # self.coupled_solver.add_constraint('SysFuelWeight.fuel_w = SysCTTar.fuel_w')
+        #self.coupled_solver.add_parameter('SysCLTar.fuel_w')
+        #self.coupled_solver.add_constraint('SysFuelWeight.fuel_w = SysCLTar.fuel_w')
+        #self.coupled_solver.add_parameter('SysCLTar.CT_tar')
+        #self.coupled_solver.add_constraint('SysCTTar.CT_tar = SysCLTar.CT_tar')
+        #self.coupled_solver.add_parameter('SysCLTar.alpha')
+        #self.coupled_solver.add_constraint('SysTripanCLSurrogate.alpha = SysCLTar.alpha')
+        #self.coupled_solver.add_parameter('SysTripanCLSurrogate.eta')
+        #self.coupled_solver.add_constraint('SysTripanCMSurrogate.eta = SysTripanCLSurrogate.eta')
+        #self.coupled_solver.add_parameter('SysCTTar.fuel_w')
+        #self.coupled_solver.add_constraint('SysFuelWeight.fuel_w = SysCTTar.fuel_w')
 
         # (Implicit comps)
         self.coupled_solver.add_parameter('SysTripanCLSurrogate.alpha')
         self.coupled_solver.add_constraint('SysTripanCLSurrogate.alpha_res = 0')
         self.coupled_solver.add_parameter('SysTripanCMSurrogate.eta')
         self.coupled_solver.add_constraint('SysTripanCMSurrogate.CM = 0')
-
-        self.coupled_solver.atol = 1e-9
-        self.coupled_solver.rtol = 1e-9
-        self.coupled_solver.max_iteration = 15
-        self.coupled_solver.gradient_options.atol = 1e-14
-        self.coupled_solver.gradient_options.rtol = 1e-20
-        self.coupled_solver.gradient_options.maxiter = 50
-
-        self.coupled_solver.iprint = 1
-
 
         # --------------------
         # Downstream of solver
@@ -241,6 +231,8 @@ class MissionSegment(Assembly):
         self.add('SysFuelObj', SysFuelObj(num_elem=self.num_elem))
         self.add('SysHi', SysHi(num_elem=self.num_elem))
         self.add('SysHf', SysHf(num_elem=self.num_elem))
+        self.add('SysMi', SysMi(num_elem=self.num_elem))
+        self.add('SysMf', SysMf(num_elem=self.num_elem))
 
         self.connect('S', 'SysTau.S')
         self.connect('thrust_sl', 'SysTau.thrust_sl')
@@ -255,6 +247,8 @@ class MissionSegment(Assembly):
         self.connect('SysFuelWeight.fuel_w', 'SysFuelObj.fuel_w')
         self.connect('SysHBspline.h', 'SysHi.h')
         self.connect('SysHBspline.h', 'SysHf.h')
+        self.connect('SysMVBspline.M', 'SysMi.M')
+        self.connect('SysMVBspline.M', 'SysMf.M')
 
 
         # Promote useful variables to the boundary.
@@ -269,15 +263,20 @@ class MissionSegment(Assembly):
         self.create_passthrough('SysHf.h_f')
 
         #-------------------------
-        # Iteration Hieararchy
+        # Iteration Hierarchy
         #-------------------------
+<<<<<<< HEAD
         self.driver.gradient_options.lin_solver = "linear_gs"
         self.driver.gradient_options.maxiter = 1
+=======
+
+>>>>>>> b1adbbac6fd118d0c105b247cc04535d5eff56b1
         self.driver.workflow.add(['SysXBspline', 'SysHBspline',
                                   'SysMVBspline', 'SysGammaBspline',
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
                                   'coupled_solver',
                                   'SysTau', 'SysTmin', 'SysTmax',
+<<<<<<< HEAD
                                   'SysFuelObj', 'SysHi', 'SysHf'])
 
 
@@ -302,11 +301,34 @@ class MissionSegment(Assembly):
         # atmospherics.gradient_options.rtol = 1e-6
         # atmospherics.gradient_options.atol = 1e-10
         # atmospherics.workflow.add(['SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',])
+=======
+                                  'SysFuelObj', 'SysHi', 'SysHf', 'SysMi', 'SysMf'])
+>>>>>>> b1adbbac6fd118d0c105b247cc04535d5eff56b1
 
         self.coupled_solver.workflow.add(['SysCLTar', 'SysTripanCLSurrogate',
                                           'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
                                           'SysCTTar', 'SysFuelWeight'])
+<<<<<<< HEAD
         
+=======
+
+        #-------------------------
+        # Driver Settings
+        #-------------------------
+
+        self.driver.gradient_options.lin_solver = "linear_gs"
+        self.driver.gradient_options.maxiter = 1
+        self.driver.gradient_options.derivative_direction = 'adjoint'
+
+        self.coupled_solver.atol = 1e-9
+        self.coupled_solver.rtol = 1e-9
+        self.coupled_solver.max_iteration = 15
+        self.coupled_solver.gradient_options.atol = 1e-14
+        self.coupled_solver.gradient_options.rtol = 1e-20
+        self.coupled_solver.gradient_options.maxiter = 50
+        self.coupled_solver.iprint = 1
+
+>>>>>>> b1adbbac6fd118d0c105b247cc04535d5eff56b1
 
     def set_init_h_pt(self, h_init_pt):
         ''' Solve for a good initial altitude profile.'''
@@ -318,8 +340,8 @@ class MissionSegment(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 250
-    num_cp = 50
+    num_elem = 100
+    num_cp = 30
     x_range = 9000.0
 
     # for debugging only
@@ -347,7 +369,7 @@ if __name__ == "__main__":
     model.AR = 8.68
     model.oswald = 0.8
 
-    profile = False
+    profile = True
 
     if profile is False:
         from time import time

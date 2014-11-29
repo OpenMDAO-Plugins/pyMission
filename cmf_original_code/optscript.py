@@ -64,8 +64,6 @@ landing_speed = 72.2
 # x-distance and airspeed
 x_range *= 1.852
 x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
-#M_init = numpy.ones(num_cp)*0.75
-M_init = numpy.ones(num_cp)*0.82
 h_init = 10 * numpy.sin(numpy.pi * x_init / (x_range/1e3))
 
 altitude = numpy.zeros(num_elem+1)
@@ -77,7 +75,7 @@ while num_cp <= num_cp_max:
 
     # define initial altitude profile, as well as fixed profile for
     # x-distance and airspeed
-    M_init = numpy.ones(num_cp)*0.8
+    M_init = numpy.ones(num_cp)*0.82
     x_init = x_range * 1e3 * (1-numpy.cos(numpy.linspace(0, 1, num_cp)*numpy.pi))/2/1e6
 
     # initialize the mission analysis problem with the framework

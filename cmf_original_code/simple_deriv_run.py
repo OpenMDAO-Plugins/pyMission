@@ -68,13 +68,21 @@ print 'done'
 #print 'rev', main.compute_derivatives('rev', 'h_pt', output=False)[0][('CL_tar', 0)][0]
 import pickle
 data = {}
-for key in ['fuelburn', 'h_i', 'h_f', 'Tmin', 'Tmax', 'gamma']:
+for key in ['fuelburn', 'h_i', 'h_f', 'Tmin', 'Tmax']:
     data[key] = {}
     grad, _ = main.compute_derivatives('rev', key, output=False)
     print grad[('h_pt', 0)]
     for item in grad.keys():
         key2 = item[0]
         data[key][key2] = grad[item].copy()
+        
+data['gamma'] = {}
+for index in range(0, num_elem):
+    data['gamma'][index] = {}
+    grad, _ = main.compute_derivatives('rev', 'gamma', ind=index, output=False)
+    for item in grad.keys():
+        key2 = item[0]
+        data['gamma'][index][key2] = grad[item].copy()
 
 pickle.dump( data, open( "derivs2.p", "wb" ) )
 
