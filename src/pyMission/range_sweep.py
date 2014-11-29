@@ -25,36 +25,23 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
-num_elem = 250
-num_cp_init = 50
-num_cp_max = 50
+missions = [100, 200, 300, 400, 500, 750, 1000, 1500,
+           2000, 2500, 3000, 3500, 4000, 4500, 5000,
+           5500, 6000, 6500, 7000, 7500, 8000, 8500,
+           9000]
+cps = [10, 13, 16, 19, 22, 27, 36, 49,
+      53, 67, 80, 93, 107, 120, 133,
+      147, 160, 173, 187, 200, 213, 227,
+      250]
 
-num_elem = 500  
-num_cp_init = 100
-num_cp_max = 100
+k = 22
+x_range = missions[k]
+num_elem = 5*cps[k]
+num_cp_init = cps[k]
+num_cp_max = cps[k]
 
-num_elem = 750  
-num_cp_init = 150
-num_cp_max = 150
-
-num_elem = 1000
-num_cp_init = 200
-num_cp_max = 200
-
-num_elem = 1250
-num_cp_init = 250
-num_cp_max = 250
-
-num_elem = 1500
-num_cp_init = 300
-num_cp_max = 300
-
-num_elem = 1750
-num_cp_init = 350
-num_cp_max = 350
 
 num_cp_step = 100
-x_range = 9000.0  # nautical miles
 
 #num_elem = 6
 #num_cp_init = 3
@@ -118,7 +105,7 @@ while num_cp <= num_cp_max:
 
     # Recording the results - This records just the parameters, objective,
     # and constraints to mission_history_cp_#.bson
-    filename = 'mission_history_cp_%d.bson' % num_cp
+    filename = 'mission_history_range_%d.bson' % missions[k]
     model.recorders = [BSONCaseRecorder(filename)]
     model.recorders.save_problem_formulation = True
     # model.recording_options.includes = model.driver.list_param_targets()

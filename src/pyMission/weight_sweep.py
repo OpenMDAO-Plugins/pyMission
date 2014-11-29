@@ -25,41 +25,24 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
-num_elem = 250
+weights = np.arange(150000, 260000, 10000)*9.81/1e6
+
+
+x_range = 100
 num_cp_init = 50
 num_cp_max = 50
-
-num_elem = 500  
-num_cp_init = 100
-num_cp_max = 100
-
-num_elem = 750  
-num_cp_init = 150
-num_cp_max = 150
-
-num_elem = 1000
-num_cp_init = 200
-num_cp_max = 200
-
-num_elem = 1250
-num_cp_init = 250
-num_cp_max = 250
-
-num_elem = 1500
-num_cp_init = 300
-num_cp_max = 300
-
-num_elem = 1750
-num_cp_init = 350
-num_cp_max = 350
+num_elem = 250
 
 num_cp_step = 100
-x_range = 9000.0  # nautical miles
+
 
 #num_elem = 6
 #num_cp_init = 3
 #num_cp_max = 3
 #num_cp_step = 33
+
+#for k in xrange(2,len(weights)):
+k=10
 
 # define bounds for the flight path angle
 gamma_lb = np.tan(-35.0 * (np.pi/180.0))/1e-1
@@ -87,7 +70,9 @@ while num_cp <= num_cp_max:
     model.replace('driver', pyOptSparseDriver())
     #model.replace('driver', SimpleDriver())
     model.driver.optimizer = 'SNOPT'
-    model.driver.options = {'Iterations limit': 5000000}
+    model.driver.options = {'Iterations limit': 5000000, 
+      'Print file': 'SNOPT_%d_print.out' % k
+    }
 
     # Add parameters, objectives, constraints
     model.driver.add_parameter('h_pt', low=0.0, high=14.1)
@@ -110,7 +95,8 @@ while num_cp <= num_cp_max:
 
     # Initial design parameters
     model.S = 427.8/1e2
-    model.ac_w = 210000*9.81/1e6
+    #model.ac_w = 210000*9.81/1e6
+    model.ac_w = weights[k]
     model.thrust_sl = 1020000.0/1e6
     model.SFCSL = 8.951*9.81
     model.AR = 8.68
@@ -118,7 +104,7 @@ while num_cp <= num_cp_max:
 
     # Recording the results - This records just the parameters, objective,
     # and constraints to mission_history_cp_#.bson
-    filename = 'mission_history_cp_%d.bson' % num_cp
+    filename = 'mission_history_weight_%d.bson' % k
     model.recorders = [BSONCaseRecorder(filename)]
     model.recorders.save_problem_formulation = True
     # model.recording_options.includes = model.driver.list_param_targets()
