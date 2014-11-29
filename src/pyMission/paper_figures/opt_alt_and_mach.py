@@ -56,6 +56,8 @@ model.driver.add_constraint('SysMi.M_i = %f' % takeoff_M)
 model.driver.add_constraint('SysMf.M_f = %f' % landing_M)
 model.driver.add_constraint('SysTmin.Tmin < 0.0')
 model.driver.add_constraint('SysTmax.Tmax < 0.0')
+model.driver.add_constraint('SysBlockTime.time > 0.0')
+model.driver.add_constraint('SysBlockTime.time < 11*3600.0')
 model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % \
                             (gamma_lb, gamma_ub), linear=True)
 

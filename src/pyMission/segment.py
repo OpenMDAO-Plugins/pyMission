@@ -228,9 +228,9 @@ class MissionSegment(Assembly):
         self.add('SysFuelObj', SysFuelObj(num_elem=self.num_elem))
         self.add('SysHi', SysHi(num_elem=self.num_elem))
         self.add('SysHf', SysHf(num_elem=self.num_elem))
-        #self.add('SysMi', SysMi(num_elem=self.num_elem))
-        #self.add('SysMf', SysMf(num_elem=self.num_elem))
-        #self.add('SysBlockTime', SysBlockTime(num_elem=self.num_elem))
+        self.add('SysMi', SysMi(num_elem=self.num_elem))
+        self.add('SysMf', SysMf(num_elem=self.num_elem))
+        self.add('SysBlockTime', SysBlockTime(num_elem=self.num_elem))
 
         self.connect('S', 'SysTau.S')
         self.connect('thrust_sl', 'SysTau.thrust_sl')
@@ -245,11 +245,11 @@ class MissionSegment(Assembly):
         self.connect('SysFuelWeight.fuel_w', 'SysFuelObj.fuel_w')
         self.connect('SysHBspline.h', 'SysHi.h')
         self.connect('SysHBspline.h', 'SysHf.h')
-        #self.connect('SysMVBspline.M', 'SysMi.M')
-        #self.connect('SysMVBspline.M', 'SysMf.M')
-        #self.connect('SysXBspline.x', 'SysBlockTime.x')
-        #self.connect('SysSpeed.v', 'SysBlockTime.v')
-        #self.connect('SysGammaBspline.Gamma', 'SysBlockTime.Gamma')
+        self.connect('SysMVBspline.M', 'SysMi.M')
+        self.connect('SysMVBspline.M', 'SysMf.M')
+        self.connect('SysXBspline.x', 'SysBlockTime.x')
+        self.connect('SysSpeed.v', 'SysBlockTime.v')
+        self.connect('SysGammaBspline.Gamma', 'SysBlockTime.Gamma')
 
 
         # Promote useful variables to the boundary.
@@ -272,7 +272,7 @@ class MissionSegment(Assembly):
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
                                   'coupled_solver',
                                   'SysTau', 'SysTmin', 'SysTmax',
-                                  'SysFuelObj', 'SysHi', 'SysHf', ])#'SysMi', 'SysMf'])
+                                  'SysFuelObj', 'SysHi', 'SysHf', 'SysMi', 'SysMf', 'SysBlockTime'])
 
         self.coupled_solver.workflow.add(['SysCLTar', 'SysTripanCLSurrogate',
                                           'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
