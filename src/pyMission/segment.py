@@ -265,52 +265,16 @@ class MissionSegment(Assembly):
         #-------------------------
         # Iteration Hierarchy
         #-------------------------
-<<<<<<< HEAD
-        self.driver.gradient_options.lin_solver = "linear_gs"
-        self.driver.gradient_options.maxiter = 1
-=======
-
->>>>>>> b1adbbac6fd118d0c105b247cc04535d5eff56b1
         self.driver.workflow.add(['SysXBspline', 'SysHBspline',
                                   'SysMVBspline', 'SysGammaBspline',
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
                                   'coupled_solver',
                                   'SysTau', 'SysTmin', 'SysTmax',
-<<<<<<< HEAD
-                                  'SysFuelObj', 'SysHi', 'SysHf'])
-
-
-        # self.driver.gradient_options.lin_solver = "linear_gs"
-        # self.driver.gradient_options.maxiter = 1
-        
-        # self.driver.workflow.add(['bsplines','atmospherics',  
-        #                           'coupled_solver', 
-        #                           'SysTau', 'SysTmin', 'SysTmax',
-        #                           'SysFuelObj', 'SysHi', 'SysHf'])
-
-        # bsplines = self.add('bsplines', Driver())
-        # bsplines.gradient_options.lin_solver = 'linear_gs'
-        # #bsplines.gradient_options.maxiter = 1
-        # bsplines.gradient_options.rtol = 1e-10
-        # bsplines.gradient_options.atol = 1e-12
-        # bsplines.workflow.add(['SysXBspline', 'SysHBspline', 'SysMVBspline', 'SysGammaBspline'])
-
-        # atmospherics = self.add('atmospherics', Driver())
-        # atmospherics.gradient_options.lin_solver = 'linear_gs'
-        # #atmospherics.gradient_options.maxiter = 1
-        # atmospherics.gradient_options.rtol = 1e-6
-        # atmospherics.gradient_options.atol = 1e-10
-        # atmospherics.workflow.add(['SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',])
-=======
                                   'SysFuelObj', 'SysHi', 'SysHf', 'SysMi', 'SysMf'])
->>>>>>> b1adbbac6fd118d0c105b247cc04535d5eff56b1
 
         self.coupled_solver.workflow.add(['SysCLTar', 'SysTripanCLSurrogate',
                                           'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
                                           'SysCTTar', 'SysFuelWeight'])
-<<<<<<< HEAD
-        
-=======
 
         #-------------------------
         # Driver Settings
@@ -328,7 +292,6 @@ class MissionSegment(Assembly):
         self.coupled_solver.gradient_options.maxiter = 50
         self.coupled_solver.iprint = 1
 
->>>>>>> b1adbbac6fd118d0c105b247cc04535d5eff56b1
 
     def set_init_h_pt(self, h_init_pt):
         ''' Solve for a good initial altitude profile.'''

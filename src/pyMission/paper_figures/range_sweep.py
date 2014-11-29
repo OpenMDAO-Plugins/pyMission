@@ -69,7 +69,7 @@ while num_cp <= num_cp_max:
     h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem=num_elem, num_cp=num_cp,
-                                      x_pts=x_init, surr_file='crm_surr'))
+                                      x_pts=x_init, surr_file='../crm_surr'))
 
     model.replace('driver', pyOptSparseDriver())
     #model.replace('driver', SimpleDriver())
