@@ -57,7 +57,7 @@ thrust *= 0.225
 altitude *= 3.28
 speed *= 1.94 * 1e2
 fuel *= 0.225/1e3 * 1e5
-thrust *= 0.225/1e3
+thrust *= 0.225/1e3 * 1e6
 
 # initialize figure, set up folder-paths
 #fig = matplotlib.pylab.figure(figsize=(18.0,8.0))
@@ -113,13 +113,21 @@ labels = [' Alt ($10^3$ ft)',
           'Path Angle (deg)', 'Mach', 'AoA (deg)',
           '$C_L$', '$L/D$',
           'Thrust ($10^3$ lb)', 'Fuel ($10^3$ lb)']
-limits = [[-5, 30],
-          [-6, 25], [0.1, 0.9], [-2.3, 4.3],
-          [0.1, 0.7], [0, 35],
+#limits = [[-5, 30],
+          #[-6, 25], [0.1, 0.9], [-2.3, 4.3],
+          #[0.1, 0.7], [0, 35],
+          #[-25, 250], [-2, 22]]
+#ticks = [[0, 25],
+          #[-3, 22], [0.2, 0.85], [-2, 4],
+          #[0.15, 0.65], [5, 30],
+          #[0, 225], [0, 20]]
+limits = [[-5, 35],
+          [-6, 20], [0.1, 0.9], [-2.3, 3.3],
+          [0.1, 0.75], [0, 12],
           [-25, 250], [-2, 22]]
 ticks = [[0, 25],
-          [-3, 22], [0.2, 0.85], [-2, 4],
-          [0.15, 0.65], [5, 30],
+          [-3, 15], [0.2, 0.85], [-2, 3],
+          [0.15, 0.7], [5, 10],
           [0, 225], [0, 20]]
 #colorVal = scalarMap.to_rgba(1)
 
@@ -145,6 +153,6 @@ for i, a in enumerate(subax):
                         wspace=0.05, hspace=0.05)
 a.set_xlabel(r'Normalized Range', fontsize=10)
 #subfig.savefig('./Results/SciTech_CarpetRange.png')
-#subfig.savefig('./Results/SciTech_CarpetRange.pdf')
+subfig.savefig('./SciTech_CarpetRange.pdf')
 matplotlib.pylab.show()
 print 'done'
