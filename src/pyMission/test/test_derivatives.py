@@ -17,7 +17,8 @@ from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline, setup_MBI
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
-                                  SysFuelObj, SysHi, SysHf, SysMi, SysMf
+                                  SysFuelObj, SysHi, SysHf, SysMi, SysMf, \
+                                  SysBlockTime
 from pyMission.propulsion import SysSFC, SysTau
 
 
@@ -91,7 +92,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
             diff = abs(Jf - Jn)
 
         assert_rel_error(self, diff.max(), 0.0, 1e-3)
-        #print inputs 
+        #print inputs
         #print outputs
         #print diff.max(), np.argmax(diff), diff.shape
 
@@ -323,6 +324,13 @@ class Testcase_pyMission_derivs(unittest.TestCase):
     def test_SysMf(self):
 
         compname = 'SysMf'
+        self.setup(compname, self.arg_dict)
+        self.run_model()
+        self.compare_derivatives()
+
+    def test_SysBlockTime(self):
+
+        compname = 'SysBlockTime'
         self.setup(compname, self.arg_dict)
         self.run_model()
         self.compare_derivatives()
