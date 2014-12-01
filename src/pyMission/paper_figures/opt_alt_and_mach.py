@@ -11,7 +11,7 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 num_elem = 150
-num_cp = 15
+num_cp = 30
 x_range = 1000.0  # nautical miles
 
 # define bounds for the flight path angle
