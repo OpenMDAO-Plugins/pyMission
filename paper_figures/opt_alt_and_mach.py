@@ -11,7 +11,7 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 num_elem = 150
-num_cp = 15
+num_cp = 30
 x_range = 1000.0  # nautical miles
 
 # define bounds for the flight path angle
@@ -70,10 +70,8 @@ model.SysSpeed.v_specified = False
 # and constraints to mission_history_cp_#.bson
 filename = 'opt_alt_and_mach_history.bson'
 model.recorders = [BSONCaseRecorder(filename)]
-model.recorders.save_problem_formulation = False
-model.recording_options.includes = model.driver.list_param_targets()
-model.recording_options.includes.extend(model.driver.list_constraint_targets())
-model.recording_options.includes.append('SysFuelObj.fuelburn')
+model.recorders.save_problem_formulation = True
+model.recording_options.includes = ['*']
 
 # Flag for making sure we run serial if we do an mpirun
 model.driver.system_type = 'serial'

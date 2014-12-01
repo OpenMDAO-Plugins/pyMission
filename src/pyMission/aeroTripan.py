@@ -117,7 +117,10 @@ class SysTripanCLSurrogate(ImplicitComponent):
         for index in xrange(n_elem):
             CL[index] = CL_temp[index, 0]
 
-        self.alpha_res = CL - CL_tar
+        flaps = Mach <= 0.4
+        flaps = flaps * 5*(0.4-Mach)
+
+        self.alpha_res = (CL + flaps) - CL_tar
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
@@ -155,8 +158,10 @@ class SysTripanCLSurrogate(ImplicitComponent):
         dres = result['alpha_res']
 
         if 'M' in arg:
+            flaps = self.M <= 0.4
+            flaps = flaps * (-5)
             dMach = arg['M']
-            dres[:] += self.J_CL[0] * dMach
+            dres[:] += (self.J_CL[0]+flaps) * dMach
         if 'alpha' in arg:
             dalpha = arg['alpha']
             dres[:] += self.J_CL[1] * dalpha * 180 / np.pi * 1e-1
@@ -180,7 +185,9 @@ class SysTripanCLSurrogate(ImplicitComponent):
 
         if 'M' in result:
             dMach = result['M']
-            dMach[:] += self.J_CL[0] * dres
+            flaps = self.M <= 0.4
+            flaps = flaps * (-5)
+            dMach[:] += (self.J_CL[0]+flaps) * dres
         if 'alpha' in result:
             dalpha = result['alpha']
             dalpha[:] += self.J_CL[1] * dres * 180 / np.pi * 1e-1
@@ -241,7 +248,10 @@ class SysTripanCDSurrogate(Component):
         for index in xrange(n_elem):
             CD[index] = CD_temp[index, 0] / 1e-1 + 0.015/1e-1
 
-        self.CD = CD
+        flaps = Mach <= 0.4
+        flaps = flaps * 0.25*(0.4-Mach)
+
+        self.CD[:] = CD + flaps/1e-1
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
@@ -279,8 +289,10 @@ class SysTripanCDSurrogate(Component):
         dCD = result['CD']
 
         if 'M' in arg:
+            flaps = self.M <= 0.4
+            flaps = flaps * (-0.25)
             dMach = arg['M']
-            dCD[:] += self.J_CD[0] * dMach / 1e-1
+            dCD[:] += (self.J_CD[0]+flaps) * dMach / 1e-1
         if 'alpha' in arg:
             dalpha = arg['alpha']
             dCD[:] += self.J_CD[1] * dalpha * 180 / np.pi
@@ -300,8 +312,10 @@ class SysTripanCDSurrogate(Component):
         dCD = arg['CD']
 
         if 'M' in result:
+            flaps = self.M <= 0.4
+            flaps = flaps * (-0.25)
             dMach = result['M']
-            dMach[:] += self.J_CD[0] * dCD / 1e-1
+            dMach[:] += (self.J_CD[0]+flaps) * dCD / 1e-1
         if 'alpha' in result:
             dalpha = result['alpha']
             dalpha[:] += self.J_CD[1] * dCD * 180 / np.pi

@@ -59,49 +59,9 @@ speed *= 1.94 * 1e2
 fuel *= 0.225/1e3 * 1e5
 thrust *= 0.225/1e3 * 1e6
 
-# initialize figure, set up folder-paths
-#fig = matplotlib.pylab.figure(figsize=(18.0,8.0))
-#nr, nc = 4, 3
-
-#values = [altitude, speed, eta,
-          #gamma, mach, alpha,
-          #rho, throttle, lift_c,
-          #fuel, thrust, drag_c]
-#labels = ['Altitude (*10^3 ft)', 'TAS (knots)', 'Trim (deg)',
-          #'Path Angle (deg)', 'Mach Number', 'AoA (deg)',
-          #'Density (kg/m^3)', 'Throttle', 'C_L',
-          #'Fuel wt. (10^3 lb)', 'Thrust (10^3 lb)', 'C_D']
-#limits = [[-1, 51], [100, 600], [-10, 10],
-          #[-32.0, 32.0], [0.05, 1.2], [-5, 10],
-          #[0.0, 1.3], [-0.1, 1.1], [0.0, 0.8],
-          #[-100.0/1e3, fuel_guess/1e3], [0.0, 250.0], [0.01, 0.05]]
-
-
-#fplot = fig.add_subplot
-#rnd = np.around
-#fig.clf()
-
-#for i in xrange(12):
-    #fplot(nr, nc, i+1).plot(dist, values[i])
-    #fplot(nr, nc, i+1).set_ylabel(labels[i])
-    ##fplot(nr, nc, i+1).set_xlim([-100.0, rnd(x_range, -2)+100.0])
-    ##fplot(nr, nc, i+1).set_ylim(limits[i])
-
-#fplot(nr, nc, 10).set_xlabel('Distance (km)')
-#fplot(nr, nc, 11).set_xlabel('Distance (km)')
-#fplot(nr, nc, 12).set_xlabel('Distance (km)')
-
-#matplotlib.pylab.show()
-
-#plt.rc('text', usetex=True)
-#plt.rc('font', family='serif')
 
 subfig, subax = plt.subplots(8, 1, sharex=True)
-#winter = cm = plt.get_cmap('winter')
-#cNorm = colors.Normalize(vmin=0, vmax=2)
-#scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=winter)
 
-# Normalize distance
 dist /= 1000
 
 lines = []
@@ -153,6 +113,6 @@ for i, a in enumerate(subax):
                         wspace=0.05, hspace=0.05)
 a.set_xlabel(r'Normalized Range', fontsize=10)
 #subfig.savefig('./Results/SciTech_CarpetRange.png')
-subfig.savefig('./SciTech_CarpetRange.pdf')
+subfig.savefig('./plots/SciTech_CarpetRange.png')
 matplotlib.pylab.show()
 print 'done'
