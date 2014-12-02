@@ -1,4 +1,5 @@
 import time
+import os.path
 import numpy as np
 
 from openmdao.lib.casehandlers.api import BSONCaseRecorder
@@ -44,11 +45,10 @@ model.AR = 8.93
 model.oswald = 0.8
 
 filename = 'mission_history_737.bson'
-model.recorders = [BSONCaseRecorder(filename)]
+model.recorders = [BSONCaseRecorder(os.path.join('plotting','737_data',filename))]
 model.recorders.save_problem_formulation = True
 
 start = time.time()
 model.run()
 
-print repr(model.SysAeroSurrogate.CD)
 print 'OPTIMIZATION TIME:', time.time() - start

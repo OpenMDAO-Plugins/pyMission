@@ -52,7 +52,7 @@ rho = np.array(data['SysRho.rho'][-1]) * 1e2
 temp = np.array(data['SysTemp.temp'][-1]) * 1e2
 speed = np.array(data['SysSpeed.v'][-1]) * 1e2
 
-# alpha = np.array(data['SysCTTar.alpha'][-1]) * 1e-1 * 180/np.pi
+#alpha = np.array(data['SysCTTar.alpha'][-1]) * 1e-1 * 180/np.pi
 
 alpha = np.array([ 0.04910292,  0.07383016,  0.11480911,  0.16899915,  0.23284648,
         0.30121282,  0.3668361 ,  0.42092049,  0.45570305,  0.46921554,

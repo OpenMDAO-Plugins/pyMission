@@ -13,7 +13,7 @@ from openmdao.lib.casehandlers.api import CaseDataset
 
 NCURVES = 1
 num_lines = range(NCURVES)
-folder_path = ''
+folder_path = 'opt_alt_and_mach'
 dists = []
 alts = []
 machs = []

@@ -1,0 +1,4 @@
+# don't add data files to the repo. They get big. 
+*.npy
+*.bson
+*.out
