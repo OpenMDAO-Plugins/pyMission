@@ -75,7 +75,8 @@ while num_cp <= num_cp_max:
     model.replace('driver', pyOptSparseDriver())
     #model.replace('driver', SimpleDriver())
     model.driver.optimizer = 'SNOPT'
-    model.driver.options = {'Iterations limit': 5000000}
+    model.driver.options = {'Iterations limit': 5000000, 
+                            'Print file': os.path.join('plotting','range_sweep_data','SNOPT_%d_print.out' % num_cp)}
 
     # Add parameters, objectives, constraints
     model.driver.add_parameter('h_pt', low=0.0, high=14.1)

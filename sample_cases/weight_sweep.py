@@ -36,14 +36,7 @@ num_elem = 250
 
 num_cp_step = 100
 
-
-#num_elem = 6
-#num_cp_init = 3
-#num_cp_max = 3
-#num_cp_step = 33
-
-#for k in xrange(2,len(weights)):
-k=10
+k=0
 
 # define bounds for the flight path angle
 gamma_lb = np.tan(-35.0 * (np.pi/180.0))/1e-1
@@ -66,14 +59,14 @@ while num_cp <= num_cp_max:
     h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem=num_elem, num_cp=num_cp,
-                                      x_pts=x_init, surr_file='../crm_surr'))
+                                      x_pts=x_init, surr_file=os.path.join('..','src','pyMission','crm_surr')))
 
     model.replace('driver', pyOptSparseDriver())
     #model.replace('driver', SimpleDriver())
     model.driver.optimizer = 'SNOPT'
     model.driver.options = {'Iterations limit': 5000000, 
-      'Print file': 'SNOPT_%d_print.out' % k
-    }
+                            'Print file': os.path.join('plotting','weight_sweep_data','SNOPT_%d_print.out' % k)
+                            }
 
     # Add parameters, objectives, constraints
     model.driver.add_parameter('h_pt', low=0.0, high=14.1)
@@ -82,7 +75,7 @@ while num_cp <= num_cp_max:
     model.driver.add_constraint('SysHf.h_f = 0.0')
     model.driver.add_constraint('SysTmin.Tmin < 0.0')
     model.driver.add_constraint('SysTmax.Tmax < 0.0')
-    model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % \
+    model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % 
                                 (gamma_lb, gamma_ub), linear=True)
 
     # Initial value of the parameter
