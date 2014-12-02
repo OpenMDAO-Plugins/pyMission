@@ -569,3 +569,121 @@ class SysMf(Component):
         """
         result['M'][-1] += arg['M_f']
 
+class SysBlockTime(Component):
+    """ Used to compute block time of a particular flight """
+
+    def __init__(self, num_elem=10):
+        """ scaling: 1e4
+        """
+        super(SysBlockTime, self).__init__()
+
+        # Inputs
+        self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
+                              desc = 'airspeed'))
+        self.add('x', Array(np.zeros((num_elem+1, )), iotype='in',
+                              desc = 'distance'))
+        self.add('Gamma', Array(np.zeros((num_elem+1, )), iotype='in',
+                              desc = 'flight path angle'))
+
+        # Outputs
+        self.add('time', Float(0.0, iotype='out',
+                               desc = 'Initial Mach number point'))
+
+    def execute(self):
+        """ Compute the block time required by numerically integrating (using
+        the mid-point rule) the velocity values. this assumes that the
+        airspeed varies linearly between data points.
+        """
+
+        speed = self.v * 1e2
+        dist = self.x * 1e6
+        gamma = self.Gamma * 1e-1
+
+        time_temp = ((dist[1:] - dist[0:-1]) /
+                     (((speed[1:] + speed[0:-1])/2) *
+                      np.cos((gamma[1:] + gamma[0:-1])/2)))
+        self.time = np.sum(time_temp)/1e4
+
+    def list_deriv_vars(self):
+        """ Return lists of inputs and outputs where we defined derivatives.
+        """
+        input_keys = ['v', 'x', 'Gamma']
+        output_keys = ['time']
+        return input_keys, output_keys
+
+    def provideJ(self):
+        """ Calculate and save derivatives. (i.e., Jacobian) """
+        pass
+
+    def apply_deriv(self, arg, result):
+        """ Compute the derivatives of blocktime wrt the velocity and
+        distance points
+        """
+
+        speed = self.v * 1e2
+        dist = self.x * 1e6
+        gamma = self.Gamma * 1e-1
+        dtime = result['time']
+
+        if 'x' in arg:
+            ddist = arg['x']
+            dtime[0] += np.sum((ddist[1:] - ddist[0:-1]) /
+                                  ((speed[1:] + speed[0:-1])/2 *
+                                   np.cos((gamma[1:] + gamma[0:-1])/2))) \
+                * 1e6/1e4
+        if 'v' in arg:
+            dspeed = arg['v']
+            dtime[0] += np.sum(-2*(dist[1:] - dist[0:-1]) *
+                                  (dspeed[1:] + dspeed[0:-1]) /
+                                  ((speed[1:] + speed[0:-1])**2 *
+                                   np.cos((gamma[1:] + gamma[0:-1])/2))) \
+                * 1e2/1e4
+        if 'Gamma' in arg:
+            dgamma = arg['Gamma']
+            dtime[0] += np.sum((np.sin((gamma[1:] + gamma[0:-1])/2)/
+                                   (np.cos((gamma[1:] +
+                                               gamma[0:-1])/2))**2) *
+                                  (dgamma[1:] + dgamma[0:-1]) *
+                                  ((dist[1:] - dist[0:-1])/
+                                   (speed[1:] + speed[0:-1]))) * 1e-1/1e4
+
+    def apply_derivT(self, arg, result):
+        """ Compute the derivatives of blocktime wrt the velocity and
+        distance points. Adjoint
+        """
+
+        speed = self.v * 1e2
+        dist = self.x * 1e6
+        gamma = self.Gamma * 1e-1
+        dtime = arg['time']
+
+        if 'x' in result:
+            ddist = result['x']
+            ddist[0:-1] += (-2/((speed[0:-1] + speed[1:]) *
+                                np.cos((gamma[0:-1] + gamma[1:])/2)) *
+                            dtime[0]) * 1e6/1e4
+            ddist[1:] += (2/((speed[0:-1] + speed[1:]) *
+                             np.cos((gamma[0:-1] + gamma[1:])/2)) *
+                          dtime[0]) * 1e6/1e4
+        if 'v' in result:
+            dspeed = result['v']
+            dspeed[0:-1] -= 2*((dist[1:] - dist[0:-1]) * dtime[0] /
+                               ((speed[1:] + speed[0:-1])**2 *
+                                np.cos((gamma[1:] + gamma[0:-1])/2))
+                               * 1e2/1e4)
+            dspeed[1:] -= 2*((dist[1:] - dist[0:-1]) * dtime[0] /
+                             ((speed[1:] + speed[0:-1])**2 *
+                              np.cos((gamma[1:] + gamma[0:-1])/2))
+                             * 1e2/1e4)
+        if 'Gamma' in result:
+            dgamma = result['Gamma']
+            dgamma[0:-1] += (((dist[1:] - dist[0:-1]) /
+                              (speed[1:] + speed[0:-1])) *
+                             ((np.sin((gamma[1:] + gamma[0:-1])/2)) /
+                              (np.cos((gamma[1:] + gamma[0:-1])/2))**2) *
+                             dtime[0]) * 1e-1/1e4
+            dgamma[1:] += (((dist[1:] - dist[0:-1]) /
+                            (speed[1:] + speed[0:-1])) *
+                           ((np.sin((gamma[1:] + gamma[0:-1])/2)) /
+                            (np.cos((gamma[1:] + gamma[0:-1])/2))**2) *
+                           dtime[0]) * 1e-1/1e4

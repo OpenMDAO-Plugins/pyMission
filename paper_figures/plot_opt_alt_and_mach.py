@@ -106,7 +106,7 @@ for i, a in enumerate(subax):
     a.set_ylabel(r'%s' %(labels[i]), rotation='horizontal', fontsize=10)
     a.set_xlim(-0.05, 1.05)
     a.set_yticks(ticks[i])
-    a.set_ylim(limits[i])
+    #a.set_ylim(limits[i])
     for tick in a.yaxis.get_major_ticks():
         tick.label.set_fontsize(10)
     subfig.subplots_adjust(left=0.25, right=0.98, top=0.98, bottom=0.05,

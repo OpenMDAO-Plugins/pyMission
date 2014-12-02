@@ -162,6 +162,7 @@ class SysTripanCLSurrogate(ImplicitComponent):
             flaps = flaps * (-5)
             dMach = arg['M']
             dres[:] += (self.J_CL[0]+flaps) * dMach
+
         if 'alpha' in arg:
             dalpha = arg['alpha']
             dres[:] += self.J_CL[1] * dalpha * 180 / np.pi * 1e-1
@@ -184,10 +185,11 @@ class SysTripanCLSurrogate(ImplicitComponent):
         dres = arg['alpha_res']
 
         if 'M' in result:
-            dMach = result['M']
             flaps = self.M <= 0.4
             flaps = flaps * (-5)
+            dMach = result['M']
             dMach[:] += (self.J_CL[0]+flaps) * dres
+
         if 'alpha' in result:
             dalpha = result['alpha']
             dalpha[:] += self.J_CL[1] * dres * 180 / np.pi * 1e-1
