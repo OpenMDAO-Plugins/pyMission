@@ -14,6 +14,7 @@ copyright July 2014
 """
 
 import time
+import os.path
 
 import numpy as np
 
@@ -104,7 +105,7 @@ while num_cp <= num_cp_max:
 
     # Recording the results - This records just the parameters, objective,
     # and constraints to mission_history_cp_#.bson
-    filename = 'mission_history_weight_%d.bson' % k
+    filename = os.path.join('plotting','weight_sweep_data','mission_history_weight_%d.bson' % k)
     model.recorders = [BSONCaseRecorder(filename)]
     model.recorders.save_problem_formulation = True
     # model.recording_options.includes = model.driver.list_param_targets()

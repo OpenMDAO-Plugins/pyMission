@@ -14,6 +14,7 @@ copyright July 2014
 """
 
 import time
+import os.path
 
 import numpy as np
 
@@ -105,7 +106,7 @@ while num_cp <= num_cp_max:
 
     # Recording the results - This records just the parameters, objective,
     # and constraints to mission_history_cp_#.bson
-    filename = 'mission_history_range_%d.bson' % missions[k]
+    filename = os.path.join('plotting','range_sweep_data','mission_history_range_%d.bson' % missions[k])
     model.recorders = [BSONCaseRecorder(filename)]
     model.recorders.save_problem_formulation = True
     # model.recording_options.includes = model.driver.list_param_targets()
