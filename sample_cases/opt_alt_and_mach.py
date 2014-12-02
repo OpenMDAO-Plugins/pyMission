@@ -1,6 +1,7 @@
 # Simultaneous optimization of Altitude and Mach to reproduce figure 10 in the paper.
 
 import time
+import os.path
 import numpy as np
 
 from openmdao.main.api import set_as_top
@@ -70,7 +71,7 @@ model.SysSpeed.v_specified = False
 
 # Recording the results - This records just the parameters, objective,
 # and constraints to mission_history_cp_#.bson
-filename = 'opt_alt_and_mach_history.bson'
+filename = os.path.join('plotting','opt_alt_and_mach','opt_alt_and_mach_history.bson')
 model.recorders = [BSONCaseRecorder(filename)]
 model.recorders.save_problem_formulation = True
 model.recording_options.includes = ['*']
@@ -79,10 +80,7 @@ model.recording_options.includes = ['*']
 model.driver.system_type = 'serial'
 model.coupled_solver.system_type = 'serial'
 
-# Debug stuff - Check gradients
-#model.run()
-#model.driver.workflow.check_gradient()
-#exit()
+
 PROFILE = False
 
 # Optimize
@@ -104,12 +102,4 @@ else:
     model.run()
     print 'OPTIMIZATION TIME:', time.time() - start
 
-# Save final optimization results. This records the final value of every
-# variable in the model, and saves them in mission_final_cp_#.bson
-model.replace('driver', SimpleDriver())
-filename = 'opt_alt_and_mach_final.bson'
-model.recorders = [BSONCaseRecorder(filename)]
-model.recorders.save_problem_formulation = True
-model.recording_options.includes = ['*']
-model.run()
 

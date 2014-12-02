@@ -139,6 +139,6 @@ for i in xrange(n_cases):
                                wspace=0.05, hspace=0.1)
 
     a.set_xlabel(r'Range', fontsize=10)
-    subfig.savefig('./plots/SciTech_mach_alt_opt_%04d.png' % index)
+    #subfig.savefig('./plots/SciTech_mach_alt_opt_%04d.png' % index)
 
-# subfig.savefig('./plots/SciTech_mach_alt_opt.pdf')
+subfig.savefig('./plots/SciTech_mach_alt_opt.pdf')
