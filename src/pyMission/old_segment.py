@@ -183,6 +183,8 @@ class MissionSegment(Assembly):
         self.drag_solver.gradient_options.atol = 1e-10
         self.drag_solver.gradient_options.rtol = 1e-10
         self.drag_solver.gradient_options.maxiter = 15
+        
+        self.drag_solver.gradient_options.lin_solver = 'petsc_ksp'
 
 
         # ------------------------------------------------
@@ -192,6 +194,7 @@ class MissionSegment(Assembly):
 
         self.add('coupled_solver', NewtonSolver())
 
+        #self.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
 
         # Old way, using params and eq-constraints
         #self.coupled_solver.add_parameter('SysCLTar.CT_tar')
