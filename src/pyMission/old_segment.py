@@ -184,7 +184,7 @@ class MissionSegment(Assembly):
         self.drag_solver.gradient_options.rtol = 1e-10
         self.drag_solver.gradient_options.maxiter = 15
         
-        self.drag_solver.gradient_options.lin_solver = 'petsc_ksp'
+        #self.drag_solver.gradient_options.lin_solver = 'petsc_ksp'
 
 
         # ------------------------------------------------
