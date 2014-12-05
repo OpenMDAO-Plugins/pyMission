@@ -34,7 +34,7 @@ from pyMission.propulsion import SysSFC, SysTau
 
 
 def is_differentiable(self): 
-        return True
+    return True
 Driver.is_differentiable = is_differentiable
 
 
@@ -296,7 +296,7 @@ class MissionSegment(Assembly):
         self.coupled_solver.gradient_options.rtol = 1e-20
         self.coupled_solver.gradient_options.maxiter = 50
         self.coupled_solver.iprint = 1
-
+        self.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
 
     def set_init_h_pt(self, h_init_pt):
         ''' Solve for a good initial altitude profile.'''

@@ -29,29 +29,29 @@ num_elem = 250
 num_cp_init = 50
 num_cp_max = 50
 
-num_elem = 500  
-num_cp_init = 100
-num_cp_max = 100
+#num_elem = 500  
+#num_cp_init = 100
+#num_cp_max = 100
 
-num_elem = 750  
-num_cp_init = 150
-num_cp_max = 150
+#num_elem = 750  
+#num_cp_init = 150
+#num_cp_max = 150
 
-num_elem = 1000
-num_cp_init = 200
-num_cp_max = 200
+#num_elem = 1000
+#num_cp_init = 200
+#num_cp_max = 200
 
-num_elem = 1250
-num_cp_init = 250
-num_cp_max = 250
+#num_elem = 1250
+#num_cp_init = 250
+#num_cp_max = 250
 
-num_elem = 1500
-num_cp_init = 300
-num_cp_max = 300
+#num_elem = 1500
+#num_cp_init = 300
+#num_cp_max = 300
 
-num_elem = 1750
-num_cp_init = 350
-num_cp_max = 350
+#num_elem = 1750
+#num_cp_init = 350
+#num_cp_max = 350
 
 num_cp_step = 100
 x_range = 9000.0  # nautical miles

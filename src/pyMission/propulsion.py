@@ -116,7 +116,7 @@ class SysTau(Component):
                                  desc = 'Throttle setting'))
 
         #self.thrust_scale = 0.072
-        self.thrust_scale = 72/1e3
+        self.thrust_scale = 72
 
     def execute(self):
         """ Compute throttle setting primarily using thrust coefficient """
