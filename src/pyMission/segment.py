@@ -296,7 +296,7 @@ class MissionSegment(Assembly):
         self.coupled_solver.gradient_options.rtol = 1e-20
         self.coupled_solver.gradient_options.maxiter = 50
         self.coupled_solver.iprint = 1
-        self.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
+        #self.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
 
     def set_init_h_pt(self, h_init_pt):
         ''' Solve for a good initial altitude profile.'''
@@ -308,36 +308,41 @@ class MissionSegment(Assembly):
 
 if __name__ == "__main__":
 
-    num_elem = 100
-    num_cp = 30
+    #num_elem = 100
+    #num_cp = 30
     x_range = 9000.0
 
     # for debugging only
-    #num_elem = 6
-    #num_cp = 3
+    num_elem = 6
+    num_cp = 3
 
+    altitude = np.zeros(num_elem+1)
+    altitude = 10 * np.sin(np.pi * np.linspace(0,1,num_elem+1))
+
+    x_range *= 1.852
     x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
-    v_init = np.ones(num_cp)*2.3
-    h_init = 1 * np.sin(np.pi * x_init / (x_range/1e3))
+    M_init = np.ones(num_cp)*0.82
+    h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
 
     model = set_as_top(MissionSegment(num_elem=num_elem, num_cp=num_cp,
                                       x_pts=x_init, surr_file='crm_surr'))
 
     model.h_pt = h_init
-    model.v_pt = v_init
+    model.M_pt = M_init
+    model.set_init_h_pt(altitude)
 
-    # Pull velocity from BSpline instead of calculating it.
-    model.SysSpeed.v_specified = True
-
+    # Calculate velocity from the Mach we have specified.
+    model.SysSpeed.v_specified = False
+    
     # Initial parameters
     model.S = 427.8/1e2
     model.ac_w = 210000*9.81/1e6
-    model.thrust_sl = 1020000.0/1e6/3
-    model.SFCSL = 8.951
+    model.thrust_sl = 1020000.0/1e6
+    model.SFCSL = 8.951*9.81
     model.AR = 8.68
     model.oswald = 0.8
 
-    profile = True
+    profile = False
 
     if profile is False:
         from time import time
