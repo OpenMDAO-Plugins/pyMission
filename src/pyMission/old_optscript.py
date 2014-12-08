@@ -132,6 +132,7 @@ while num_cp <= num_cp_max:
     else:
         start = time.time()
         model.run()
+        print "Objective", model.driver.eval_objectives()
         print 'OPTIMIZATION TIME:', time.time() - start
 
     # Save final optimization results. This records the final value of every

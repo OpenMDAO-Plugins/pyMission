@@ -270,16 +270,41 @@ class MissionSegment(Assembly):
         #-------------------------
         # Iteration Hierarchy
         #-------------------------
-        self.driver.workflow.add(['SysXBspline', 'SysHBspline',
-                                  'SysMVBspline', 'SysGammaBspline',
-                                  'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
-                                  'coupled_solver',
+        #self.driver.workflow.add(['SysXBspline', 'SysHBspline',
+                                  #'SysMVBspline', 'SysGammaBspline',
+                                  #'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
+                                  #'coupled_solver',
+                                  #'SysTau', 'SysTmin', 'SysTmax',
+                                  #'SysFuelObj', 'SysHi', 'SysHf', 'SysMi', 'SysMf', 'SysBlockTime'])
+        
+        self.add('bsplines', Driver())
+        self.add('atmosphere', Driver())
+        self.add('SysCLTar_Sub', Driver())
+        self.add('SysTripanCLSurrogate_Sub', Driver())
+        self.add('SysTripanCMSurrogate_Sub', Driver())
+        self.add('SysTripanCDSurrogate_Sub', Driver())
+        self.add('SysCTTar_Sub', Driver())
+        self.add('SysFuelWeight_Sub', Driver())
+
+        self.driver.workflow.add(['bsplines', 'atmosphere', 'coupled_solver',
                                   'SysTau', 'SysTmin', 'SysTmax',
                                   'SysFuelObj', 'SysHi', 'SysHf', 'SysMi', 'SysMf', 'SysBlockTime'])
+        
+        self.bsplines.workflow.add(['SysXBspline', 'SysHBspline',
+                                    'SysMVBspline', 'SysGammaBspline'])
 
-        self.coupled_solver.workflow.add(['SysCLTar', 'SysTripanCLSurrogate',
-                                          'SysTripanCMSurrogate', 'SysTripanCDSurrogate',
-                                          'SysCTTar', 'SysFuelWeight'])
+        self.atmosphere.workflow.add(['SysSFC', 'SysTemp', 'SysRho', 'SysSpeed'])
+
+        self.coupled_solver.workflow.add(['SysCLTar_Sub', 'SysTripanCLSurrogate_Sub',
+                                          'SysTripanCMSurrogate_Sub', 'SysTripanCDSurrogate_Sub',
+                                          'SysCTTar_Sub', 'SysFuelWeight_Sub'])
+        
+        self.SysCLTar_Sub.workflow.add(['SysCLTar'])
+        self.SysTripanCLSurrogate_Sub.workflow.add(['SysTripanCLSurrogate'])
+        self.SysTripanCMSurrogate_Sub.workflow.add(['SysTripanCMSurrogate'])
+        self.SysTripanCDSurrogate_Sub.workflow.add(['SysTripanCDSurrogate'])
+        self.SysCTTar_Sub.workflow.add(['SysCTTar'])
+        self.SysFuelWeight_Sub.workflow.add(['SysFuelWeight'])
 
         #-------------------------
         # Driver Settings
