@@ -25,15 +25,15 @@ from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
 
 
-num_elem = 250  
+num_elem = 250
 num_cp_init = 50
 num_cp_max = 50
 
-#num_elem = 500  
+#num_elem = 500
 #num_cp_init = 100
 #num_cp_max = 100
 
-#num_elem = 750  
+#num_elem = 750
 #num_cp_init = 150
 #num_cp_max = 150
 
@@ -127,7 +127,7 @@ while num_cp <= num_cp_max:
     model.driver.system_type = 'serial'
     model.coupled_solver.system_type = 'serial'
 
-    PROFILE = True
+    PROFILE = False
 
     # Optimize
     if PROFILE==True:
