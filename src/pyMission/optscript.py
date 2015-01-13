@@ -126,6 +126,7 @@ while num_cp <= num_cp_max:
     # Flag for making sure we run serial if we do an mpirun
     model.driver.system_type = 'serial'
     model.coupled_solver.system_type = 'serial'
+    #model.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
 
     PROFILE = False
 
