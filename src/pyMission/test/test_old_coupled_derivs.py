@@ -77,7 +77,7 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         for i in range(0, 4):
 
             old_derivs = old_derivs_dict['h_pt'+str(i)]
-            print 'h_pt' + str(i)
+            #print 'h_pt' + str(i)
 
             # name change
             old_derivs['fuelburn'] = old_derivs['wf_obj']
@@ -88,9 +88,9 @@ class Testcase_pyMissionSegment(unittest.TestCase):
 
                 #diff = np.nan_to_num(abs(new - old) / old)
                 diff = new-old
-                print key
-                print old
-                print new
+                #print key
+                #print old
+                #print new
                 assert_rel_error(self, diff.max(), 0.0, 1e-5)
 
 if __name__ == "__main__":

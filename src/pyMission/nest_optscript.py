@@ -22,7 +22,7 @@ from openmdao.main.test.simpledriver import SimpleDriver
 from openmdao.lib.casehandlers.api import BSONCaseRecorder
 
 from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
-from pyMission.segment import MissionSegment
+from pyMission.nest_segment import MissionSegment
 
 
 num_elem = 250
@@ -126,7 +126,6 @@ while num_cp <= num_cp_max:
     # Flag for making sure we run serial if we do an mpirun
     model.driver.system_type = 'serial'
     model.coupled_solver.system_type = 'serial'
-    #model.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
 
     PROFILE = False
 
@@ -146,11 +145,6 @@ while num_cp <= num_cp_max:
         p.print_callees()
     else:
         start = time.time()
-        # from openmdao.util.dotgraph import plot_graphs, plot_system_tree
-        # model._setup()
-        # plot_system_tree(model._system, fmt='pdf',
-        #                    outfile='segment_sys_tree.pdf')
-        # exit()
         model.run()
         print "Objective", model.driver.eval_objectives()
         print 'OPTIMIZATION TIME:', time.time() - start

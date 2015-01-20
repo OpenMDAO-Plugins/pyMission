@@ -45,6 +45,9 @@ model.SFCSL = 8.951*9.81
 model.AR = 8.68
 model.oswald = 0.8
 
+# Needs to use the old propulsion model
+model.SysTau.thrust_scale = 0.072
+
 # Add parameters, objectives, constraints
 model.driver.add_parameter('h_pt', low=0.0, high=14.1)
 model.driver.add_parameter('M_pt', low=0.001, high=0.949)
