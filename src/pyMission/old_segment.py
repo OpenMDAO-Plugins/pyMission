@@ -177,6 +177,7 @@ class MissionSegment(Assembly):
         self.drag_solver.add_constraint('SysAeroSurrogate.CL = SysCLTar.CL')
 
         self.drag_solver.iprint = 1
+        self.drag_solver.gradient_options.iprint = 1
         self.drag_solver.atol = 1e-9
         self.drag_solver.rtol = 1e-9
         self.drag_solver.max_iteration = 15
@@ -225,6 +226,8 @@ class MissionSegment(Assembly):
         self.coupled_solver.gradient_options.maxiter = 25
         #self.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
 
+        self.driver.gradient_options.iprint = 1
+        self.coupled_solver.gradient_options.iprint = 1
         self.coupled_solver.iprint = 1
 
 
@@ -284,7 +287,6 @@ class MissionSegment(Assembly):
         # the pickle was created.
         self.SysTau.thrust_scale = 0.072
         self.SysCLTar.fuel_scale = 1e6
-        self.SysCTTar.fuel_scale = 1e6
         self.SysFuelWeight.fuel_scale = 1e6
 
 

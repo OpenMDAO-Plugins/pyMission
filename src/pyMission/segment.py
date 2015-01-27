@@ -288,6 +288,7 @@ class MissionSegment(Assembly):
         self.driver.gradient_options.lin_solver = "linear_gs"
         self.driver.gradient_options.maxiter = 1
         self.driver.gradient_options.derivative_direction = 'adjoint'
+        self.driver.gradient_options.iprint = 1
 
         self.coupled_solver.atol = 1e-9
         self.coupled_solver.rtol = 1e-9
@@ -295,8 +296,9 @@ class MissionSegment(Assembly):
         self.coupled_solver.gradient_options.atol = 1e-14
         self.coupled_solver.gradient_options.rtol = 1e-20
         self.coupled_solver.gradient_options.maxiter = 50
-        self.coupled_solver.iprint = 1
-        #self.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
+        self.coupled_solver.iprint = 2
+        self.coupled_solver.gradient_options.iprint = 1
+        self.coupled_solver.gradient_options.lin_solver = 'petsc_ksp'
 
     def set_init_h_pt(self, h_init_pt):
         ''' Solve for a good initial altitude profile.'''
