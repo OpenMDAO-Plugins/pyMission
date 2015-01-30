@@ -162,24 +162,26 @@ model.driver.workflow.add(['seg1', 'seg2', 'seg3'])
 
 model.replace('driver', SimpleDriver())
 model.driver.add_objective('seg1.fuelburn + seg2.fuelburn + seg3.fuelburn')
-#model.driver.add_constraint('seg1.h_i = 0.0')
-#model.driver.add_constraint('seg2.h_i = 0.0')
-#model.driver.add_constraint('seg3.h_i = 0.0')
-#model.driver.add_constraint('seg1.h_f = 0.0')
-#model.driver.add_constraint('seg2.h_f = 0.0')
-#model.driver.add_constraint('seg3.h_f = 0.0')
-#model.driver.add_constraint('seg1.Tmin < 0.0')
-#model.driver.add_constraint('seg2.Tmin < 0.0')
-#model.driver.add_constraint('seg3.Tmin < 0.0')
-#model.driver.add_constraint('seg1.Tmax < 0.0')
-#model.driver.add_constraint('seg2.Tmax < 0.0')
-#model.driver.add_constraint('seg3.Tmax < 0.0')
+model.driver.add_constraint('seg1.h_i = 0.0')
+model.driver.add_constraint('seg2.h_i = 0.0')
+model.driver.add_constraint('seg3.h_i = 0.0')
+model.driver.add_constraint('seg1.h_f = 0.0')
+model.driver.add_constraint('seg2.h_f = 0.0')
+model.driver.add_constraint('seg3.h_f = 0.0')
+model.driver.add_constraint('seg1.Tmin < 0.0')
+model.driver.add_constraint('seg2.Tmin < 0.0')
+model.driver.add_constraint('seg3.Tmin < 0.0')
+model.driver.add_constraint('seg1.Tmax < 0.0')
+model.driver.add_constraint('seg2.Tmax < 0.0')
+model.driver.add_constraint('seg3.Tmax < 0.0')
 model.driver.add_parameter('seg1.h_pt', low=0.0, high=14.1)
 model.driver.add_parameter('seg2.h_pt', low=0.0, high=14.1)
 model.driver.add_parameter('seg3.h_pt', low=0.0, high=14.1)
 
 model.driver.gradient_options.iprint = 1
-#model.driver.gradient_options.lin_solver = 'linear_gs'
+model.driver.gradient_options.lin_solver = 'linear_gs'
+model.driver.gradient_options.maxiter = 1
+#model.driver.gradient_options.lin_solver = 'petsc_ksp'
 
 start = time.time()
 model.run()
