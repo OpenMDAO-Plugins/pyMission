@@ -163,21 +163,23 @@ model.driver.workflow.add(['seg1', 'seg2', 'seg3'])
 
 model.replace('driver', pyOptSparseDriver())
 model.driver.optimizer = 'SNOPT'
-model.driver.options = {'Iterations limit': 25}
+#model.driver.options = {'Iterations limit': 25}
+model.driver.gradient_options.lin_solver = 'petsc_ksp'
+model.driver.gradient_options.iprint = 1
 
 model.driver.add_objective('seg1.fuelburn + seg2.fuelburn + seg3.fuelburn')
 model.driver.add_constraint('seg1.h_i = 0.0')
 model.driver.add_constraint('seg2.h_i = 0.0')
-#model.driver.add_constraint('seg3.h_i = 0.0')
-#model.driver.add_constraint('seg1.h_f = 0.0')
-#model.driver.add_constraint('seg2.h_f = 0.0')
-#model.driver.add_constraint('seg3.h_f = 0.0')
-#model.driver.add_constraint('seg1.Tmin < 0.0')
-#model.driver.add_constraint('seg2.Tmin < 0.0')
-#model.driver.add_constraint('seg3.Tmin < 0.0')
-#model.driver.add_constraint('seg1.Tmax < 0.0')
-#model.driver.add_constraint('seg2.Tmax < 0.0')
-#model.driver.add_constraint('seg3.Tmax < 0.0')
+model.driver.add_constraint('seg3.h_i = 0.0')
+model.driver.add_constraint('seg1.h_f = 0.0')
+model.driver.add_constraint('seg2.h_f = 0.0')
+model.driver.add_constraint('seg3.h_f = 0.0')
+model.driver.add_constraint('seg1.Tmin < 0.0')
+model.driver.add_constraint('seg2.Tmin < 0.0')
+model.driver.add_constraint('seg3.Tmin < 0.0')
+model.driver.add_constraint('seg1.Tmax < 0.0')
+model.driver.add_constraint('seg2.Tmax < 0.0')
+model.driver.add_constraint('seg3.Tmax < 0.0')
 #model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % \
 #                            (gamma_lb, gamma_ub), linear=True)
 model.driver.add_parameter('seg1.h_pt', low=0.0, high=14.1)
@@ -203,6 +205,8 @@ else:
     print "seg1 fuel burn", model.seg1.SysFuelObj.fuelburn
     print "seg2 fuel burn", model.seg2.SysFuelObj.fuelburn
     print "seg3 fuel burn", model.seg3.SysFuelObj.fuelburn
+    
+print "objective:", model._pseudo_0.out0
 print 'Simulation TIME:', time.time() - start
 print 'Total Time:', time.time() - start0
 

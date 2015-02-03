@@ -110,7 +110,7 @@ class Testcase_pyMission_derivs(unittest.TestCase):
         else:
             diff = abs(Ja - Jn)
 
-        assert_rel_error(self, diff.max(), 0.0, 1e-6)
+        assert_rel_error(self, diff.max(), 0.0, 1e-3)
 
     def test_SysAeroSurrogate(self):
 
