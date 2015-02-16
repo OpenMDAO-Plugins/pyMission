@@ -318,8 +318,8 @@ class pyOptSparseDriver(Driver):
             traceback.print_exc()
             print 70*"="
 
-        print "Functions calculated"
-        print func_dict
+        #print "Functions calculated"
+        #print func_dict
         return func_dict, fail
 
     def gradfunc(self, dv_dict, func_dict):
