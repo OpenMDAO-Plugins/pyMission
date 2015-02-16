@@ -28,8 +28,7 @@ from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
                                SysGammaBspline, setup_MBI
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
-                                  SysFuelObj, SysHi, SysHf, SysMf, SysMi, \
-                                  SysBlockTime
+                                  SysFuelObj, SysBlockTime 
 from pyMission.propulsion import SysSFC, SysTau
 
 
