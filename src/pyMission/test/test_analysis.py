@@ -69,6 +69,8 @@ class Testcase_pyMissionSegment(unittest.TestCase):
         old_keys.remove('Temp')
         old_keys.remove('M_i')
         old_keys.remove('M_f')
+        old_keys.remove('h_i')
+        old_keys.remove('h_f')
         old_keys.remove('M_spline')
         old_keys.remove('jason')
         old_keys.remove('time')

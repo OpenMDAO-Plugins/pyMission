@@ -65,8 +65,8 @@ while num_cp <= num_cp_max:
     # Add parameters, objectives, constraints
     model.driver.add_parameter('h_pt', low=0.0, high=20.0)
     model.driver.add_objective('SysFuelObj.fuelburn')
-    model.driver.add_constraint('SysHi.h_i = 0.0')
-    model.driver.add_constraint('SysHf.h_f = 0.0')
+    model.driver.add_constraint('SysHBspline.h[0] = 0.0')
+    model.driver.add_constraint('SysHBspline.h[-1] = 0.0')
     model.driver.add_constraint('SysTmin.Tmin < 0.0')
     model.driver.add_constraint('SysTmax.Tmax < 0.0')
     model.driver.add_constraint('%.15f < SysGammaBspline.Gamma < %.15f' % \

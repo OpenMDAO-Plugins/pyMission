@@ -26,7 +26,7 @@ from pyMission.bsplines import SysXBspline, SysHBspline, SysMVBspline, \
     SysGammaBspline, setup_MBI
 from pyMission.coupled_analysis import SysCLTar, SysCTTar, SysFuelWeight
 from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
-    SysFuelObj, SysHi, SysHf
+    SysFuelObj
 from pyMission.propulsion import SysSFC, SysTau
 
 
@@ -217,8 +217,6 @@ class MissionSegment(Assembly):
         self.add('SysSlopeMin', SysSlopeMin(num_elem=self.num_elem))
         self.add('SysSlopeMax', SysSlopeMax(num_elem=self.num_elem))
         self.add('SysFuelObj', SysFuelObj(num_elem=self.num_elem))
-        self.add('SysHi', SysHi(num_elem=self.num_elem))
-        self.add('SysHf', SysHf(num_elem=self.num_elem))
 
         self.connect('S', 'SysTau.S')
         self.connect('thrust_sl', 'SysTau.thrust_sl')
@@ -231,8 +229,6 @@ class MissionSegment(Assembly):
         self.connect('SysGammaBspline.Gamma', 'SysSlopeMin.Gamma')
         self.connect('SysGammaBspline.Gamma', 'SysSlopeMax.Gamma')
         self.connect('SysFuelWeight.fuel_w', 'SysFuelObj.fuel_w')
-        self.connect('SysHBspline.h', 'SysHi.h')
-        self.connect('SysHBspline.h', 'SysHf.h')
 
         # Promote useful variables to the boundary.
         self.create_passthrough('SysHBspline.h_pt')
@@ -241,8 +237,7 @@ class MissionSegment(Assembly):
         self.create_passthrough('SysTmin.Tmin')
         self.create_passthrough('SysTmax.Tmax')
         self.create_passthrough('SysFuelObj.fuelburn')
-        self.create_passthrough('SysHi.h_i')
-        self.create_passthrough('SysHf.h_f')
+        self.create_passthrough('SysHBspline.h')
 
         #-------------------------
         # Iteration Hieararchy
@@ -252,7 +247,7 @@ class MissionSegment(Assembly):
                                   'SysSFC', 'SysTemp', 'SysRho', 'SysSpeed',
                                   'coupled_solver',
                                   'SysTau', 'SysTmin', 'SysTmax', 'SysSlopeMin', 'SysSlopeMax',
-                                  'SysFuelObj', 'SysHi', 'SysHf'])
+                                  'SysFuelObj'])
         self.coupled_solver.workflow.add(
             ['SysCLTar', 'drag_solver', 'SysCTTar', 'SysCM', 'SysFuelWeight'])
         self.drag_solver.workflow.add(['SysAeroSurrogate'])
