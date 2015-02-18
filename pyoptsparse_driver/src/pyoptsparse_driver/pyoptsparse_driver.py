@@ -103,6 +103,9 @@ class pyOptSparseDriver(Driver):
 
 
         for name, param in self.get_parameters().iteritems():
+            
+            if isinstance(name, tuple):
+                name = name[0]
 
             # We need to identify Enums, Lists, Dicts
             metadata = param.get_metadata()[1]
@@ -137,10 +140,6 @@ class pyOptSparseDriver(Driver):
                 upper_bounds = self.ub[i_param:i_param+n_vals]
 
             i_param += n_vals
-            
-            if isinstance(name, tuple):
-                name = str(name)
-                
             opt_prob.addVarGroup(name, n_vals, type=vartype,
                                  lower=lower_bounds, upper=upper_bounds,
                                  value=values, choices=choices)
@@ -233,12 +232,15 @@ class pyOptSparseDriver(Driver):
             print sol
 
 
-
         # Pull optimal parameters back into framework and re-run, so that
         # framework is left in the right final state
         dv_dict = sol.getDVs()
         param_types = self.param_type
         for name, param in self.get_parameters().iteritems():
+            
+            if isinstance(name, tuple):
+                name = name[0]
+            
             val = dv_dict[name]
             if param_types[name] == 'i':
                 val = int(round(val))
@@ -284,11 +286,16 @@ class pyOptSparseDriver(Driver):
             # and turn them into python integers before setting.
             param_types = self.param_type
             for name, param in self.get_parameters().iteritems():
+                
+                tup_name = name
+                if isinstance(name, tuple):
+                    name = name[0]
+                
                 val = dv_dict[name]
                 if param_types[name] == 'i':
                     val = int(round(val))
 
-                self.set_parameter_by_name(name, val)
+                self.set_parameter_by_name(tup_name, val)
 
             # Execute the model
             #print "Setting DV"
