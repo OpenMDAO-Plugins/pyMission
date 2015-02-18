@@ -137,6 +137,10 @@ class pyOptSparseDriver(Driver):
                 upper_bounds = self.ub[i_param:i_param+n_vals]
 
             i_param += n_vals
+            
+            if isinstance(name, tuple):
+                name = str(name)
+                
             opt_prob.addVarGroup(name, n_vals, type=vartype,
                                  lower=lower_bounds, upper=upper_bounds,
                                  value=values, choices=choices)
