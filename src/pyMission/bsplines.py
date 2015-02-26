@@ -57,9 +57,9 @@ class BSplineSystem(Component):
         super(BSplineSystem, self).__init__()
 
         # Inputs
-        self.add('x_init', Array(x_init, iotype='in',
-                 desc = 'Initial control point positions.',
-                 deriv_ignore=True))
+        #self.add('x_init', Array(x_init, iotype='in',
+        #         desc = 'Initial control point positions.',
+        #         deriv_ignore=True))
 
         self.num_elem = num_elem+1
         self.num_pt = num_pt

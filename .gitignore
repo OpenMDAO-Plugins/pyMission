@@ -5,6 +5,7 @@
 *.egg-info
 *openmdao_log.txt
 *~
+*SNOPT*
 
 src/CADRE/test/check_units_desc.py
 generated_images/

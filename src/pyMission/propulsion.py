@@ -28,14 +28,14 @@ from openmdao.main.datatypes.api import Array, Float
 class SysSFC(Component):
     """ Linear SFC model wrt altitude """
 
-    def __init__(self, num_elem=10):
+    def __init__(self, num_elem=10, SFCSL=0):
         super(SysSFC, self).__init__()
+
+        self.SFCSL = SFCSL
 
         # Inputs
         self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude'))
-        self.add('SFCSL', Float(0.0, iotype='in',
-                                desc = 'sea-level SFC value'))
 
         # Outputs
         self.add('SFC', Array(np.zeros((num_elem+1, )), iotype='out',
@@ -55,7 +55,7 @@ class SysSFC(Component):
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
         """
-        input_keys = ['h', 'SFCSL']
+        input_keys = ['h']
         output_keys = ['SFC']
         return input_keys, output_keys
 
@@ -95,8 +95,11 @@ class SysTau(Component):
     dependence on altitude is used
     """
 
-    def __init__(self, num_elem=10):
+    def __init__(self, num_elem=10, S=0, thrust_sl=0):
         super(SysTau, self).__init__()
+
+        self.S = S
+        self.thrust_sl = thrust_sl
 
         # Inputs
         self.add('CT_tar', Array(np.zeros((num_elem+1, )), iotype='in',
@@ -107,9 +110,6 @@ class SysTau(Component):
                             desc = 'Speed'))
         self.add('h', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Altitude'))
-        self.add('thrust_sl', Float(0.0, iotype='in',
-                                    desc = 'Maximum sea-level thrust'))
-        self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
 
         # Outputs
         self.add('tau', Array(np.zeros((num_elem+1, )), iotype='out',
@@ -135,7 +135,7 @@ class SysTau(Component):
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
         """
-        input_keys = ['CT_tar', 'rho', 'v', 'h', 'thrust_sl', 'S']
+        input_keys = ['CT_tar', 'rho', 'v', 'h']
         output_keys = ['tau']
         return input_keys, output_keys
 

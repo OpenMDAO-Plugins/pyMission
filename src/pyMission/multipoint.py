@@ -11,10 +11,15 @@ from openmdao.lib.casehandlers.api import BSONCaseRecorder
 
 from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 from pyMission.segment import MissionSegment
+from pyMission.bsplines import setup_MBI
+from pyMission.aeroTripan import setup_surrogate
+
+aero_surr = {}
+aero_surr['CL'], aero_surr['CD'], aero_surr['CM'], aero_surr['nums'] = setup_surrogate('crm_surr')
 
 # Same discretization for each segment for now.
-num_elem = 250
-num_cp = 50
+num_elem = 50#250
+num_cp = 10#50
 
 model = set_as_top(Assembly())
 
@@ -38,9 +43,12 @@ x_range *= 1.852
 x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
 M_init = np.ones(num_cp)*0.82
 h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
+jac_h, jac_gamma = setup_MBI(num_elem+1, num_cp, x_init)
 
 model.add('seg1', MissionSegment(num_elem=num_elem, num_cp=num_cp,
-                                 x_pts=x_init, surr_file='crm_surr'))
+                                 x_pts=x_init, params_file='CRM_params.py',
+                                 aero_surr=aero_surr,
+                                 jac_h=jac_h, jac_gamma=jac_gamma))
 
 # Initial value of the parameter
 model.seg1.h_pt = h_init
@@ -82,9 +90,12 @@ x_range *= 1.852
 x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
 M_init = np.ones(num_cp)*0.82
 h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
+jac_h, jac_gamma = setup_MBI(num_elem+1, num_cp, x_init)
 
 model.add('seg2', MissionSegment(num_elem=num_elem, num_cp=num_cp,
-                                 x_pts=x_init, surr_file='crm_surr'))
+                                 x_pts=x_init, params_file='CRM_params.py',
+                                 aero_surr=aero_surr,
+                                 jac_h=jac_h, jac_gamma=jac_gamma))
 
 # Initial value of the parameter
 model.seg2.h_pt = h_init
@@ -126,9 +137,12 @@ x_range *= 1.852
 x_init = x_range * 1e3 * (1-np.cos(np.linspace(0, 1, num_cp)*np.pi))/2/1e6
 M_init = np.ones(num_cp)*0.82
 h_init = 10 * np.sin(np.pi * x_init / (x_range/1e3))
+jac_h, jac_gamma = setup_MBI(num_elem+1, num_cp, x_init)
 
 model.add('seg3', MissionSegment(num_elem=num_elem, num_cp=num_cp,
-                                 x_pts=x_init, surr_file='crm_surr'))
+                                 x_pts=x_init, params_file='CRM_params.py',
+                                 aero_surr=aero_surr,
+                                 jac_h=jac_h, jac_gamma=jac_gamma))
 
 # Initial value of the parameter
 model.seg3.h_pt = h_init
@@ -180,3 +194,5 @@ else:
     print "seg3 fuel burn", model.seg3.SysFuelObj.fuelburn
 print 'Simulation TIME:', time.time() - start
 
+model.seg1.check_comp_derivatives()
+model.seg1.list_unconnected_inputs()

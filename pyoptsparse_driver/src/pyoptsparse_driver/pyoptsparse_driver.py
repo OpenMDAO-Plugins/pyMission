@@ -61,6 +61,8 @@ class pyOptSparseDriver(Driver):
 
     exit_flag = Int(0, iotype="out", desc="0 for fail, 1 for ok")
 
+    history_flag = Bool(True, iotype="in", desc="controls the printing of history file")
+
     def __init__(self, n_x=None):
         """Initialize pyopt
         n_x: number of design variables"""
@@ -103,7 +105,7 @@ class pyOptSparseDriver(Driver):
 
 
         for name, param in self.get_parameters().iteritems():
-            
+
             if isinstance(name, tuple):
                 name = name[0]
 
@@ -220,12 +222,18 @@ class pyOptSparseDriver(Driver):
             opt.setOption(option, value)
 
         # Execute the optimization problem
+        kwargs = {}
         if self.pyopt_diff:
-            # Use pyOpt's internal finite difference
-            sol = opt(opt_prob, sens='FD', sensStep=self.gradient_options.fd_step)
+            kwargs['sens']="FD"
+            kwargs['sensStep']=self.gradient_options.fd_step
         else:
-            # Use OpenMDAO's differentiator for the gradient
-            sol = opt(opt_prob, sens=self.gradfunc)
+            kwargs['sens']=self.gradfunc
+
+        if self.history_flag:
+            kwargs['storeHistory']='hist.hst'
+
+        # Use OpenMDAO's differentiator for the gradient
+        sol = opt(opt_prob, **kwargs)
 
         # Print results
         if self.print_results:
@@ -237,10 +245,10 @@ class pyOptSparseDriver(Driver):
         dv_dict = sol.getDVs()
         param_types = self.param_type
         for name, param in self.get_parameters().iteritems():
-            
+
             if isinstance(name, tuple):
                 name = name[0]
-            
+
             val = dv_dict[name]
             if param_types[name] == 'i':
                 val = int(round(val))
@@ -286,11 +294,11 @@ class pyOptSparseDriver(Driver):
             # and turn them into python integers before setting.
             param_types = self.param_type
             for name, param in self.get_parameters().iteritems():
-                
+
                 tup_name = name
                 if isinstance(name, tuple):
                     name = name[0]
-                
+
                 val = dv_dict[name]
                 if param_types[name] == 'i':
                     val = int(round(val))
@@ -379,4 +387,3 @@ class pyOptSparseDriver(Driver):
         #print dv_dict
         #print sens_dict
         return sens_dict, fail
-

@@ -31,6 +31,9 @@ from pyMission.functionals import SysTmin, SysTmax, SysSlopeMin, SysSlopeMax, \
                                   SysFuelObj, SysBlockTime 
 from pyMission.propulsion import SysSFC, SysTau
 
+import check_deriv_patch
+import unconn_patch
+
 
 def is_differentiable(self): 
     return True
@@ -41,7 +44,8 @@ class MissionSegment(Assembly):
     """ Defines a single segment for the Mission Analysis. """
 
 
-    def __init__(self, num_elem=10, num_cp=5, x_pts=None, surr_file=None):
+    def __init__(self, num_elem=10, num_cp=5, x_pts=None, params_file=None,
+                 aero_surr=None, jac_h=None, jac_gamma=None):
         """Initialize this segment trajectory problem.
 
         num_elem: int
@@ -56,35 +60,37 @@ class MissionSegment(Assembly):
         surr_file: Name of file for generating the Tripan surrogate models.
         """
 
+        super(MissionSegment, self).__init__()
+
         self.num_elem = num_elem
         self.num_pt = num_cp
         self.x_pts = x_pts
 
+        data = {}
+        execfile(params_file, data)
+        params = data['params']
+        self.S = params['S']
+        self.ac_w = params['ac_w']
+        self.thrust_sl = params['thrust_sl']
+        self.SFCSL = params['SFCSL']
+        self.AR = params['AR']
+        self.oswald = params['e']
+        self.wt_pax = 84 * 9.81
+
         # Generate jacobians for b-splines using MBI package
-        self.jac_h, self.jac_gamma = setup_MBI(num_elem+1, num_cp, x_pts)
+        self.jac_h, self.jac_gamma = jac_h, jac_gamma
+        #self.jac_h, self.jac_gamma = setup_MBI(num_elem+1, num_cp, x_pts)
 
         # Setup the surrogate models
-        self.CL_arr, self.CD_arr, self.CM_arr, self.num = \
-            setup_surrogate(surr_file)
+        self.CL_arr = aero_surr['CL']
+        self.CD_arr = aero_surr['CD']
+        self.CM_arr = aero_surr['CM']
+        self.num = aero_surr['nums']
 
-        super(MissionSegment, self).__init__()
+#    def configure(self):
+#        """ Set it all up. """
 
-    def configure(self):
-        """ Set it all up. """
-
-        # Place all design variables on the Assembly boundary.
-        self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
-        self.add('ac_w', Float(0.0, iotype='in',
-                               desc = 'Weight of aircraft + payload'))
-        self.add('SFCSL', Float(0.0, iotype='in',
-                                desc = 'sea-level SFC value'))
-        self.add('thrust_sl', Float(0.0, iotype='in',
-                                    desc = 'Maximum sea-level thrust'))
-        self.add('AR', Float(0.0, iotype='in',
-                             desc = 'Aspect Ratio'))
-        self.add('oswald', Float(0.0, iotype='in',
-                                 desc = "Oswald's efficiency"))
-
+        self.add('pax_flt', Float(0.0, iotype='in'))
 
         # Splines
         self.add('SysXBspline', SysXBspline(num_elem=self.num_elem,
@@ -111,12 +117,12 @@ class MissionSegment(Assembly):
 
 
         # Atmospherics
-        self.add('SysSFC', SysSFC(num_elem=self.num_elem))
+        self.add('SysSFC', SysSFC(num_elem=self.num_elem, SFCSL=self.SFCSL))
         self.add('SysTemp', SysTemp(num_elem=self.num_elem))
         self.add('SysRho', SysRho(num_elem=self.num_elem))
         self.add('SysSpeed', SysSpeed(num_elem=self.num_elem))
+        self.SysSpeed.v_specified = False
 
-        self.connect('SFCSL', 'SysSFC.SFCSL')
         self.connect('SysHBspline.h', 'SysSFC.h')
         self.connect('SysHBspline.h', 'SysTemp.h')
         self.connect('SysHBspline.h', 'SysRho.h')
@@ -131,10 +137,9 @@ class MissionSegment(Assembly):
         # -----------------------------------
 
         # Vertical Equilibrium
-        self.add('SysCLTar', SysCLTar(num_elem=self.num_elem))
+        self.add('SysCLTar', SysCLTar(num_elem=self.num_elem, wt_pax=self.wt_pax,
+                                      S=self.S, ac_w=self.ac_w))
 
-        self.connect('S', 'SysCLTar.S')
-        self.connect('ac_w', 'SysCLTar.ac_w')
         self.connect('SysRho.rho', 'SysCLTar.rho')
         self.connect('SysGammaBspline.Gamma', 'SysCLTar.Gamma')
         self.connect('SysSpeed.v', 'SysCLTar.v')
@@ -165,18 +170,17 @@ class MissionSegment(Assembly):
         self.connect('SysTripanCLSurrogate.alpha', 'SysTripanCDSurrogate.alpha')
 
         # Horizontal Equilibrium
-        self.add('SysCTTar', SysCTTar(num_elem=self.num_elem))
+        self.add('SysCTTar', SysCTTar(num_elem=self.num_elem, wt_pax=self.wt_pax,
+                                      S=self.S, ac_w=self.ac_w))
 
         self.connect('SysGammaBspline.Gamma', 'SysCTTar.Gamma')
         self.connect('SysTripanCDSurrogate.CD', 'SysCTTar.CD')
         self.connect('SysTripanCLSurrogate.alpha', 'SysCTTar.alpha')
         self.connect('SysRho.rho', 'SysCTTar.rho')
         self.connect('SysSpeed.v', 'SysCTTar.v')
-        self.connect('S', 'SysCTTar.S')
-        self.connect('ac_w', 'SysCTTar.ac_w')
 
         # Weight
-        self.add('SysFuelWeight', SysFuelWeight(num_elem=self.num_elem))
+        self.add('SysFuelWeight', SysFuelWeight(num_elem=self.num_elem, S=self.S))
         self.SysFuelWeight.fuel_w = np.linspace(1.0, 0.0, self.num_elem+1)
 
         self.connect('SysSpeed.v', 'SysFuelWeight.v')
@@ -185,7 +189,6 @@ class MissionSegment(Assembly):
         self.connect('SysXBspline.x', 'SysFuelWeight.x')
         self.connect('SysSFC.SFC', 'SysFuelWeight.SFC')
         self.connect('SysRho.rho', 'SysFuelWeight.rho')
-        self.connect('S', 'SysFuelWeight.S')
 
         # ------------------------------------------------
         # Coupled Analysis - Newton for outer loop
@@ -223,7 +226,8 @@ class MissionSegment(Assembly):
         # --------------------
 
         # Functionals (i.e., components downstream of the coupled system.)
-        self.add('SysTau', SysTau(num_elem=self.num_elem))
+        self.add('SysTau', SysTau(num_elem=self.num_elem,
+                                  S=self.S, thrust_sl=self.thrust_sl))
         self.add('SysTmin', SysTmin(num_elem=self.num_elem))
         self.add('SysTmax', SysTmax(num_elem=self.num_elem))
         #self.add('SysSlopeMin', SysSlopeMin(num_elem=self.num_elem))
@@ -231,8 +235,6 @@ class MissionSegment(Assembly):
         self.add('SysFuelObj', SysFuelObj(num_elem=self.num_elem))
         self.add('SysBlockTime', SysBlockTime(num_elem=self.num_elem))
 
-        self.connect('S', 'SysTau.S')
-        self.connect('thrust_sl', 'SysTau.thrust_sl')
         self.connect('SysRho.rho', 'SysTau.rho')
         self.connect('SysCTTar.CT_tar', 'SysTau.CT_tar')
         self.connect('SysHBspline.h', 'SysTau.h')
@@ -257,7 +259,12 @@ class MissionSegment(Assembly):
         self.create_passthrough('SysTmin.Tmin')
         self.create_passthrough('SysTmax.Tmax')
         self.create_passthrough('SysFuelObj.fuelburn')
+        self.create_passthrough('SysBlockTime.time')
         self.create_passthrough('SysHBspline.h')
+        self.create_passthrough('SysGammaBspline.Gamma')
+
+        self.connect('pax_flt', 'SysCLTar.pax_flt')
+        self.connect('pax_flt', 'SysCTTar.pax_flt')
 
         #-------------------------
         # Iteration Hierarchy

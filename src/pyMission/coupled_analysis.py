@@ -32,8 +32,12 @@ class SysCLTar(Component):
     vertical flight equilibrium equation is enforced.
     """
 
-    def __init__(self, num_elem=10):
+    def __init__(self, num_elem=10, wt_pax=0.0, S=0, ac_w=0):
         super(SysCLTar, self).__init__()
+
+        self.wt_pax = wt_pax
+        self.S = S
+        self.ac_w = ac_w
 
         # Inputs
         self.add('fuel_w', Array(np.zeros((num_elem+1, )), iotype='in',
@@ -48,9 +52,8 @@ class SysCLTar(Component):
                             desc = 'Speed'))
         self.add('alpha', Array(np.ones((num_elem+1, )), iotype='in',
                                 desc = 'Angle of attack'))
-        self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
-        self.add('ac_w', Float(0.0, iotype='in',
-                               desc = 'Weight of aircraft + payload'))
+        self.add('pax_flt', Float(0.0, iotype='in',
+                                  desc = 'Passengers per flight'))
 
         # Outputs
         self.add('CL', Array(np.zeros((num_elem+1, )), iotype='out',
@@ -73,8 +76,10 @@ class SysCLTar(Component):
         speed = self.v * 1e2
         wing_area = self.S * 1e2
         ac_w = self.ac_w * 1e6
+        pax_flt = self.pax_flt
+        wt_pax = self.wt_pax
 
-        self.CL = (ac_w + fuel_w)*np.cos(Gamma) /\
+        self.CL = (ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                   (0.5*rho*speed**2*wing_area) - \
                   thrust_c*np.sin(alpha)
 
@@ -82,7 +87,7 @@ class SysCLTar(Component):
         """ Return lists of inputs and outputs where we defined derivatives.
         """
         input_keys = ['fuel_w', 'Gamma', 'CT_tar', 'alpha', 'rho',
-                      'v', 'S', 'ac_w']
+                      'v', 'pax_flt']
         output_keys = ['CL']
         return input_keys, output_keys
 
@@ -105,31 +110,35 @@ class SysCLTar(Component):
         speed = self.v * 1e2
         wing_area = self.S * 1e2
         ac_w = self.ac_w * 1e6
+        pax_flt = self.pax_flt
+        wt_pax = self.wt_pax
 
         if 'ac_w' in arg:
             result['CL'] += np.cos(Gamma) /(0.5*rho*speed**2*wing_area) *\
                            arg['ac_w']*1e6
         if 'S' in arg:
-            result['CL'] += -(ac_w + fuel_w)*np.cos(Gamma) /\
+            result['CL'] += -(ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                           (0.5*rho*speed**2*wing_area**2) *\
                           arg['S'] * 1e2
         if 'v' in arg:
-            result['CL'] += -2*(ac_w + fuel_w)*np.cos(Gamma) /\
+            result['CL'] += -2*(ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                           (0.5*rho*speed**3*wing_area) * arg['v'] * 1e2
         if 'rho' in arg:
-            result['CL'] += -(ac_w + fuel_w)*np.cos(Gamma) /\
+            result['CL'] += -(ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                           (0.5*rho**2*speed**2*wing_area) * arg['rho']
         if 'fuel_w' in arg:
             result['CL'] += np.cos(Gamma) /\
                           (0.5*rho*speed**2*wing_area) *\
                           arg['fuel_w'] * self.fuel_scale
         if 'Gamma' in arg:
-            result['CL'] += -(ac_w + fuel_w)*np.sin(Gamma) /\
+            result['CL'] += -(ac_w + fuel_w + wt_pax * pax_flt)*np.sin(Gamma) /\
                           (0.5*rho*speed**2*wing_area) * arg['Gamma'] * 1e-1
         if 'CT_tar' in arg:
             result['CL'] += -np.sin(alpha) * arg['CT_tar'] * 1e-1
         if 'alpha' in arg:
             result['CL'] += -thrust_c*np.cos(alpha) * arg['alpha'] * 1e-1
+        if 'pax_flt' in arg:
+            result['CL'] += wt_pax * np.cos(Gamma) / (0.5*rho*speed**2*wing_area) * arg['pax_flt']
 
     def apply_derivT(self, arg, result):
         """ Compute lift coefficient derivatives wrt weight of aircraft, wing
@@ -146,6 +155,8 @@ class SysCLTar(Component):
         speed = self.v * 1e2
         wing_area = self.S * 1e2
         ac_w = self.ac_w * 1e6
+        wt_pax = self.wt_pax
+        pax_flt = self.pax_flt
 
         d_CL = arg['CL']
 
@@ -153,24 +164,26 @@ class SysCLTar(Component):
             result['ac_w'] += np.dot(np.cos(Gamma) /\
                                (0.5*rho*speed**2*wing_area), d_CL) * 1e6
         if 'S' in result:
-            result['S'] += -np.dot((ac_w + fuel_w)*np.cos(Gamma) /\
+            result['S'] += -np.dot((ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                             (0.5*rho*speed**2*wing_area**2), d_CL) * 1e2
         if 'v' in result:
-            result['v'] += -2*(ac_w + fuel_w)*np.cos(Gamma) /\
+            result['v'] += -2*(ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                             (0.5*rho*speed**3*wing_area) * d_CL * 1e2
         if 'rho' in result:
-            result['rho'] += -(ac_w + fuel_w)*np.cos(Gamma) /\
+            result['rho'] += -(ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                               (0.5*rho**2*speed**2*wing_area) * d_CL
         if 'fuel_w' in result:
             result['fuel_w'] += np.cos(Gamma) /\
                                 (0.5*rho*speed**2*wing_area) * d_CL * self.fuel_scale
         if 'Gamma' in result:
-            result['Gamma'] += -(ac_w + fuel_w)*np.sin(Gamma) /\
+            result['Gamma'] += -(ac_w + fuel_w + wt_pax * pax_flt)*np.sin(Gamma) /\
                                 (0.5*rho*speed**2*wing_area) * d_CL * 1e-1
         if 'CT_tar' in result:
             result['CT_tar'] += -np.sin(alpha) * d_CL * 1e-1
         if 'alpha' in result:
             result['alpha'] += -thrust_c*np.cos(alpha) * d_CL *1e-1
+        if 'pax_flt' in result:
+            result['pax_flt'] += np.sum(wt_pax * np.cos(Gamma) / (0.5*rho*speed**2*wing_area) * d_CL)
 
 
 class SysCTTar(Component):
@@ -178,8 +191,12 @@ class SysCTTar(Component):
     horizontal flight equilibrium equation is enforced.
     """
 
-    def __init__(self, num_elem=10):
+    def __init__(self, num_elem=10, wt_pax=0.0, S=0, ac_w=0):
         super(SysCTTar, self).__init__()
+
+        self.wt_pax = wt_pax
+        self.S = S
+        self.ac_w = ac_w
 
         # Inputs
         self.add('fuel_w', Array(np.zeros((num_elem+1, )), iotype='in',
@@ -194,9 +211,8 @@ class SysCTTar(Component):
                               desc = 'Density'))
         self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
                             desc = 'Speed'))
-        self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
-        self.add('ac_w', Float(0.0, iotype='in',
-                               desc = 'Weight of aircraft + payload'))
+        self.add('pax_flt', Float(0.0, iotype='in',
+                                  desc = 'Passengers per flight'))
 
         # Outputs
         self.add('CT_tar', Array(np.zeros((num_elem+1, )), iotype='out',
@@ -219,16 +235,18 @@ class SysCTTar(Component):
         speed = self.v * 1e2
         wing_area = self.S * 1e2
         ac_w = self.ac_w * 1e6
+        pax_flt = self.pax_flt
+        wt_pax = self.wt_pax
 
         self.CT_tar = (drag_c/np.cos(alpha) +
-                       (ac_w + fuel_w)*np.sin(Gamma) /
+                       (ac_w + fuel_w + wt_pax * pax_flt)*np.sin(Gamma) /
                        (0.5*rho*speed**2*wing_area*np.cos(alpha))) / 1e-1
 
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
         """
         input_keys = ['fuel_w', 'Gamma', 'CD', 'alpha', 'rho',
-                      'v', 'S', 'ac_w']
+                      'v', 'pax_flt']
         output_keys = ['CT_tar']
         return input_keys, output_keys
 
@@ -251,6 +269,8 @@ class SysCTTar(Component):
         speed = self.v * 1e2
         wing_area = self.S * 1e2
         ac_w = self.ac_w * 1e6
+        pax_flt = self.pax_flt
+        wt_pax = self.wt_pax
 
         dthrust_c = result['CT_tar']
         cos_alpha = np.cos(alpha)
@@ -261,30 +281,33 @@ class SysCTTar(Component):
             dthrust_c += (sin_gamma / (fact) * \
                           arg['ac_w'] * 1e6/1e-1)
         if 'S' in arg:
-            dthrust_c += -((ac_w + fuel_w)*sin_gamma / \
+            dthrust_c += -((ac_w + fuel_w + wt_pax * pax_flt)*sin_gamma / \
                               (fact*wing_area) * \
                               arg['S'] * 1e2/1e-1)
         if 'v' in arg:
-            dthrust_c += -2*(ac_w + fuel_w) * sin_gamma /\
+            dthrust_c += -2*(ac_w + fuel_w + wt_pax * pax_flt) * sin_gamma /\
                             (fact*speed) * \
                             arg['v'] * 1e2/1e-1
         if 'rho' in arg:
-            dthrust_c += -(ac_w + fuel_w) * sin_gamma /\
+            dthrust_c += -(ac_w + fuel_w + wt_pax * pax_flt) * sin_gamma /\
                             (fact*rho) * arg['rho'] / 1e-1
         if 'fuel_w' in arg:
             dthrust_c += sin_gamma /\
                             (fact) * arg['fuel_w'] * self.fuel_scale/1e-1
         if 'Gamma' in arg:
-            dthrust_c += (ac_w + fuel_w)*np.cos(Gamma) /\
+            dthrust_c += (ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                             (fact) * arg['Gamma'] * 1e-1/1e-1
         if 'CD' in arg:
             dthrust_c += 1.0/cos_alpha * arg['CD'] * 1e-1/1e-1
         if 'alpha' in arg:
             dthrust_c += (drag_c*np.sin(alpha)/\
                              (cos_alpha)**2 \
-                             + (ac_w + fuel_w)*sin_gamma* \
+                             + (ac_w + fuel_w + wt_pax * pax_flt)*sin_gamma* \
                              np.sin(alpha)/(fact*cos_alpha)) \
                              * arg['alpha'] * 1e-1/1e-1
+        if 'pax_flt' in arg:
+            dthrust_c += wt_pax * np.sin(Gamma) /\
+                       (0.5*rho*speed**2*wing_area*np.cos(alpha)) * arg['pax_flt'] / 1e-1
 
     def apply_derivT(self, arg, result):
         """ Compute thrust coefficient derivatives wrt weight of aircraft,
@@ -301,6 +324,8 @@ class SysCTTar(Component):
         speed = self.v * 1e2
         wing_area = self.S * 1e2
         ac_w = self.ac_w * 1e6
+        pax_flt = self.pax_flt
+        wt_pax = self.wt_pax
 
         dthrust_c = arg['CT_tar']
         cos_alpha = np.cos(alpha)
@@ -311,29 +336,32 @@ class SysCTTar(Component):
             result['ac_w'] += np.sum(sin_gamma/(fact*cos_alpha) * \
                                   dthrust_c) * 1e6/1e-1
         if 'S' in result:
-            result['S'] -= np.sum((ac_w + fuel_w)*sin_gamma/
+            result['S'] -= np.sum((ac_w + fuel_w + wt_pax * pax_flt)*sin_gamma/
                            (fact*wing_area*cos_alpha) * \
                            dthrust_c) * 1e2/1e-1
         if 'v' in result:
-            result['v'] += -2*(ac_w + fuel_w) * sin_gamma /\
+            result['v'] += -2*(ac_w + fuel_w + wt_pax * pax_flt) * sin_gamma /\
                             (fact*speed*cos_alpha) * \
                             dthrust_c * 1e2/1e-1
         if 'rho' in result:
-            result['rho'] += -(ac_w + fuel_w) * sin_gamma /\
+            result['rho'] += -(ac_w + fuel_w + wt_pax * pax_flt) * sin_gamma /\
                               (fact*rho*cos_alpha) * dthrust_c  /1e-1
         if 'fuel_w' in result:
             result['fuel_w'] += sin_gamma /\
                                 (fact*cos_alpha) * dthrust_c * self.fuel_scale/1e-1
         if 'Gamma' in result:
-            result['Gamma'] += (ac_w + fuel_w)*np.cos(Gamma) /\
+            result['Gamma'] += (ac_w + fuel_w + wt_pax * pax_flt)*np.cos(Gamma) /\
                                (fact*cos_alpha) * dthrust_c * 1e-1/1e-1
         if 'CD' in result:
             result['CD'] += 1.0/cos_alpha * dthrust_c * 1e-1/1e-1
         if 'alpha' in result:
             result['alpha'] += ((drag_c*np.sin(alpha)/(cos_alpha)**2
-                               + (ac_w + fuel_w)*sin_gamma*
+                               + (ac_w + fuel_w + wt_pax * pax_flt)*sin_gamma*
                                  np.sin(alpha)/(fact*(cos_alpha)**2)) \
                                  * dthrust_c) * 1e-1/1e-1
+        if 'pax_flt' in result:
+            result['pax_flt'] += np.sum(wt_pax * np.sin(Gamma) /\
+                       (0.5*rho*speed**2*wing_area*np.cos(alpha)) * dthrust_c / 1e-1)
 
 
 class SysFuelWeight(Component):
@@ -341,8 +369,10 @@ class SysFuelWeight(Component):
     weight carried at each element control point
     """
 
-    def __init__(self, num_elem=10):
+    def __init__(self, num_elem=10, S=0):
         super(SysFuelWeight, self).__init__()
+
+        self.S = S
 
         # Inputs
         self.add('v', Array(np.zeros((num_elem+1, )), iotype='in',
@@ -357,7 +387,6 @@ class SysFuelWeight(Component):
                               desc = 'Specific Fuel Consumption'))
         self.add('rho', Array(np.zeros((num_elem+1, )), iotype='in',
                               desc = 'Density'))
-        self.add('S', Float(0.0, iotype='in', desc = 'Wing Area'))
 
         # Note, this isn't used in the calculation, but it may have been used
         # to help convergence due to lack of graph.
@@ -406,7 +435,7 @@ class SysFuelWeight(Component):
     def list_deriv_vars(self):
         """ Return lists of inputs and outputs where we defined derivatives.
         """
-        input_keys = ['v', 'Gamma', 'CT_tar', 'x', 'SFC', 'rho', 'S']
+        input_keys = ['v', 'Gamma', 'CT_tar', 'x', 'SFC', 'rho']
         output_keys = ['fuel_w']
         return input_keys, output_keys
 
@@ -607,67 +636,3 @@ class SysFuelWeight(Component):
             dfuel_temp[0:-1] += dfuel_drho1 * fuel_cumul
             dfuel_temp[1:] += dfuel_drho2 * fuel_cumul
             result['rho'] += dfuel_temp / self.fuel_scale
-
-
-# This system can be replaced by a solver's Pseudocomp.
-
-#class SysAlpha(ImplicitComponent):
-    #""" System used to make user provided CL match with CL target """
-
-    #def __init__(self, num_elem=10):
-        #super(SysAlpha, self).__init__()
-
-        ## Inputs
-        #self.add('CL', Array(np.zeros((num_elem+1, )), iotype='out',
-                             #desc = 'User provided coefficient of lift'))
-        #self.add('CL_tar', Array(np.zeros((num_elem+1, )), iotype='in',
-                                 #desc = 'Target coefficient of lift'))
-
-        ## States
-        #self.add('alpha', Array(np.zeros((num_elem+1, )), iotype='state',
-                                #desc = 'Angle of attack'))
-
-        ## Residuals
-        #self.add('alpha_res', Array(np.zeros((num_elem+1, )), iotype='residual',
-                                #desc = 'Residual for Angle of attack equation'))
-
-    #def evaluate(self):
-        #""" The residual of the system is simply the difference between the
-        #two CL values.
-        #"""
-
-        #lift_c = self.CL
-        #lift_c_tar = self.CL_tar
-        #alpha_res = fvec('alpha')
-
-        #alpha_res[:] = lift_c - lift_c_tar
-
-    #def apply_dFdpu(self, args):
-        #""" compute the trivial derivatives of the system """
-
-        #dpvec = self.vec['dp']
-        #duvec = self.vec['du']
-        #dfvec = self.vec['df']
-
-        #dlift_c = dpvec('CL')
-        #dlift_c_tar = dpvec('CL_tar')
-        #dalpha_res = dfvec('alpha')
-        #dalpha = duvec('alpha')
-
-        #if self.mode == 'fwd':
-            #dalpha_res[:] = 0.0
-            #if 'CL' in args:
-                #dalpha_res[:] += dlift_c
-            #if 'CL_tar' in args:
-                #dalpha_res[:] -= dlift_c_tar
-
-        #elif self.mode == 'rev':
-            #dlift_c[:] = 0.0
-            #dlift_c_tar[:] = 0.0
-            #dalpha[:] = 0.0
-            #if 'CL' in args:
-                #dlift_c[:] += dalpha_res
-            #if 'CL_tar' in args:
-                #dlift_c_tar[:] -= dalpha_res
-
-
