@@ -185,11 +185,11 @@ model.driver.gradient_options.maxiter = 1
 
 start = time.time()
 model.run()
-J = model.driver.workflow.calc_gradient(return_format='dict')
+J = model.driver.calc_gradient(return_format='dict')
 
 print "."
 if MPI:
-    J = model.driver.workflow._system.get_combined_J(J)
+    J = model.driver._system.get_combined_J(J)
     if MPI.COMM_WORLD.rank == 0:
         print J
 else:
