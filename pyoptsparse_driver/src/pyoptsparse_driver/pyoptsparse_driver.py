@@ -103,7 +103,7 @@ class pyOptSparseDriver(Driver):
 
 
         for name, param in self.get_parameters().iteritems():
-            
+
             if isinstance(name, tuple):
                 name = name[0]
 
@@ -237,15 +237,16 @@ class pyOptSparseDriver(Driver):
         dv_dict = sol.getDVs()
         param_types = self.param_type
         for name, param in self.get_parameters().iteritems():
-            
+
+            full_name = name
             if isinstance(name, tuple):
                 name = name[0]
-            
+
             val = dv_dict[name]
             if param_types[name] == 'i':
                 val = int(round(val))
 
-            self.set_parameter_by_name(name, val)
+            self.set_parameter_by_name(full_name, val)
 
         self.run_iteration()
 
@@ -286,11 +287,11 @@ class pyOptSparseDriver(Driver):
             # and turn them into python integers before setting.
             param_types = self.param_type
             for name, param in self.get_parameters().iteritems():
-                
+
                 tup_name = name
                 if isinstance(name, tuple):
                     name = name[0]
-                
+
                 val = dv_dict[name]
                 if param_types[name] == 'i':
                     val = int(round(val))
